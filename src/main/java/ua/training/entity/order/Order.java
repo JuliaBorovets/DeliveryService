@@ -31,7 +31,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    private User owner;
+    private User ownerId;
 
     @Column(name = "status")
     @Enumerated(value = EnumType.STRING)
