@@ -1,105 +1,44 @@
 @import "https://use.fontawesome.com/releases/v5.5.0/css/all.css";
-
-body {
-    background: rgba(169, 163, 221, 0.58);
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.py-1 {
+    color: rgba(169, 163, 221, 0.58);
 }
 
-h1 {
+.new {
+    color: rgba(169, 163, 221, 0.58);
+}
+
+.d-flex {
+    background-color: rgba(169, 163, 221, 0.58);
+}
+
+.page-footer {
+    background-color: rgba(169, 163, 221, 0.23);
+}
+
+.uk_lang {
+    width: 100px;
+    color: #480c54;
+}
+
+.en_lang {
+    width: 100px;
+    color: #480c54;
+}
+
+.btn {
+    width: 140px;
+}
+
+.p_name {
+    font-size: 32px;
     text-transform: uppercase;
     color: #fff;
-    font-size: 38px;
-    line-height: 40px;
-}
-
-
-.black {
-    color: Black;
-
-    text-align: center;
-}
-
-
-.column {
-    background: linear-gradient(125deg, #778beb, #f8a5c2);
-    width: 500px;
-    height: 500px;
-    padding: 60px;
-    text-align: center;
-    box-shadow: 0 0 20px #00000060;
-}
-
-.alert {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    line-height: 30px;
 }
 
 .info {
-    width: 100%;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-.button {
-    position: center;
-    display: unset;
-    width: 40%;
-    height: 50px;
-    border: none;
+    font-kerning: initial;
     font-size: 20px;
-    background-size: 200%;
-    color: #fff;
-    outline: none;
-    cursor: pointer;
-    transition: .5s;
-    background: linear-gradient(120deg, #3498db, #8e44ad, #3498db) right;
+    white-space: normal;
 }
 
-
-.validation {
-    display: none;
-    white-space: nowrap;
-}
-
-input[type="text"], input[type="email"], input[type="password"] {
-    width: 50%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    box-sizing: border-box;
-    border: 2px solid IndianRed;
-    border-radius: 4px;
-}
-
-input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
-    border: 2px solid Tomato;
-}
-
-a:link {
-    color: IndianRed;
-}
-
-a:visited {
-    color: IndianRed;
-}
-
-a:hover {
-    color: Tomato;
-}
-
-a:active {
-    color: Tomato;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Open Sans", sans-serif;
-}
