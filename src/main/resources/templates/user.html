@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<!--suppress HtmlUnknownAttribute -->
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Web Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+<div class="column">
+    <h1 th:text="#{user.welcome}">{Header}</h1>
+
+    <br/>
+    <br/>
+    <div class="alert" th:if="${error}">
+        <h3 class="black" th:text="#{general.access_denied}">{Access denied}</h3>
+    </div>
+    <br th:if="${error}"/>
+    <div>
+        <span th:text="#{general.login}" th:remove="tag">{Logged in as}</span>:
+        <span th:text="${user.firstName} + ' ' + ${user.lastName}" th:remove="tag">{Logged in as}</span>
+        (<a href="/logout" th:text="#{general.logout}">{Log out}</a>)
+    </div>
+    <br/>
+
+    <div>
+        <span th:text="#{language}" th:remove="tag">{Your language}</span>:
+        <span th:text="${language.name}" th:remove="tag">{whatever locale is selected}</span>
+    </div>
+    <br/>
+    <div>
+        <span th:text="#{general.placeholder}" th:remove="tag">{Under construction}</span>
+    </div>
+</div>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package ua.training.dto;
 
 import lombok.*;
+import ua.training.entity.order.Order;
 import ua.training.entity.user.User;
 
 import java.util.List;
@@ -11,8 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @ToString
-public class UsersDTO {
+public class OrdersDTO {
 
-    private List<User> users;
+    private List<Order> orders;
 
 }

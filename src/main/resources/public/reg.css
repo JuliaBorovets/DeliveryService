@@ -1,0 +1,134 @@
+
+body {
+    background: rgba(169, 163, 221, 0.58);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "montserrat", sans-serif;
+}
+
+h1 {
+    text-transform: uppercase;
+    color: #fff;
+    font-size: 38px;
+    line-height: 40px;
+}
+
+.black {
+    color: Black;
+    text-align: center;
+}
+
+.column {
+    background: linear-gradient(125deg, #778beb, #f8a5c2);
+    width: 900px;
+    height: 500px;
+    padding: 60px;
+    text-align: center;
+    box-shadow: 0 0 20px #00000060;
+}
+
+.alert {
+    display: flex;
+    color: #a20218;
+    align-items: center;
+    justify-content: center;
+}
+
+.info {
+    width: 50%;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button {
+    position: center;
+    display: unset;
+    font-size: 18px;
+    width: 40%;
+    height: 50px;
+    border: none;
+    background-size: 200%;
+    color: #fff;
+    outline: none;
+    cursor: pointer;
+    transition: .5s;
+    background: linear-gradient(120deg, #3498db, #8e44ad, #3498db) right;
+}
+
+
+.validation {
+    display: none;
+    white-space: nowrap;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Open Sans", sans-serif;
+}
+
+.firstName, .firstNameCyr, .lastName, .lastNameCyr, .login, .password, .email {
+    box-sizing: border-box;
+    border: 2px solid #720e80;
+    border-radius: 4px;
+    outline: none;
+    color: #d2b5d1;
+    padding: 10px 6px;
+    font-size: 14px;
+    margin-bottom: 40px;
+}
+
+
+.firstName {
+    float: left;
+    margin-left: 100px;
+    left: 50px;
+    width: 270px;
+}
+
+.firstNameCyr {
+    float: right;
+    margin-right: 100px;
+    right: 350px;
+    width: 270px;
+}
+
+.lastName {
+    float: left;
+    margin-left: 100px;
+    width: 270px;
+}
+
+.lastNameCyr {
+
+    float: right;
+    margin-right: 100px;
+    width: 270px;
+}
+
+.login {
+    float: left;
+    margin-left: 100px;
+    width: 270px;
+}
+
+.email {
+
+    float: right;
+    margin-right: 100px;
+    width: 270px;
+}
+
+

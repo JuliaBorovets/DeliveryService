@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<!--suppress HtmlUnknownAttribute -->
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Web Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="reg.css">
+</head>
+
+<body onload="checkFields()">
+<div class="column">
+    <h1 th:text="#{reg.welcome}">{Welcome header}</h1>
+
+    <div class="alert" th:if="${error}">
+        <h3 class="black" th:text="#{reg.error.generic}">{Reg error}</h3>
+    </div>
+
+    <div class="alert" th:if="${duplicate}">
+        <h3 class="black" th:text="#{reg.error.duplicate}">{Reg duplicate field}</h3>
+    </div>
+
+    <div class="registr">
+        <form id="newUser" name="newUser" action="#" th:action="@{/newuser}" th:object="${newUser}" method="post">
+
+            <br/>
+            <div>
+                <input type="text" id="firstName" name="firstName" class="firstName" th:field="*{firstName}"
+                       th:placeholder="#{reg.firstname.lat}" required>
+            </div>
+            <div>
+                <input type="text" id="firstNameCyr" name="firstNameCyr" class="firstNameCyr" th:field="*{firstNameCyr}"
+                       th:placeholder="#{reg.firstname.cyr}" required>
+            </div>
+            <br/>
+            <div>
+                <input type="text" id="lastName" name="lastName" class="lastName" th:field="*{lastName}"
+                       th:placeholder="#{reg.lastname.lat}" required>
+            </div>
+            <div>
+                <input type="text" id="lastNameCyr" name="lastNameCyr" class="lastNameCyr" th:field="*{lastNameCyr}"
+                       th:placeholder="#{reg.lastname.cyr}" required>
+            </div>
+            <br/>
+            <div>
+                <input type="text" id="login" name="login" th:field="*{login}" class="login"
+                       th:placeholder="#{login.username}" required>
+            </div>
+            <div>
+                <input type="email" id="email" name="email" th:field="*{email}" class="email"
+                       th:placeholder="#{reg.email}" required>
+            </div>
+            <br/>
+            <div>
+                <input type="password" id="password" name="password" class="password" th:placeholder="#{login.password}"
+                       required>
+            </div>
+            <div>
+                <input class="button" type="submit" th:value="#{reg.submit}">
+            </div>
+        </form>
+    </div>
+    <br/>
+</div>
+</body>
+</html>
