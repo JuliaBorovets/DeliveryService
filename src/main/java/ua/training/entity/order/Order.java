@@ -33,12 +33,18 @@ public class Order {
     @JoinColumn(name = "owner_id")
     private User ownerId;
 
+    //TODO  коритсувач
+
+    //TODO  отримувач
+
     @Column(name = "status")
     @Enumerated(value = EnumType.STRING)
     private Status status;
 
     @Column(name = "weight", nullable = false)
     private BigDecimal weight;
+
+    //TODO об'ємна вага
 
     @Column(name = "destination")
     @Enumerated(value = EnumType.STRING)
@@ -51,5 +57,8 @@ public class Order {
     //TODO чи є зворотня доставка
 
     //TODO дата доставки
+
+    //TODO оголошена вартість
+
 
 }
