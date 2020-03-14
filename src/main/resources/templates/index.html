@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<!--suppress HtmlUnknownAttribute -->
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Web Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<script type="text/javascript">
+    function handleClick(lang_radio) {
+        if (lang_radio.value != '') {
+            window.location.replace('?language=' + lang_radio.value);
+        }
+    }
+</script>
+
+<body>
+<div class="column">
+    <h1 th:text="#{index.welcome}">{Welcome header}</h1>
+
+    <div class="alert" th:if="${error}">
+        <h3 class="black" th:text="#{login.error}">{Login error}</h3>
+    </div>
+
+    <div class="info" th:if="${logout}">
+        <h3 class="black" th:text="#{login.logout}">{Logout ok}</h3>
+    </div>
+
+    <div class="info" th:if="${reg}">
+        <h3 class="black" th:text="#{login.registered}">{Reg ok}</h3>
+    </div>
+
+    <br/>
+
+    <h3 th:text="#{index.language}">{Choose language}</h3>
+    <div>
+        <form name="language_selection" th:object="${language}">
+            <div th:each="current : ${supported}">
+                <label>
+                    <input type="radio" onclick="handleClick(this);" th:field="*{choice}" th:value="${current.code}">
+                    <span th:text="${current.name}" th:remove="tag">placeholder title</span>
+                </label>
+            </div>
+        </form>
+    </div>
+    <br/>
+
+
+    <form method="post">
+        <div>
+            <br/>
+            <i class="fas fa-user"></i>
+            <input type="text" id="username" th:placeholder="#{login.username}" name="username">
+            <br/>
+        </div>
+        <div>
+            <br/>
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" th:placeholder="#{login.password}" name="password">
+            <br/>
+        </div>
+        <br/>
+        <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden">
+        <div>
+            <input class="button" type="submit" th:value="#{login.proceed}">
+        </div>
+    </form>
+    <br/>
+    <a href="/reg" th:text="#{index.register.link}">{Register!}</a>
+    <br/>
+</div>
+</body>
+</html>

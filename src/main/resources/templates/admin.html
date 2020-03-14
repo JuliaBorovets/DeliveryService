@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<!--suppress HtmlUnknownAttribute -->
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Web Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="column">
+    <h1 th:text="#{admin.welcome}">{Header}</h1>
+    <br/>
+    <div>
+        <span th:text="#{general.login}" th:remove="tag">{Logged in as}</span>
+        <span th:text="${user.firstName} + ' ' + ${user.lastName}" th:remove="tag">{Logged in as}</span>
+        (<a href="/logout" th:text="#{general.logout}">{Log out}</a>)
+    </div>
+    <br/>
+    <div>
+        <span th:text="#{language}" th:remove="tag">{Your language}</span>
+        <span th:text="${language.name}" th:remove="tag">{whatever locale is selected}</span>
+    </div>
+    <br/>
+    <div>
+        <h3 th:text="#{users.header} + ':'">{Here goes user table}</h3>
+        <br/>
+        <table>
+            <tr th:each="user : ${users}">
+                <td width="40%">
+                    <span th:text="${user.firstName} + ' ' + ${user.lastName}" th:remove="tag">{Full user name}</span>
+                    <br/><br/>
+                </td>
+                <td width="40%">
+                    <span th:text="${user.email}" th:remove="tag">{email}</span>
+                    <br/><br/>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br/>
+
+</div>
+</body>
+</html>
