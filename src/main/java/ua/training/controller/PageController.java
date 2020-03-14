@@ -42,13 +42,17 @@ public class PageController implements WebMvcConfigurer {
     }
 
     @RequestMapping("/")
-    public String mainPage(Model model) {
+    public String mainPage(@RequestParam(value = "reg", required = false) String reg,
+                           @RequestParam(value = "login", required = false) String login,
+                           Model model) {
 
         languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
         model.addAttribute("language", languageChanger);
         model.addAttribute("supported", languageChanger.getSupportedLanguages());
 
-        return "main.css";
+        model.addAttribute("reg", reg != null);
+        model.addAttribute("login", login != null);
+        return "index.html";
     }
 
 
