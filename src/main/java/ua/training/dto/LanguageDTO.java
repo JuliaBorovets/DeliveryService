@@ -1,10 +1,12 @@
 package ua.training.dto;
 
+import lombok.Getter;
 import ua.training.controller.SupportedLanguages;
 
 import java.util.Arrays;
 import java.util.Locale;
 
+@Getter
 public class LanguageDTO {
 
     private String name;
@@ -15,13 +17,6 @@ public class LanguageDTO {
         this.name = findNameByCode(language);
     }
 
-    public String getChoice() {
-        return choice;
-    }
-
-    public String getName() {
-        return name;
-    }
 
     public String findNameByCode(String code) {
         String codeLC = code.toLowerCase();
