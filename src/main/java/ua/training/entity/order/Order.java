@@ -3,6 +3,7 @@ package ua.training.entity.order;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import lombok.*;
 import ua.training.entity.user.User;
@@ -30,12 +31,12 @@ public class Order {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private User ownerId;
+    @JoinColumn(name = "sender_id")
+    private User senderId;
 
-    //TODO  коритсувач
-
-    //TODO  отримувач
+    @ManyToOne
+    @JoinColumn(name = "recipient_id")
+    private User recipientId;
 
     @Column(name = "status")
     @Enumerated(value = EnumType.STRING)
@@ -44,8 +45,6 @@ public class Order {
     @Column(name = "weight", nullable = false)
     private BigDecimal weight;
 
-    //TODO об'ємна вага
-
     @Column(name = "destination")
     @Enumerated(value = EnumType.STRING)
     private Destination destination;
@@ -53,12 +52,13 @@ public class Order {
     @Column(name = "price")
     private BigDecimal price;
 
+    @Column(name = "announced_price")
+    private BigDecimal announcedPrice;
 
-    //TODO чи є зворотня доставка
+    @Column(name = "shipping_date")
+    private LocalDate shippingDate;
 
-    //TODO дата доставки
-
-    //TODO оголошена вартість
-
+    @Column(name = "is_return_shipping", nullable = false)
+    private boolean isReturnShipping;
 
 }
