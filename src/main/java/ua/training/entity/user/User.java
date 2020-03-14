@@ -12,7 +12,7 @@ import javax.persistence.*;
 @ToString
 
 @Entity
-@Table(name = "final_project",
+@Table(name = "users",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"login", "email"})})
 public class User {
 

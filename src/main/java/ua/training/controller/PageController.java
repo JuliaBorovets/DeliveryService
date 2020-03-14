@@ -42,10 +42,21 @@ public class PageController implements WebMvcConfigurer {
     }
 
     @RequestMapping("/")
-    public String mainPage(@RequestParam(value = "error", required = false) String error,
-                           @RequestParam(value = "logout", required = false) String logout,
-                           @RequestParam(value = "reg", required = false) String reg,
-                           Model model) {
+    public String mainPage(Model model) {
+
+        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
+        model.addAttribute("language", languageChanger);
+        model.addAttribute("supported", languageChanger.getSupportedLanguages());
+
+        return "main.css";
+    }
+
+
+    @RequestMapping("/login")
+    public String loginPage(@RequestParam(value = "error", required = false) String error,
+                            @RequestParam(value = "logout", required = false) String logout,
+                            @RequestParam(value = "reg", required = false) String reg,
+                            Model model) {
 
         languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
         model.addAttribute("language", languageChanger);
@@ -55,7 +66,7 @@ public class PageController implements WebMvcConfigurer {
         model.addAttribute("logout", logout != null);
         model.addAttribute("reg", reg != null);
 
-        return "index.html";
+        return "login.html";
     }
 
     @RequestMapping("/success_url")
