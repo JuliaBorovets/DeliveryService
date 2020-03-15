@@ -1,5 +1,6 @@
 package ua.training.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -8,6 +9,7 @@ import java.util.Locale;
 import java.util.Set;
 
 @Getter
+@AllArgsConstructor
 public enum SupportedLanguages {
     ENGLISH("en", "English"),
     UKRAINIAN("uk", "Українська");
@@ -18,15 +20,9 @@ public enum SupportedLanguages {
     private String code;
     private String name;
 
-    SupportedLanguages(String code, String name) {
-        this.code = code;
-        this.name = name;
-    }
-
     public static SupportedLanguages getDefault() {
         return ENGLISH;
     }
-
 
     public static Locale determineLocale(SupportedLanguages lang) {
         return new Locale(lang.getCode());

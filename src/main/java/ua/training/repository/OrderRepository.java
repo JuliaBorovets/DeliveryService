@@ -13,7 +13,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Optional<Order> findOrderById(Long id);
     
-    List<Order> findOrderByOwnerId(User ownerId);
+    List<Order> findOrderBySenderId(User senderId);
 
-
+    List<Order> findOrderByRecipientId(User recipientId);
 }

@@ -9,8 +9,9 @@
 
 <body onload="checkFields()">
 <div class="column">
+    <a class="button" href="/login" th:text="#{go.to.first.page}">{To the first page}</a>
     <h1 th:text="#{reg.welcome}">{Welcome header}</h1>
-
+    <br>
     <div class="alert" th:if="${error}">
         <h3 class="black" th:text="#{reg.error.generic}">{Reg error}</h3>
     </div>
@@ -22,7 +23,6 @@
     <div class="registr">
         <form id="newUser" name="newUser" action="#" th:action="@{/newuser}" th:object="${newUser}" method="post">
 
-            <br/>
             <div>
                 <input type="text" id="firstName" name="firstName" class="firstName" th:field="*{firstName}"
                        th:placeholder="#{reg.firstname.lat}" required>
@@ -59,7 +59,6 @@
             </div>
         </form>
     </div>
-    <br/>
 </div>
 </body>
 </html>

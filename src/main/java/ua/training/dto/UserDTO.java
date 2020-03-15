@@ -1,6 +1,7 @@
 package ua.training.dto;
 
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ua.training.entity.user.User;
@@ -9,15 +10,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
 public class UserDTO implements UserDetails {
     private User user;
 
     public UserDTO(User user) {
         this.user = user;
-    }
-
-    public User getUser() {
-        return user;
     }
 
     @Override
