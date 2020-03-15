@@ -1,8 +1,13 @@
 package ua.training.entity.user;
 
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -14,7 +19,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "users",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"login", "email"})})
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -58,4 +63,16 @@ public class User {
     @Column(nullable = false)
     private boolean enabled;
 
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> result = new HashSet<>();
+        result.add(getRole());
+        return result;
+    }
+
+    @Override
+    public String getUsername() {
+        return getLogin();
+    }
 }

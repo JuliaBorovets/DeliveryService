@@ -1,0 +1,84 @@
+@import "general.css";
+
+.alert {
+    display: flex;
+    color: #a20218;
+    align-items: center;
+    justify-content: center;
+}
+
+.button {
+    position: center;
+    display: unset;
+    font-size: 18px;
+    width: 40%;
+    height: 50px;
+    border: none;
+    background-size: 200%;
+    color: #fff;
+    outline: none;
+    cursor: pointer;
+    transition: .5s;
+    background: linear-gradient(120deg, #b5badb, rgba(41, 81, 173, 0.5), rgba(56, 52, 219, 0.75)) center;
+}
+
+.description, .senderId, .recipientId, .weight, .price, .announcedPrice, .form-group, .type {
+    box-sizing: border-box;
+    border: 2px solid #720e80;
+    border-radius: 4px;
+    outline: none;
+    color: #d2b5d1;
+    padding: 10px 6px;
+    font-size: 14px;
+    margin-bottom: 35px;
+}
+
+.description {
+    float: left;
+    margin-left: 100px;
+    left: 50px;
+    width: 270px;
+}
+
+.senderId {
+    float: right;
+    margin-right: 100px;
+    right: 350px;
+    width: 270px;
+}
+
+.recipientId {
+    float: left;
+    margin-left: 100px;
+    width: 270px;
+}
+
+.weight {
+    float: right;
+    margin-right: 100px;
+    width: 270px;
+}
+
+.price {
+    float: left;
+    margin-left: 100px;
+    width: 270px;
+}
+
+.announcedPrice {
+    float: right;
+    margin-right: 100px;
+    width: 270px;
+}
+
+.form-group {
+    float: right;
+    margin-right: 100px;
+    width: 270px;
+}
+
+.type {
+    float: right;
+    margin-right: 100px;
+    width: 270px;
+}
