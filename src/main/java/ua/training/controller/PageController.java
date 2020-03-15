@@ -91,22 +91,31 @@ public class PageController implements WebMvcConfigurer {
     @RequestMapping("/success")
     public RedirectView localRedirect() {
         RedirectView redirectView = new RedirectView();
+//
+//        if (currentUserRoleAdmin()) {
+//            redirectView.setUrl("/admin");
+//        } else {
+//            redirectView.setUrl("/user");
+//        }
 
-        if (currentUserRoleAdmin()) {
-            redirectView.setUrl("/admin");
-        } else {
-            redirectView.setUrl("/user");
-        }
-
+        redirectView.setUrl("/account_page");
         return redirectView;
     }
 
 
+    @RequestMapping("/account_page")
+    public String accountPage(Model model) {
+        model.addAttribute("user_role_admin", currentUserRoleAdmin());
+        model.addAttribute("language", languageChanger);
+        model.addAttribute("error", false);
+        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
+        return "account_page.html";
+    }
+
     @RequestMapping("/user")
     public String userPage(Model model) {
 
-        User currentUser = getCurrentUser();
-        model.addAttribute("user", currentUser);
+        model.addAttribute("user_role_admin", currentUserRoleAdmin());
         model.addAttribute("language", languageChanger);
         model.addAttribute("error", false);
         languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
@@ -116,7 +125,7 @@ public class PageController implements WebMvcConfigurer {
     @RequestMapping("/admin")
     public String adminPage(Model model) {
         model.addAttribute("language", languageChanger);
-        model.addAttribute("user", getCurrentUser());
+        model.addAttribute("user_role_admin", currentUserRoleAdmin());
         languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
         if (currentUserRoleAdmin()) {
             model.addAttribute("users", getAllUsers());
@@ -166,6 +175,21 @@ public class PageController implements WebMvcConfigurer {
         redirectView.setUrl("/?reg");
         return redirectView;
     }
+
+    @RequestMapping("/calc")
+    public String calculatorPage(Model model) {
+        model.addAttribute("language", languageChanger);
+        model.addAttribute("user", getCurrentUser());
+        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
+        if (currentUserRoleAdmin()) {
+            model.addAttribute("users", getAllUsers());
+            return "admin.html";
+        } else {
+            model.addAttribute("error", true);
+            return "user.html";
+        }
+    }
+
 
     private boolean verifyUserFields(User user) {
         return user.getFirstName().matches(RegistrationValidation.FIRST_NAME_REGEX) &&
