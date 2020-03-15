@@ -17,7 +17,9 @@
 
 <body>
 <div class="column">
-    <h1 th:text="#{index.welcome}">{Welcome header}</h1>
+    <h1 th:text="#{index.welcome}">{Header}</h1>
+    <br>
+    <a class="button" href="/" th:text="#{go.to.first.page}">{To the first page}</a>
 
     <div class="alert" th:if="${error}">
         <h3 class="black" th:text="#{login.error}">{Login error}</h3>
@@ -31,8 +33,6 @@
         <h3 class="black" th:text="#{login.registered}">{Reg ok}</h3>
     </div>
 
-    <br/>
-
     <h3 th:text="#{index.language}">{Choose language}</h3>
     <div>
         <form name="language_selection" th:object="${language}">
@@ -44,8 +44,6 @@
             </div>
         </form>
     </div>
-    <br/>
-
 
     <form method="post">
         <div>
@@ -69,6 +67,7 @@
     <br/>
     <a href="/reg" th:text="#{index.register.link}">{Register!}</a>
     <br/>
+
 </div>
 </body>
 </html>
