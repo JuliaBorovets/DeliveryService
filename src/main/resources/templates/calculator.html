@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<!--suppress HtmlUnknownAttribute -->
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Web Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="login.css">
+</head>
+
+<body>
+<div class="column">
+    <h1 class="calc">Calculator page</h1>
+    <br>
+    <a class="button" href="/" th:text="#{go.to.first.page}">{To the first page}</a>
+
+    <h1 th:text="#{reg.welcome}">{Welcome header}</h1>
+    <div class="order">
+        <form id="newOrder" name="newOrder" action="#" th:action="@{/neworder}" th:object="${newOrder}" method="post">
+
+            <div>
+                <input type="text" id="description" name="description" class="description" th:field="*{description}"
+                       th:placeholder="#{new.order.description}" required>
+            </div>
+            <br/>
+            <div>
+                <input type="text" id="senderId" name="senderId" class="senderId" th:field="*{senderId}"
+                       th:placeholder="#{new.order.senderId}" required>
+            </div>
+            <div>
+                <input type="text" id="recipientId" name="recipientId" class="recipientId" th:field="*{recipientId}"
+                       th:placeholder="#{new.order.recipientId}" required>
+            </div>
+            <br/>
+            <div>
+                <input type="text" id="weight" name="weight" th:field="*{weight}" class="login"
+                       th:placeholder="#{new.order.weight}" required>
+            </div>
+            <div>
+                <input type="text" id="price" name="price" th:field="*{price}" class="email"
+                       th:placeholder="#{new.order.price}" required>
+            </div>
+            <br/>
+            <div>
+                <input type="text" id="announcedPrice" name="announcedPrice" class="announcedPrice"
+                       th:placeholder="#{new.order.announcedPrice}" required>
+            </div>
+            <div>
+                <input class="button" type="submit" th:value="#{reg.submit}">
+            </div>
+        </form>
+    </div>
+
+</div>
+</body>
+</html>
