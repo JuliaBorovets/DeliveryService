@@ -1,44 +1,35 @@
+
 <!DOCTYPE HTML>
 <!--suppress HtmlUnknownAttribute -->
 <html xmlns:th="https://www.thymeleaf.org">
 <head>
-    <title>Web Test</title>
+    <title>Delivery service</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
-<div class="column">
-    <h1 th:text="#{admin.welcome}">{Header}</h1>
-    <br/>
-    <div>
-        <span th:text="#{general.login}" th:remove="tag">{Logged in as}</span>
-        <span th:text="${user.firstName} + ' ' + ${user.lastName}" th:remove="tag">{Logged in as}</span>
-        (<a href="/logout" th:text="#{general.logout}">{Log out}</a>)
+
+<div id="container">
+
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom shadow-sm">
+        <h5 class="p_name mr-md-auto font-weight-bold " th:text="#{project.name}">{Project name}</h5>
+        <a class="uk_lang" href="?language=uk">Українська</a>
+        <a class="en_lang" href="?language=en">English</a>
+        <a class="btn btn-outline-primary " th:text="#{general.logout}" href="/logout_new">{Logout}</a>
     </div>
-    <br/>
-    <div>
-        <span th:text="#{language}" th:remove="tag">{Your language}</span>
-        <span th:text="${language.name}" th:remove="tag">{whatever locale is selected}</span>
-    </div>
-    <br/>
-    <div>
-        <h3 th:text="#{users.header} + ':'">{Here goes user table}</h3>
-        <br/>
-        <table>
-            <tr th:each="user : ${users}">
-                <td width="40%">
-                    <span th:text="${user.firstName} + ' ' + ${user.lastName}" th:remove="tag">{Full user name}</span>
-                    <br/><br/>
-                </td>
-                <td width="40%">
-                    <span th:text="${user.email}" th:remove="tag">{email}</span>
-                    <br/><br/>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <br/>
 
 </div>
+
+
+<h1 th:text="#{admin.welcome}">{Header}</h1>
+
+
+<footer class="page-footer font-small  lighten-3 pt-4">
+
+    <div class="footer-copyright text-center" th:text="#{all.rights.reserved}">{All rights reserved}</div>
+</footer>
+
 </body>
+
 </html>

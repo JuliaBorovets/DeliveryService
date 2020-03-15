@@ -73,7 +73,22 @@ public class PageController implements WebMvcConfigurer {
         return "login.html";
     }
 
-    @RequestMapping("/success_url")
+
+    @RequestMapping("/logout_new")
+    public String logoutPage(@RequestParam(value = "reg", required = false) String reg,
+                             @RequestParam(value = "login", required = false) String login,
+                             Model model) {
+
+        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
+        model.addAttribute("language", languageChanger);
+        model.addAttribute("supported", languageChanger.getSupportedLanguages());
+
+        model.addAttribute("reg", reg != null);
+        model.addAttribute("login", login != null);
+        return "index.html";
+    }
+
+    @RequestMapping("/success")
     public RedirectView localRedirect() {
         RedirectView redirectView = new RedirectView();
 
@@ -86,11 +101,15 @@ public class PageController implements WebMvcConfigurer {
         return redirectView;
     }
 
+
     @RequestMapping("/user")
     public String userPage(Model model) {
+
+        User currentUser = getCurrentUser();
+        model.addAttribute("user", currentUser);
         model.addAttribute("language", languageChanger);
-        model.addAttribute("user", getCurrentUser());
         model.addAttribute("error", false);
+        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
         return "user.html";
     }
 
@@ -98,6 +117,7 @@ public class PageController implements WebMvcConfigurer {
     public String adminPage(Model model) {
         model.addAttribute("language", languageChanger);
         model.addAttribute("user", getCurrentUser());
+        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
         if (currentUserRoleAdmin()) {
             model.addAttribute("users", getAllUsers());
             return "admin.html";
@@ -118,7 +138,6 @@ public class PageController implements WebMvcConfigurer {
         model.addAttribute("lastNameRegex", "^" + RegistrationValidation.LAST_NAME_REGEX + "$");
         model.addAttribute("lastNameCyrRegex", "^" + RegistrationValidation.LAST_NAME_CYR_REGEX + "$");
         model.addAttribute("loginRegex", "^" + RegistrationValidation.LOGIN_REGEX + "$");
-//        model.addAttribute("emailRegex", "^" + RegistrationValidation.LOGIN_REGEX + "$");
 
         model.addAttribute("error", error != null);
         model.addAttribute("duplicate", duplicate != null);

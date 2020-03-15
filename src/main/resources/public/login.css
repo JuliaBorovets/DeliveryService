@@ -1,6 +1,7 @@
 @import "https://use.fontawesome.com/releases/v5.5.0/css/all.css";
 @import "general.css";
 
+
 .column {
     background: linear-gradient(125deg, #5499c7, #ffffff);
     width: 500px;
@@ -16,6 +17,7 @@
     width: 40%;
     height: 50px;
     border: none;
+    text-align: center;
     font-size: 20px;
     background-size: 200%;
     color: #fff;
@@ -33,3 +35,4 @@ input[type="text"], input[type="email"], input[type="password"] {
     border: 2px solid #480c54;
     border-radius: 4px;
 }
+
