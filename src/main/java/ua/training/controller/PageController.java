@@ -34,6 +34,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Controller
 public class PageController implements WebMvcConfigurer {
@@ -196,6 +197,16 @@ public class PageController implements WebMvcConfigurer {
         return "calculator.html";
     }
 
+    @RequestMapping("/my_shipments")
+    public String shipmentsPage(Model model, @AuthenticationPrincipal User user) {
+        model.addAttribute("language", languageChanger);
+
+        List<Order> orders = orderService.findAllOrders(user.getId());
+        model.addAttribute("orders", orders);
+        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
+        return "my_shipments.html";
+    }
+
 
     private boolean verifyUserFields(User user) {
         return user.getFirstName().matches(RegistrationValidation.FIRST_NAME_REGEX) &&
@@ -231,10 +242,10 @@ public class PageController implements WebMvcConfigurer {
     }
 
 
-    private List<Order> getAllOrders() {
-        List<Order> orders = orderService.getAllOrders().getOrders();
-        return orders;
-    }
+//    private List<Order> getAllOrders() {
+//        List<Order> orders = orderService.getAllOrders().getOrders();
+//        return orders;
+//    }
 
 
     private void changeToCyrillic(UserDTO user) {

@@ -32,7 +32,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    private User ownerId;
+    private User owner;
 
     @Column(name = "weight", nullable = false)
     private BigDecimal weight;

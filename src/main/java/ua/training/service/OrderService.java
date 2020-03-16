@@ -23,7 +23,11 @@ import ua.training.repository.UserRepository;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Getter
@@ -36,10 +40,17 @@ public class OrderService {
     public OrderService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
+//
+//    public List<Order> getAllOrders(User user) {
+//        return newOrderList;
+//
+//    }
 
-    public OrdersDTO getAllOrders() {
-        return new OrdersDTO(orderRepository.findAll());
+
+    public List<Order> findAllOrders(long userId) {
+        return orderRepository.findOrderByOwnerId(userId);
     }
+
 
     public void createOrder(OrderDTO orderDTO, User user) {
         Order order = Order.builder()
@@ -48,7 +59,7 @@ public class OrderService {
                 .orderType(getOrderType(orderDTO))
                 .shippingDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(1))
                 .weight(orderDTO.getDtoWeight())
-                .ownerId(user)
+                .owner(user)
                 .announcedPrice(orderDTO.getDtoAnnouncedPrice())
                 .build();
         try {
