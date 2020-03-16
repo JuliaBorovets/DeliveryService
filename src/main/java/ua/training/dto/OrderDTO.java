@@ -4,6 +4,7 @@ import lombok.*;
 import ua.training.entity.user.User;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Setter
@@ -24,6 +25,8 @@ public class OrderDTO {
 
     @NotBlank(message = "announced price can not be blank")
     BigDecimal dtoAnnouncedPrice;
+//    @NotNull
+//    String dtoDestination;
 
 
 }

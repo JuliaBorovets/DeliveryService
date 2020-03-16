@@ -48,5 +48,4 @@ public class Order {
 
 //    @Column(name = "is_return_shipping", nullable = false)
 //    private boolean isReturnShipping;
-
 }

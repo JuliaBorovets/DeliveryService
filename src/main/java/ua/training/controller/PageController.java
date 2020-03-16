@@ -30,8 +30,10 @@ import ua.training.entity.user.User;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 @Controller
 public class PageController implements WebMvcConfigurer {

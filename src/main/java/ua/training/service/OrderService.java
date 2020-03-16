@@ -13,6 +13,7 @@ import ua.training.dto.OrderDTO;
 import ua.training.dto.OrdersDTO;
 import ua.training.dto.UserDTO;
 import ua.training.dto.UsersDTO;
+import ua.training.entity.order.Destination;
 import ua.training.entity.order.Order;
 import ua.training.entity.order.OrderType;
 import ua.training.entity.user.User;
@@ -22,6 +23,7 @@ import ua.training.repository.UserRepository;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Optional;
+
 
 @Getter
 @Service
