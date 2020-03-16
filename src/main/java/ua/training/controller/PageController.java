@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -27,6 +28,8 @@ import ua.training.entity.user.User;
 import ua.training.service.CalculatorService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
+
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Locale;
 
@@ -185,14 +188,6 @@ public class PageController implements WebMvcConfigurer {
         return "new_order.html";
     }
 
-    @RequestMapping("/calc")
-    public String calculatorPage(Model model) {
-        model.addAttribute("language", languageChanger);
-        model.addAttribute("user", getCurrentUser());
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
-        return "calculator.html";
-    }
-
     @RequestMapping("/my_shipments")
     public String shipmentsPage(Model model, @AuthenticationPrincipal User user) {
         model.addAttribute("language", languageChanger);
@@ -214,17 +209,19 @@ public class PageController implements WebMvcConfigurer {
     }
 
     @PostMapping("/calculator")
-    public String calculatePrice(@ModelAttribute CalculatorDTO order,
+    public String calculatePrice(@ModelAttribute("order") @Valid CalculatorDTO order,
                                  @RequestParam(value = "error", required = false) String error,
-                                 Model model) {
+                                 BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "calculator";
+        }
         model.addAttribute("language", languageChanger);
         model.addAttribute("error", false);
-        model.addAttribute("newOrder", order);
         languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
         model.addAttribute("price", calculatorService.calculatePrice(order));
-
         return "calculator";
     }
+    //TODO checking fields
 
     private boolean verifyUserFields(User user) {
         return user.getFirstName().matches(RegistrationValidation.FIRST_NAME_REGEX) &&

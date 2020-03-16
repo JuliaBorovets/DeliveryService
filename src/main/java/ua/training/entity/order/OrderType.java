@@ -1,8 +1,10 @@
 package ua.training.entity.order;
 
 public enum OrderType {
+    DOCUMENTS(10),
     SMALL(20),
-    BIG(30);
+    MIDDLE(30),
+    BIG(40);
 
     private final int priceForType;
 

@@ -43,8 +43,10 @@
             <div class="input-field col s4">
                 <select id="type" class="order_type" name="type" th:field="*{dtoOrderType}" required>
                     <option value="" disabled selected th:text="#{choose.type}"></option>
-                    <option value="BIG" th:text="#{type.big}"></option>
                     <option value="SMALL" th:text="#{type.small}"></option>
+                    <option value="MIDDLE" th:text="#{type.middle}"></option>
+                    <option value="BIG" th:text="#{type.big}"></option>
+                    <option value="DOCUMENTS" th:text="#{type.documents}"></option>
                 </select>
             </div>
             <br>

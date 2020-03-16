@@ -3,7 +3,7 @@ package ua.training.dto;
 
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 
 @Setter
@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @ToString
 public class CalculatorDTO {
 
-    @NonNull
+    @DecimalMin("0.500")
     private BigDecimal calcWeight;
 
     @NotBlank
@@ -21,4 +21,7 @@ public class CalculatorDTO {
 
     @NotBlank
     private String calcType;
+
+    @DecimalMin("0.500")
+    private BigDecimal calcAnnPrice;
 }

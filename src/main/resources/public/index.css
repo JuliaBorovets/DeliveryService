@@ -48,3 +48,33 @@
 }
 
 
+.calcWeight, .calcAnnPrice {
+    box-sizing: border-box;
+    border: 2px solid #720e80;
+    border-radius: 4px;
+    outline: none;
+    color: #d2b5d1;
+    padding: 10px 6px;
+    font-size: 14px;
+    margin-bottom: 35px;
+    float: initial;
+    width: 270px;
+}
+
+.calcWeight {
+    position: center;
+    display: unset;
+    font-family: 'Open Sans', 'Helvetica Neue', 'Segoe UI', 'Calibri', 'Arial', sans-serif;
+    font-size: 18px;
+    color: #60666d;
+}
+
+.calcAnnPrice {
+    position: center;
+    display: unset;
+    font-family: 'Open Sans', 'Helvetica Neue', 'Segoe UI', 'Calibri', 'Arial', sans-serif;
+    font-size: 18px;
+    color: #60666d;
+}
+
+

@@ -10,12 +10,23 @@
 <body>
 
 <div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
+<div class="alert" th:if="${error}">
+    <h3 class="black" th:text="#{login.error}">{Login error}</h3>
+</div>
 
 <form th:action="@{/calculator}" th:object="${order}" method="post">
     <div class="input-field col s11">
 
-        <input id="weight" name="calcWeight" type="number" class="validate">
+
+        <input id="weight" name="calcWeight" type="number" class="validate" required>
         <label for="weight" th:text="#{order.weight}"></label>
+
+    </div>
+
+    <div class="input-field col s11">
+
+        <input id="calcAnnPrice" name="calcAnnPrice" type="number" class="validate" required>
+        <label for="calcAnnPrice" th:text="#{order.announced.price}"></label>
     </div>
 
     <div class="input-field push-s1 col s10">
