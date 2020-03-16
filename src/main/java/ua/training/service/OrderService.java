@@ -43,14 +43,12 @@ public class OrderService {
     public void createOrder(OrderDTO orderDTO, User user) {
         Order order = Order.builder()
                 .description(orderDTO.getDtoDescription())
-                //   .destination(order.getDestination())
+                .destination(getDestination(orderDTO))
                 .orderType(getOrderType(orderDTO))
-                //  .shippingDate(order.getShippingDate())
+                //.shippingDate(order.getShippingDate())
                 .weight(orderDTO.getDtoWeight())
-                //  .status(order.getStatus())
                 .ownerId(user)
                 .announcedPrice(orderDTO.getDtoAnnouncedPrice())
-                //  .isReturnShipping(order.isReturnShipping())
                 .build();
         try {
             orderRepository.save(order);
@@ -62,6 +60,11 @@ public class OrderService {
 
     private OrderType getOrderType(OrderDTO dto) {
         return OrderType.valueOf(dto.getDtoOrderType());
+    }
+
+    private Destination getDestination(OrderDTO dto) {
+
+        return Destination.valueOf(dto.getDtoDestination());
     }
 
     public Optional<Order> getOrderById(@NotNull Long id) {

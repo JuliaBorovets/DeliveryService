@@ -35,10 +35,10 @@ public class Order {
 
     @Column(name = "weight", nullable = false)
     private BigDecimal weight;
-//
-//    @Column(name = "destination")
-//    @Enumerated(value = EnumType.STRING)
-//    private Destination destination;
+
+    @Column(name = "destination")
+    @Enumerated(value = EnumType.STRING)
+    private Destination destination;
 
     @Column(name = "announced_price")
     private BigDecimal announcedPrice;

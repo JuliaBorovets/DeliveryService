@@ -25,8 +25,13 @@ public class OrderDTO {
 
     @NotBlank(message = "announced price can not be blank")
     BigDecimal dtoAnnouncedPrice;
-//    @NotNull
-//    String dtoDestination;
+
+
+    @NotNull
+    String dtoDestination;
+
+//    @NotBlank(message = "announced price can not be blank")
+//    BigDecimal dtoAnnouncedPrice;
 
 
 }
