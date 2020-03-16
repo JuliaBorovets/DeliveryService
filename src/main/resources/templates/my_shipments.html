@@ -20,18 +20,33 @@
 <div>
     <h3 th:text="#{my.shipments} + ':'">{Here goes shipments table}</h3>
     <br/>
-    <table>
-        <tr th:each="order : ${orders}">
-            <td width="40%">
-                <span th:text="${order.description} " th:remove="tag">{Description}</span>
-                <br/><br/>
-            </td>
-            <!--                <td width="40%">-->
-            <!--                    <span th:text="${user.type}" th:remove="tag">{type}</span>-->
-            <!--                    <br/><br/>-->
-            <!--                </td>-->
+
+    <table class="table table-hover">
+
+        <thead>
+        <tr>
+            <th scope="col" th:width="50px">ID</th>
+            <th scope="col" th:text="#{new.order.description}" th:width="400px">{Description}</th>
+            <th scope="col" th:text="#{order.type}">{Type}</th>
+            <th scope="col" th:text="#{order.weight}">{Weight}</th>
+            <th scope="col" th:text="#{order.destination}">{Destination}</th>
+            <th scope="col" th:text="#{order.announced.price}">{Announced Price}</th>
+            <th scope="col" th:text="#{order.shipping.date}">{Shipping Date}</th>
         </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <th scope="row" th:text="${order.id}" style="width: 10px">{ID}</th>
+            <td th:text="${order.description}">{Description}</td>
+            <td th:text="${order.orderType}">{Order type}</td>
+            <td th:text="${order.weight}">{Order weight}</td>
+            <td th:text="${order.destination}">{Order destination}</td>
+            <td th:text="${order.announcedPrice}">{Order announced Price}</td>
+            <td th:text="${order.shippingDate}">{Order shippingDate}</td>
+        </tr>
+        </tbody>
     </table>
+
     <br/>
 </div>
 

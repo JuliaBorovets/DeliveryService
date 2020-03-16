@@ -200,7 +200,7 @@ public class PageController implements WebMvcConfigurer {
     @RequestMapping("/my_shipments")
     public String shipmentsPage(Model model, @AuthenticationPrincipal User user) {
         model.addAttribute("language", languageChanger);
-
+        model.addAttribute("user_role_admin", currentUserRoleAdmin());
         List<Order> orders = orderService.findAllOrders(user.getId());
         model.addAttribute("orders", orders);
         languageChanger.setChoice(LocaleContextHolder.getLocale().toString());

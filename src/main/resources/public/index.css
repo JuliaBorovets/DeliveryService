@@ -42,4 +42,8 @@
     white-space: normal;
 }
 
+.table {
+    table-layout: fixed;
+    word-wrap: break-word;
+}
 
