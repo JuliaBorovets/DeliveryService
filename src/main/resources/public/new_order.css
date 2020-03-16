@@ -1,0 +1,64 @@
+@import "general.css";
+
+.alert {
+    display: flex;
+    color: #a20218;
+    align-items: center;
+    justify-content: center;
+}
+
+.column {
+    background: linear-gradient(125deg, #5499c7, #ffffff);
+    width: 900px;
+    height: 550px;
+    padding: 60px;
+    text-align: center;
+    box-shadow: 0 0 20px #00000060;
+}
+
+.button {
+    position: center;
+    display: unset;
+    font-size: 18px;
+    width: 40%;
+    height: 50px;
+    border: none;
+    background-size: 200%;
+    color: #fff;
+    outline: none;
+    cursor: pointer;
+    transition: .5s;
+    background: linear-gradient(120deg, #b5badb, rgba(41, 81, 173, 0.5), rgba(56, 52, 219, 0.75)) center;
+}
+
+.dtoDescription, .weight, .announcedPrice {
+    box-sizing: border-box;
+    border: 2px solid #720e80;
+    border-radius: 4px;
+    outline: none;
+    color: #d2b5d1;
+    padding: 10px 6px;
+    font-size: 14px;
+    margin-bottom: 35px;
+    float: initial;
+    width: 270px;
+}
+
+.order_type {
+    position: center;
+    display: unset;
+    font-family: 'Open Sans', 'Helvetica Neue', 'Segoe UI', 'Calibri', 'Arial', sans-serif;
+    font-size: 18px;
+    color: #60666d;
+}
+
+.destination {
+    position: center;
+    display: unset;
+    font-family: 'Open Sans', 'Helvetica Neue', 'Segoe UI', 'Calibri', 'Arial', sans-serif;
+    font-size: 18px;
+    color: #60666d;
+    width: 270px;
+}
+
+

@@ -1,57 +1,40 @@
 package ua.training.dto;
 
-
-import lombok.Getter;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.*;
+import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 
+@Setter
 @Getter
-public class UserDTO implements UserDetails {
-    private User user;
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class UserDTO {
+    @NotNull
+    String firstName;
 
-    public UserDTO(User user) {
-        this.user = user;
-    }
+    @NotNull
+    String firstNameCyr;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> result = new HashSet<>();
-        result.add(user.getRole());
-        return result;
-    }
+    @NotNull
+    String lastName;
 
-    @Override
-    public String getPassword() {
-        return user.getPassword();
-    }
+    @NotNull
+    String lastNameCyr;
 
-    @Override
-    public String getUsername() {
-        return user.getLogin();
-    }
+    @NotNull
+    String login;
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return user.isAccountNonExpired();
-    }
+    @Email
+    String email;
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return user.isAccountNonLocked();
-    }
+    @NotNull
+    String password;
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return user.isCredentialsNonExpired();
-    }
+    @NotNull
+    RoleType roleType;
 
-    @Override
-    public boolean isEnabled() {
-        return user.isEnabled();
-    }
 }

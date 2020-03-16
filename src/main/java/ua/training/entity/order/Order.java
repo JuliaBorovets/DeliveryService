@@ -3,7 +3,6 @@ package ua.training.entity.order;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 import lombok.*;
 import ua.training.entity.user.User;
@@ -31,16 +30,8 @@ public class Order {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "sender_id")
-    private User senderId;
-
-    @ManyToOne
-    @JoinColumn(name = "recipient_id")
-    private User recipientId;
-
-    @Column(name = "status")
-    @Enumerated(value = EnumType.STRING)
-    private Status status;
+    @JoinColumn(name = "owner_id")
+    private User ownerId;
 
     @Column(name = "weight", nullable = false)
     private BigDecimal weight;
@@ -49,16 +40,12 @@ public class Order {
     @Enumerated(value = EnumType.STRING)
     private Destination destination;
 
-    @Column(name = "price")
-    private BigDecimal price;
-
     @Column(name = "announced_price")
     private BigDecimal announcedPrice;
+//
+//    @Column(name = "shipping_date")
+//    private LocalDate shippingDate;
 
-    @Column(name = "shipping_date")
-    private LocalDate shippingDate;
-
-    @Column(name = "is_return_shipping", nullable = false)
-    private boolean isReturnShipping;
-
+//    @Column(name = "is_return_shipping", nullable = false)
+//    private boolean isReturnShipping;
 }

@@ -25,11 +25,9 @@ public class UserService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
     @Override
-    public UserDetails loadUserByUsername(@NotNull String username) throws UsernameNotFoundException {
-        return new UserDTO(userRepository.findByLogin(username).orElseThrow(() ->
-                new UsernameNotFoundException("login " + username + " not found.")));
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        return userRepository.findByLogin(login).orElseThrow(() -> new UsernameNotFoundException(login));
     }
 
     @Autowired
