@@ -22,6 +22,7 @@ import ua.training.repository.UserRepository;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Optional;
 
 
@@ -45,7 +46,7 @@ public class OrderService {
                 .description(orderDTO.getDtoDescription())
                 .destination(getDestination(orderDTO))
                 .orderType(getOrderType(orderDTO))
-                //.shippingDate(order.getShippingDate())
+                .shippingDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(1))
                 .weight(orderDTO.getDtoWeight())
                 .ownerId(user)
                 .announcedPrice(orderDTO.getDtoAnnouncedPrice())

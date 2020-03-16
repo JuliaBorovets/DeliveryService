@@ -3,6 +3,7 @@ package ua.training.entity.order;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import lombok.*;
 import ua.training.entity.user.User;
@@ -42,10 +43,8 @@ public class Order {
 
     @Column(name = "announced_price")
     private BigDecimal announcedPrice;
-//
-//    @Column(name = "shipping_date")
-//    private LocalDate shippingDate;
 
-//    @Column(name = "is_return_shipping", nullable = false)
-//    private boolean isReturnShipping;
+    @Column(name = "shipping_date")
+    private LocalDate shippingDate;
+
 }

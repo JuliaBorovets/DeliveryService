@@ -3,10 +3,12 @@ package ua.training.dto;
 import lombok.*;
 import ua.training.entity.user.User;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Setter
 @Getter
@@ -29,9 +31,5 @@ public class OrderDTO {
 
     @NotNull
     String dtoDestination;
-
-//    @NotBlank(message = "announced price can not be blank")
-//    BigDecimal dtoAnnouncedPrice;
-
 
 }
