@@ -3,7 +3,6 @@ package ua.training.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import ua.training.dto.LanguageDTO;
 import ua.training.dto.OrderDTO;
-import ua.training.dto.OrdersDTO;
 import ua.training.dto.UserDTO;
 import ua.training.entity.order.Order;
 import ua.training.entity.user.RoleType;
@@ -28,12 +26,8 @@ import ua.training.entity.user.User;
 import ua.training.service.CalculatorService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
-
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Controller
 public class PageController implements WebMvcConfigurer {

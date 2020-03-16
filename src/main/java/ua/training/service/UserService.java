@@ -1,6 +1,5 @@
 package ua.training.service;
 
-
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +9,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.training.controller.RegException;
-import ua.training.dto.UserDTO;
 import ua.training.dto.UsersDTO;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.repository.UserRepository;
-
-import javax.validation.constraints.NotNull;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -74,6 +70,5 @@ public class UserService implements UserDetailsService {
                 .enabled(true)
                 .build();
     }
-
 
 }

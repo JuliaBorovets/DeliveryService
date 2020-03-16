@@ -1,34 +1,20 @@
 package ua.training.service;
 
 import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ua.training.controller.RegException;
 import ua.training.dto.OrderDTO;
-import ua.training.dto.OrdersDTO;
-import ua.training.dto.UserDTO;
-import ua.training.dto.UsersDTO;
 import ua.training.entity.order.Destination;
 import ua.training.entity.order.Order;
 import ua.training.entity.order.OrderType;
 import ua.training.entity.user.User;
 import ua.training.repository.OrderRepository;
-import ua.training.repository.UserRepository;
-
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 
 @Getter
 @Service

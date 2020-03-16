@@ -2,7 +2,6 @@ package ua.training.dto;
 
 import lombok.Getter;
 import ua.training.controller.SupportedLanguages;
-
 import java.util.Arrays;
 import java.util.Locale;
 
