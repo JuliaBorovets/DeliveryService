@@ -17,6 +17,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
+import ua.training.dto.CalculatorDTO;
 import ua.training.dto.LanguageDTO;
 import ua.training.dto.OrderDTO;
 import ua.training.dto.UserDTO;
@@ -213,13 +214,15 @@ public class PageController implements WebMvcConfigurer {
     }
 
     @PostMapping("/calculator")
-    public String calculatePrice(@ModelAttribute OrderDTO order,
+    public String calculatePrice(@ModelAttribute CalculatorDTO order,
                                  @RequestParam(value = "error", required = false) String error,
                                  Model model) {
         model.addAttribute("language", languageChanger);
         model.addAttribute("error", false);
+        model.addAttribute("newOrder", order);
         languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
         model.addAttribute("price", calculatorService.calculatePrice(order));
+
         return "calculator";
     }
 

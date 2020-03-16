@@ -11,10 +11,37 @@
 
 <div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
 
-<h1>
-    Hello world!
-</h1>
+<form th:action="@{/calculator}" th:object="${order}" method="post">
+    <div class="input-field col s11">
 
+        <input id="weight" name="calcWeight" type="number" class="validate">
+        <label for="weight" th:text="#{order.weight}"></label>
+    </div>
+
+    <div class="input-field push-s1 col s10">
+        <select name="calcDestination" required>
+            <option value="" disabled selected th:text="#{choose.destination}"></option>
+            <option value="NONE" th:text="#{destination.none}"></option>
+            <option value="INNER" th:text="#{destination.inner}"></option>
+            <option value="COUNTRY" th:text="#{destination.country}"></option>
+        </select>
+    </div>
+
+    <div class="input-field push-s1 col s10">
+        <select name="calcType" required>
+            <option value="" disabled selected th:text="#{choose.type}"></option>
+            <option value="BIG" th:text="#{type.big}"></option>
+            <option value="SMALL" th:text="#{type.small}"></option>
+        </select>
+    </div>
+
+    <div class="col s12 sign">
+        <button class="btn waves-effect waves-light"
+                type="submit" name="action" th:text="#{calculator.button}">
+        </button>
+        <span th:if="${price != null}" class="price_calculation" th:text="${price}"></span>
+    </div>
+</form>
 
 <div th:include="fragments/footer :: footer" th:remove="tag"></div>
 
