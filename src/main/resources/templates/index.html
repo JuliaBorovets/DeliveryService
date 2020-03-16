@@ -9,37 +9,10 @@
 
 </head>
 <body>
-<div id="container">
 
-    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom shadow-sm">
-        <h5 class="p_name mr-md-auto font-weight-bold " th:text="#{project.name}">{Project name}</h5>
-        <a class="uk_lang" href="?language=uk">Українська</a>
-        <a class="en_lang" href="?language=en">English</a>
-        <div class="btn-group mr-2" role="group" aria-label="First group">
-            <a class="btn btn-outline-primary " th:text="#{login.proceed}" href="/login">{Sign in}</a>
-            <a class="btn btn-outline-primary" th:text="#{index.register.link}" href="/reg">{Sign up}</a>
-        </div>
-    </div>
+    <div th:include="fragments/header :: header_guest" th:remove="tag"></div>
 
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" th:text="#{about.us}">{About us}</a>
-        </li>
+    <div th:include="fragments/footer :: footer" th:remove="tag"></div>
 
-        <li class="nav-item">
-            <a class="nav-link" href="/calc" th:text="#{calculator}">{Calculator}</a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link" href="/find_post_office" th:text="#{find.post.office.address}">{Find our office}</a>
-        </li>
-    </ul>
-
-</div>
-
-<footer class="page-footer font-small  lighten-3 pt-4">
-
-    <div class="footer-copyright text-center" th:text="#{all.rights.reserved}">{All rights reserved}</div>
-</footer>
 </body>
 </html>

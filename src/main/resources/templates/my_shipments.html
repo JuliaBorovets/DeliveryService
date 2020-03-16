@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<!--suppress HtmlUnknownAttribute -->
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>My shipments</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+<div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
+<br>
+
+<div class="alert" th:if="${error}">
+    <h3 class="black" th:text="#{reg.error.generic}">{Reg error}</h3>
+</div>
+
+<div>
+    <h3 th:text="#{my.shipments} + ':'">{Here goes shipments table}</h3>
+    <br/>
+    <table>
+        <tr th:each="order : ${orders}">
+            <td width="40%">
+                <span th:text="${order.description} " th:remove="tag">{Description}</span>
+                <br/><br/>
+            </td>
+            <!--                <td width="40%">-->
+            <!--                    <span th:text="${user.type}" th:remove="tag">{type}</span>-->
+            <!--                    <br/><br/>-->
+            <!--                </td>-->
+        </tr>
+    </table>
+    <br/>
+</div>
+
+<div th:include="fragments/footer :: footer" th:remove="tag"></div>
+
+</body>
+</html>
