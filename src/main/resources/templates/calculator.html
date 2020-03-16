@@ -29,7 +29,7 @@
         <label for="calcAnnPrice" th:text="#{order.announced.price}"></label>
     </div>
 
-    <div class="input-field push-s1 col s10">
+    <div class="calcDestination push-s1 col s10">
         <select name="calcDestination" required>
             <option value="" disabled selected th:text="#{choose.destination}"></option>
             <option value="NONE" th:text="#{destination.none}"></option>
@@ -38,16 +38,18 @@
         </select>
     </div>
 
-    <div class="input-field push-s1 col s10">
+    <div class="calcType push-s1 col s10">
         <select name="calcType" required>
             <option value="" disabled selected th:text="#{choose.type}"></option>
-            <option value="BIG" th:text="#{type.big}"></option>
+            <option value="DOCUMENTS" th:text="#{type.documents}"></option>
             <option value="SMALL" th:text="#{type.small}"></option>
+            <option value="MIDDLE" th:text="#{type.middle}"></option>
+            <option value="BIG" th:text="#{type.big}"></option>
         </select>
     </div>
 
     <div class="col s12 sign">
-        <button class="btn waves-effect waves-light"
+        <button class="calculate waves-effect waves-light"
                 type="submit" name="action" th:text="#{calculator.button}">
         </button>
         <span th:if="${price != null}" class="price_calculation" th:text="${price}"></span>
