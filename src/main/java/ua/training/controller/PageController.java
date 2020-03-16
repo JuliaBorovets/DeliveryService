@@ -160,6 +160,12 @@ public class PageController implements WebMvcConfigurer {
                                  @AuthenticationPrincipal User user,
                                  RedirectAttributes redirectAttributes) {
         RedirectView redirectView = new RedirectView();
+        if (!verifyOrderFields(modelOrder)) {
+            redirectAttributes.addFlashAttribute("order", modelOrder);
+            redirectView.setUrl("/create?error");
+            return redirectView;
+        }
+
         try {
             orderService.createOrder(modelOrder, user);
         } catch (Exception e) {
@@ -167,7 +173,7 @@ public class PageController implements WebMvcConfigurer {
             return redirectView;
         }
 
-        redirectView.setUrl("/?create");
+        redirectView.setUrl("/account_page");
         return redirectView;
     }
 
@@ -197,6 +203,10 @@ public class PageController implements WebMvcConfigurer {
                 user.getLastName().matches(RegistrationValidation.LAST_NAME_REGEX) &&
                 user.getLastNameCyr().matches(RegistrationValidation.LAST_NAME_CYR_REGEX) &&
                 user.getLogin().matches(RegistrationValidation.LOGIN_REGEX);
+    }
+
+    private boolean verifyOrderFields(OrderDTO order) {
+        return order.getDtoDescription().matches(OrderValidation.DESCRIPTION);
     }
 
 

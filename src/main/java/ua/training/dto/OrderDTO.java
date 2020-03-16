@@ -5,6 +5,7 @@ import ua.training.entity.user.User;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Setter
@@ -14,18 +15,17 @@ import java.math.BigDecimal;
 @ToString
 public class OrderDTO {
 
-    @NotBlank(message = "description can not be blank")
+    @Size(min = 2, max = 90)
     String dtoDescription;
 
-    @NotBlank(message = "type may can not be blank")
+    @NotNull
     String dtoOrderType;
 
-    @NotBlank(message = "weight can not be blank")
+    @NotNull
     BigDecimal dtoWeight;
 
-    @NotBlank(message = "announced price can not be blank")
+    @NotNull
     BigDecimal dtoAnnouncedPrice;
-
 
     @NotNull
     String dtoDestination;

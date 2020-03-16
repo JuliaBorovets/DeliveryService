@@ -14,7 +14,7 @@
         <h3 class="black" th:text="#{reg.error.generic}">{Reg error}</h3>
     </div>
 
-    <a class="button" href="/" th:text="#{go.to.first.page}">{To the first page}</a>
+    <a class="button" href="/account_page" th:text="#{go.to.first.page}">{To the first page}</a>
     <br>
     <br>
     <h1 class="calc" th:text="#{create.new.order}">{Create new order}</h1>
@@ -27,14 +27,15 @@
                 <input type="text" id="dtoDescription" name="dtoDescription" class="dtoDescription"
                        th:field="*{dtoDescription}"
                        th:placeholder="#{new.order.description}" required>
+
             </div>
             <div>
 
-                <input type="text" id="weight" name="weight" th:field="*{dtoWeight}" class="weight"
+                <input type="number" id="weight" name="weight" th:field="*{dtoWeight}" class="weight"
                        th:placeholder="#{new.order.weight}" required>
             </div>
             <div>
-                <input type="text" id="announcedPrice" name="announcedPrice" th:field="*{dtoAnnouncedPrice}"
+                <input type="number" id="announcedPrice" name="announcedPrice" th:field="*{dtoAnnouncedPrice}"
                        class="announcedPrice"
                        th:placeholder="#{new.order.announcedPrice}" required>
             </div>
@@ -58,9 +59,9 @@
             </div>
 
             <br>
-            <div>
-                <input class="button" type="submit" th:value="#{reg.submit}">
-            </div>
+            <form>
+                <input class="button" type="submit" value="Submit">
+            </form>
 
 
         </form>
