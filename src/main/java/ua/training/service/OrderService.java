@@ -40,17 +40,10 @@ public class OrderService {
     public OrderService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
-//
-//    public List<Order> getAllOrders(User user) {
-//        return newOrderList;
-//
-//    }
-
 
     public List<Order> findAllOrders(long userId) {
         return orderRepository.findOrderByOwnerId(userId);
     }
-
 
     public void createOrder(OrderDTO orderDTO, User user) {
         Order order = Order.builder()
@@ -69,13 +62,11 @@ public class OrderService {
         }
     }
 
-
     private OrderType getOrderType(OrderDTO dto) {
         return OrderType.valueOf(dto.getDtoOrderType());
     }
 
     private Destination getDestination(OrderDTO dto) {
-
         return Destination.valueOf(dto.getDtoDestination());
     }
 

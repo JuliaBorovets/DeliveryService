@@ -10,9 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -27,6 +25,7 @@ import ua.training.dto.UserDTO;
 import ua.training.entity.order.Order;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
+import ua.training.service.CalculatorService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
 
@@ -41,15 +40,17 @@ public class PageController implements WebMvcConfigurer {
 
     private final UserService userService;
     private final OrderService orderService;
+    private final CalculatorService calculatorService;
     private LanguageDTO languageChanger = new LanguageDTO();
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public PageController(UserService userService, OrderService orderService) {
+    public PageController(UserService userService, OrderService orderService, CalculatorService calculatorService) {
         this.userService = userService;
         this.orderService = orderService;
+        this.calculatorService = calculatorService;
     }
 
     @RequestMapping("/")
@@ -207,6 +208,26 @@ public class PageController implements WebMvcConfigurer {
         return "my_shipments.html";
     }
 
+    @GetMapping("/calculator")
+    public String calculatePage(@ModelAttribute OrderDTO modelOrder,
+                                @RequestParam(value = "error", required = false) String error,
+                                Model model) {
+        model.addAttribute("language", languageChanger);
+        model.addAttribute("error", false);
+        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
+        return "calculator";
+    }
+
+    @PostMapping("/calculator")
+    public String calculatePrice(@ModelAttribute OrderDTO order,
+                                 @RequestParam(value = "error", required = false) String error,
+                                 Model model) {
+        model.addAttribute("language", languageChanger);
+        model.addAttribute("error", false);
+        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
+        model.addAttribute("price", calculatorService.calculatePrice(order));
+        return "calculator";
+    }
 
     private boolean verifyUserFields(User user) {
         return user.getFirstName().matches(RegistrationValidation.FIRST_NAME_REGEX) &&
@@ -240,13 +261,6 @@ public class PageController implements WebMvcConfigurer {
 
         return currentUser;
     }
-
-
-//    private List<Order> getAllOrders() {
-//        List<Order> orders = orderService.getAllOrders().getOrders();
-//        return orders;
-//    }
-
 
     private void changeToCyrillic(UserDTO user) {
         if (languageChanger.getChoice().equals(SupportedLanguages.UKRAINIAN.getCode())) {
