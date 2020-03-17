@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<!--suppress HtmlUnknownAttribute -->
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Pay</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+<div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
+<br>
+
+<h3 th:text="#{to.pay} + ':'">{To pay}</h3>
+
+<br/>
+
+<div th:include="fragments/footer :: footer" th:remove="tag"></div>
+
+</body>
+</html>

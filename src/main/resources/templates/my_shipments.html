@@ -26,12 +26,14 @@
         <thead>
         <tr>
             <th scope="col" th:width="50px">ID</th>
-            <th scope="col" th:text="#{new.order.description}" th:width="400px">{Description}</th>
+            <th scope="col" th:text="#{new.order.description}" th:width="350px">{Description}</th>
             <th scope="col" th:text="#{order.type}">{Type}</th>
             <th scope="col" th:text="#{order.weight}">{Weight}</th>
             <th scope="col" th:text="#{order.destination}">{Destination}</th>
             <th scope="col" th:text="#{order.announced.price}">{Announced Price}</th>
             <th scope="col" th:text="#{order.shipping.date}">{Shipping Date}</th>
+            <th scope="col" th:text="#{order.shipment.price}">{Shipping price}</th>
+            <th scope="col" th:text="#{order.status}">{Shipping Status}</th>
         </tr>
         </thead>
         <tbody>
@@ -43,6 +45,8 @@
             <td th:text="${order.destination}">{Order destination}</td>
             <td th:text="${order.announcedPrice}">{Order announced Price}</td>
             <td th:text="${order.shippingDate}">{Order shippingDate}</td>
+            <td th:text="${order.shippingPrice}">{Order shippingPrice}</td>
+            <td th:text="${order.orderStatus}">{Order status}</td>
         </tr>
         </tbody>
     </table>

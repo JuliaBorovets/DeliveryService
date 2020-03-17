@@ -1,6 +1,6 @@
 package ua.training.entity.order;
 
-public enum Status {
+public enum OrderStatus {
     PAID,
     NOT_PAID;
 }

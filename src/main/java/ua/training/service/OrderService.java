@@ -8,9 +8,12 @@ import ua.training.dto.OrderDTO;
 import ua.training.entity.order.Destination;
 import ua.training.entity.order.Order;
 import ua.training.entity.order.OrderType;
+import ua.training.entity.order.OrderStatus;
 import ua.training.entity.user.User;
 import ua.training.repository.OrderRepository;
+
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
@@ -40,6 +43,8 @@ public class OrderService {
                 .weight(orderDTO.getDtoWeight())
                 .owner(user)
                 .announcedPrice(orderDTO.getDtoAnnouncedPrice())
+                .orderStatus(OrderStatus.NOT_PAID)
+                .shippingPrice(calculatePrice(orderDTO))
                 .build();
         try {
             orderRepository.save(order);
@@ -56,7 +61,22 @@ public class OrderService {
         return Destination.valueOf(dto.getDtoDestination());
     }
 
+    private int getDestinationPrice(OrderDTO orderDTO) {
+        return Destination.valueOf(orderDTO.getDtoDestination()).getPriceForDestination();
+    }
+
+    private int getTypePrice(OrderDTO orderDTO) {
+        return OrderType.valueOf(orderDTO.getDtoOrderType()).getPriceForType();
+    }
+
+    public BigDecimal calculatePrice(OrderDTO orderDTO) {
+        return BigDecimal.valueOf(ShipmentsTariffs.BASE_PRICE + (getDestinationPrice(orderDTO) + getTypePrice(orderDTO))
+                * ShipmentsTariffs.COEFFICIENT + orderDTO.getDtoAnnouncedPrice().doubleValue() *
+                ShipmentsTariffs.COEFFICIENT_FOR_ANN_PRICE);
+    }
+
     public Optional<Order> getOrderById(@NotNull Long id) {
         return orderRepository.findById(id);
     }
+
 }

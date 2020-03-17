@@ -11,10 +11,6 @@ import java.math.BigDecimal;
 @Service
 public class CalculatorService {
 
-    private final int BASE_PRICE = 30;
-    private final double COEFFICIENT = 1.5;
-    private final double COEFFICIENT_FOR_ANN_PRICE = 0.2;
-
     private int getDestinationPrice(CalculatorDTO orderDTO) {
         return Destination.valueOf(orderDTO.getCalcDestination()).getPriceForDestination();
     }
@@ -24,8 +20,9 @@ public class CalculatorService {
     }
 
     public BigDecimal calculatePrice(CalculatorDTO orderDTO) {
-        return BigDecimal.valueOf(BASE_PRICE + (getDestinationPrice(orderDTO) + getTypePrice(orderDTO)) * COEFFICIENT +
-                orderDTO.getCalcAnnPrice().doubleValue() * COEFFICIENT_FOR_ANN_PRICE);
+        return BigDecimal.valueOf(ShipmentsTariffs.BASE_PRICE + (getDestinationPrice(orderDTO) + getTypePrice(orderDTO))
+                * ShipmentsTariffs.COEFFICIENT + orderDTO.getCalcAnnPrice().doubleValue() *
+                ShipmentsTariffs.COEFFICIENT_FOR_ANN_PRICE);
     }
 
 }

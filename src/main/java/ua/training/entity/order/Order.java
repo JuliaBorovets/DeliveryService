@@ -45,4 +45,10 @@ public class Order {
     @Column(name = "shipping_date")
     private LocalDate shippingDate;
 
+    @Column(name = "order_status")
+    @Enumerated(value = EnumType.STRING)
+    private OrderStatus orderStatus;
+
+    @Column(name = "shippingPrice", nullable = false)
+    private BigDecimal shippingPrice;
 }

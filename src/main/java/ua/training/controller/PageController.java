@@ -62,7 +62,7 @@ public class PageController implements WebMvcConfigurer {
 
         model.addAttribute("reg", reg != null);
         model.addAttribute("login", login != null);
-        return "index.html";
+        return "index";
     }
 
 
@@ -80,7 +80,7 @@ public class PageController implements WebMvcConfigurer {
         model.addAttribute("logout", logout != null);
         model.addAttribute("reg", reg != null);
 
-        return "login.html";
+        return "login";
     }
 
 
@@ -95,7 +95,7 @@ public class PageController implements WebMvcConfigurer {
 
         model.addAttribute("reg", reg != null);
         model.addAttribute("login", login != null);
-        return "index.html";
+        return "index";
     }
 
     @RequestMapping("/success")
@@ -112,7 +112,7 @@ public class PageController implements WebMvcConfigurer {
         model.addAttribute("language", languageChanger);
         model.addAttribute("error", false);
         languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
-        return "account_page.html";
+        return "account_page";
     }
 
     @RequestMapping("/reg")
@@ -131,7 +131,7 @@ public class PageController implements WebMvcConfigurer {
         model.addAttribute("duplicate", duplicate != null);
         model.addAttribute("newUser", user == null ? new User() : user);
 
-        return "reg.html";
+        return "reg";
     }
 
     @RequestMapping("/newuser")
@@ -185,7 +185,7 @@ public class PageController implements WebMvcConfigurer {
         model.addAttribute("error", error != null);
         model.addAttribute("newOrder", order == null ? new User() : order);
 
-        return "new_order.html";
+        return "new_order";
     }
 
     @RequestMapping("/my_shipments")
@@ -195,7 +195,7 @@ public class PageController implements WebMvcConfigurer {
         List<Order> orders = orderService.findAllOrders(user.getId());
         model.addAttribute("orders", orders);
         languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
-        return "my_shipments.html";
+        return "my_shipments";
     }
 
     @GetMapping("/calculator")
@@ -222,6 +222,17 @@ public class PageController implements WebMvcConfigurer {
         return "calculator";
     }
     //TODO checking fields
+
+
+    @RequestMapping("/to_pay")
+    public String toPayPage(Model model, @AuthenticationPrincipal User user) {
+        model.addAttribute("language", languageChanger);
+        model.addAttribute("user_role_admin", currentUserRoleAdmin());
+        List<Order> orders = orderService.findAllOrders(user.getId());
+        model.addAttribute("orders", orders);
+        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
+        return "to_pay";
+    }
 
     private boolean verifyUserFields(User user) {
         return user.getFirstName().matches(RegistrationValidation.FIRST_NAME_REGEX) &&
