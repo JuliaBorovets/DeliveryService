@@ -21,39 +21,43 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
-import ua.training.dto.CalculatorDTO;
-import ua.training.dto.LanguageDTO;
-import ua.training.dto.OrderDTO;
-import ua.training.dto.UserDTO;
+import ua.training.dto.*;
 import ua.training.entity.order.Order;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
+import ua.training.service.BankService;
 import ua.training.service.CalculatorService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class PageController implements WebMvcConfigurer {
 
     private final UserService userService;
     private final OrderService orderService;
     private final CalculatorService calculatorService;
+    private final BankService bankService;
     private LanguageDTO languageChanger = new LanguageDTO();
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public PageController(UserService userService, OrderService orderService, CalculatorService calculatorService) {
+    public PageController(UserService userService, OrderService orderService, CalculatorService calculatorService, BankService bankService) {
         this.userService = userService;
         this.orderService = orderService;
         this.calculatorService = calculatorService;
+        this.bankService = bankService;
     }
 
     @RequestMapping("/")
@@ -61,10 +65,8 @@ public class PageController implements WebMvcConfigurer {
                            @RequestParam(value = "login", required = false) String login,
                            Model model) {
 
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
-        model.addAttribute("language", languageChanger);
-        model.addAttribute("supported", languageChanger.getSupportedLanguages());
 
+        insertLang(model);
         model.addAttribute("reg", reg != null);
         model.addAttribute("login", login != null);
         return "index";
@@ -77,9 +79,7 @@ public class PageController implements WebMvcConfigurer {
                             @RequestParam(value = "reg", required = false) String reg,
                             Model model) {
 
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
-        model.addAttribute("language", languageChanger);
-        model.addAttribute("supported", languageChanger.getSupportedLanguages());
+        insertLang(model);
 
         model.addAttribute("error", error != null);
         model.addAttribute("logout", logout != null);
@@ -94,9 +94,7 @@ public class PageController implements WebMvcConfigurer {
                              @RequestParam(value = "login", required = false) String login,
                              Model model) {
 
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
-        model.addAttribute("language", languageChanger);
-        model.addAttribute("supported", languageChanger.getSupportedLanguages());
+        insertLang(model);
 
         model.addAttribute("reg", reg != null);
         model.addAttribute("login", login != null);
@@ -114,9 +112,9 @@ public class PageController implements WebMvcConfigurer {
     @RequestMapping("/account_page")
     public String accountPage(Model model) {
 
-        model.addAttribute("language", languageChanger);
+        insertLang(model);
+
         model.addAttribute("error", false);
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
         return "account_page";
     }
 
@@ -182,7 +180,7 @@ public class PageController implements WebMvcConfigurer {
         return redirectView;
     }
 
-    @PreAuthorize("isAuthenticated()")
+
     @RequestMapping("/create")
     public String createOrder(@ModelAttribute OrderDTO order,
                               @RequestParam(value = "error", required = false) String error,
@@ -194,14 +192,15 @@ public class PageController implements WebMvcConfigurer {
         return "new_order";
     }
 
-    @PreAuthorize("isAuthenticated()")
+
     @RequestMapping("/my_shipments")
     public String shipmentsPage(Model model, @AuthenticationPrincipal User user) {
-        model.addAttribute("language", languageChanger);
+        insertLang(model);
+
         model.addAttribute("user_role_admin", currentUserRoleAdmin());
         List<Order> orders = orderService.findAllOrders(user.getId());
         model.addAttribute("orders", orders);
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
+
         return "my_shipments";
     }
 
@@ -209,9 +208,10 @@ public class PageController implements WebMvcConfigurer {
     public String calculatePage(@ModelAttribute OrderDTO modelOrder,
                                 @RequestParam(value = "error", required = false) String error,
                                 Model model) {
-        model.addAttribute("language", languageChanger);
+
+        insertLang(model);
         model.addAttribute("error", false);
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
+
         return "calculator";
     }
 
@@ -223,34 +223,26 @@ public class PageController implements WebMvcConfigurer {
         if (bindingResult.hasErrors()) {
             return "calculator";
         }
-        model.addAttribute("language", languageChanger);
+        insertLang(model);
         model.addAttribute("error", false);
-
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
         model.addAttribute("price", calculatorService.calculatePrice(order));
         return "calculator";
     }
-//    //TODO checking fields
+
+    //    //TODO checking fields
 //
 //
-//    @RequestMapping("/to_pay{id}")
-//    public String toPayPage(Model model, @AuthenticationPrincipal User user,
-//                            @PathVariable("id") Long orderID) {
-//        model.addAttribute("language", languageChanger);
-//        model.addAttribute("user_role_admin", currentUserRoleAdmin());
-//        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
-//
-//        model.addAttribute("user", user);
-//        Optional<Order> order = orderService.getOrderById(orderID);
-//
-//        if (!order.isPresent()){
-//            orderService.payForOrder(order);
-//        } else {
-//            model.addAttribute("error", "")
-//        }
-//
-//        return "my_shipments";
-//    }
+    @RequestMapping("/to_pay")
+    public String toPayPage(
+//                            @ModelAttribute("added_money")BigDecimal money,
+            @AuthenticationPrincipal User modelUser, Model model) throws BankTransactionException {
+        insertLang(model);
+
+        log.error(modelUser.getId().toString());
+//        bankService.addMoney(modelUser.getId(), BigDecimal.valueOf(200));
+
+        return "payment";
+    }
 
     private boolean verifyUserFields(User user) {
         return user.getFirstName().matches(RegistrationValidation.FIRST_NAME_REGEX) &&
@@ -297,6 +289,14 @@ public class PageController implements WebMvcConfigurer {
         }
     }
 
+    public void insertLang(Model model) {
+        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
+        model.addAttribute("language", languageChanger);
+        model.addAttribute("supported", languageChanger.getSupportedLanguages());
+        model.addAttribute("supported", languageChanger.getSupportedLanguages());
+
+
+    }
 
     @Bean
     public LocaleResolver localeResolver() {
@@ -318,4 +318,5 @@ public class PageController implements WebMvcConfigurer {
     }
 
 }
+
 

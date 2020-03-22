@@ -1,15 +1,21 @@
 package ua.training.service;
 
+
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import ua.training.controller.BankTransactionException;
 import ua.training.dto.OrderDTO;
+import ua.training.entity.BankAccount;
 import ua.training.entity.order.Destination;
 import ua.training.entity.order.Order;
 import ua.training.entity.order.OrderType;
 import ua.training.entity.order.OrderStatus;
 import ua.training.entity.user.User;
+import ua.training.repository.BankRepository;
 import ua.training.repository.OrderRepository;
 
 import javax.validation.constraints.NotNull;
@@ -81,7 +87,9 @@ public class OrderService {
     }
 
     public Optional<Order> getOrderById(@NotNull Long id) {
+
         return orderRepository.findById(id);
     }
+
 
 }

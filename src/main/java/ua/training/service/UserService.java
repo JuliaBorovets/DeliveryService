@@ -10,9 +10,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.training.controller.RegException;
 import ua.training.dto.UsersDTO;
+import ua.training.entity.BankAccount;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.repository.UserRepository;
+
+import java.math.BigDecimal;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -37,7 +40,7 @@ public class UserService implements UserDetailsService {
 
     public void saveNewUser(User user) throws RegException {
         try {
-            userRepository.save(getUserWithPermissions(user));
+            userRepository.save(createUser(user));
         } catch (DataIntegrityViolationException e) {
             RegException regException = new RegException(e);
 
@@ -54,7 +57,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    private User getUserWithPermissions(User user) {
+    private User createUser(User user) {
         return User.builder()
                 .firstName(user.getFirstName())
                 .firstNameCyr(user.getFirstNameCyr())
@@ -68,7 +71,13 @@ public class UserService implements UserDetailsService {
                 .accountNonLocked(true)
                 .credentialsNonExpired(true)
                 .enabled(true)
+                .balance(BigDecimal.ZERO)
                 .build();
     }
 
+    public void addMoney(User user, BigDecimal money) {
+        BigDecimal current = user.getBalance();
+        user.setBalance(current.add(money));
+        // userRepository.save(user);
+    }
 }
