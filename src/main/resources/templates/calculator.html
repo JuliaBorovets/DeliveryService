@@ -5,59 +5,71 @@
     <title>Calculator service</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="new_order.css">
 </head>
 <body>
 
-<div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
-<div class="alert" th:if="${error}">
-    <h3 class="black" th:text="#{login.error}">{Login error}</h3>
+
+<div class="column">
+    <br>
+    <div class="alert" th:if="${error}">
+        <h3 class="black" th:text="#{reg.error.generic}">{Reg error}</h3>
+    </div>
+
+    <a class="button" href="/account_page" th:text="#{go.to.first.page}">{To the first page}</a>
+    <br>
+    <h1 class="calc" th:text="#{calculator}">{Calculator}</h1>
+
+    <div class="order">
+        <form th:action="@{/calculator}" th:object="${order}" method="post">
+
+            <div>
+
+                <input type="number" id="weight" name="calcWeight" class="weight"
+                       th:placeholder="#{new.order.weight}" required>
+            </div>
+            <div>
+
+                <input type="number" id="calcAnnPrice" name="calcAnnPrice" class="announcedPrice"
+                       th:placeholder="#{new.order.announcedPrice}" required>
+            </div>
+
+            <div class="input-field col s4">
+                <select id="type" class="order_type_calc" name="calcType" required>
+                    <option value="" disabled selected th:text="#{choose.type}"></option>
+                    <option value="SMALL" th:text="#{type.small}"></option>
+                    <option value="MIDDLE" th:text="#{type.middle}"></option>
+                    <option value="BIG" th:text="#{type.big}"></option>
+                    <option value="DOCUMENTS" th:text="#{type.documents}"></option>
+                </select>
+            </div>
+            <br>
+
+            <div class="input-field col s4">
+                <select id="dest" name="calcDestination" class="destination" required>
+                    <option value="" disabled selected th:text="#{choose.destination}"></option>
+                    <option value="NONE" th:text="#{destination.none}"></option>
+                    <option value="INNER" th:text="#{destination.inner}"></option>
+                    <option value="COUNTRY" th:text="#{destination.country}"></option>
+                </select>
+            </div>
+
+
+            <br>
+            <form>
+                <div class="col s12 sign">
+                    <button class="calculate waves-effect waves-light"
+                            type="submit" name="action" th:text="#{calculator.button}">
+                    </button>
+                    <br>
+                    <span th:if="${price != null}" class="price_calculation" th:text="${price}"></span>
+                </div>
+            </form>
+
+
+        </form>
+    </div>
+
 </div>
-
-<form th:action="@{/calculator}" th:object="${order}" method="post">
-    <div class="input-field col s11">
-
-
-        <input id="weight" name="calcWeight" type="number" class="validate" required>
-        <label for="weight" th:text="#{order.weight}"></label>
-
-    </div>
-
-    <div class="input-field col s11">
-
-        <input id="calcAnnPrice" name="calcAnnPrice" type="number" class="validate" required>
-        <label for="calcAnnPrice" th:text="#{order.announced.price}"></label>
-    </div>
-
-    <div class="calcDestination push-s1 col s10">
-        <select name="calcDestination" required>
-            <option value="" disabled selected th:text="#{choose.destination}"></option>
-            <option value="NONE" th:text="#{destination.none}"></option>
-            <option value="INNER" th:text="#{destination.inner}"></option>
-            <option value="COUNTRY" th:text="#{destination.country}"></option>
-        </select>
-    </div>
-
-    <div class="calcType push-s1 col s10">
-        <select name="calcType" required>
-            <option value="" disabled selected th:text="#{choose.type}"></option>
-            <option value="DOCUMENTS" th:text="#{type.documents}"></option>
-            <option value="SMALL" th:text="#{type.small}"></option>
-            <option value="MIDDLE" th:text="#{type.middle}"></option>
-            <option value="BIG" th:text="#{type.big}"></option>
-        </select>
-    </div>
-
-    <div class="col s12 sign">
-        <button class="calculate waves-effect waves-light"
-                type="submit" name="action" th:text="#{calculator.button}">
-        </button>
-        <span th:if="${price != null}" class="price_calculation" th:text="${price}"></span>
-    </div>
-</form>
-
-<div th:include="fragments/footer :: footer" th:remove="tag"></div>
-
 </body>
-
 </html>

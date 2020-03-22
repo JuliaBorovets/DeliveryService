@@ -1,11 +1,14 @@
 package ua.training.controller;
 
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +35,8 @@ import ua.training.service.UserService;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 
 @Controller
 public class PageController implements WebMvcConfigurer {
@@ -108,7 +113,7 @@ public class PageController implements WebMvcConfigurer {
 
     @RequestMapping("/account_page")
     public String accountPage(Model model) {
-        model.addAttribute("user_role_admin", currentUserRoleAdmin());
+
         model.addAttribute("language", languageChanger);
         model.addAttribute("error", false);
         languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
@@ -177,6 +182,7 @@ public class PageController implements WebMvcConfigurer {
         return redirectView;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping("/create")
     public String createOrder(@ModelAttribute OrderDTO order,
                               @RequestParam(value = "error", required = false) String error,
@@ -188,6 +194,7 @@ public class PageController implements WebMvcConfigurer {
         return "new_order";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping("/my_shipments")
     public String shipmentsPage(Model model, @AuthenticationPrincipal User user) {
         model.addAttribute("language", languageChanger);
@@ -210,6 +217,7 @@ public class PageController implements WebMvcConfigurer {
 
     @PostMapping("/calculator")
     public String calculatePrice(@ModelAttribute("order") @Valid CalculatorDTO order,
+                                 @ModelAttribute User modelUser,
                                  @RequestParam(value = "error", required = false) String error,
                                  BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
@@ -217,22 +225,32 @@ public class PageController implements WebMvcConfigurer {
         }
         model.addAttribute("language", languageChanger);
         model.addAttribute("error", false);
+
         languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
         model.addAttribute("price", calculatorService.calculatePrice(order));
         return "calculator";
     }
-    //TODO checking fields
-
-
-    @RequestMapping("/to_pay")
-    public String toPayPage(Model model, @AuthenticationPrincipal User user) {
-        model.addAttribute("language", languageChanger);
-        model.addAttribute("user_role_admin", currentUserRoleAdmin());
-        List<Order> orders = orderService.findAllOrders(user.getId());
-        model.addAttribute("orders", orders);
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
-        return "to_pay";
-    }
+//    //TODO checking fields
+//
+//
+//    @RequestMapping("/to_pay{id}")
+//    public String toPayPage(Model model, @AuthenticationPrincipal User user,
+//                            @PathVariable("id") Long orderID) {
+//        model.addAttribute("language", languageChanger);
+//        model.addAttribute("user_role_admin", currentUserRoleAdmin());
+//        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
+//
+//        model.addAttribute("user", user);
+//        Optional<Order> order = orderService.getOrderById(orderID);
+//
+//        if (!order.isPresent()){
+//            orderService.payForOrder(order);
+//        } else {
+//            model.addAttribute("error", "")
+//        }
+//
+//        return "my_shipments";
+//    }
 
     private boolean verifyUserFields(User user) {
         return user.getFirstName().matches(RegistrationValidation.FIRST_NAME_REGEX) &&
@@ -252,6 +270,7 @@ public class PageController implements WebMvcConfigurer {
         return currentUser.getRoleType() == RoleType.ROLE_ADMIN;
     }
 
+
     private UserDTO getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDTO currentUser;
@@ -266,6 +285,7 @@ public class PageController implements WebMvcConfigurer {
 
         return currentUser;
     }
+
 
     private void changeToCyrillic(UserDTO user) {
         if (languageChanger.getChoice().equals(SupportedLanguages.UKRAINIAN.getCode())) {

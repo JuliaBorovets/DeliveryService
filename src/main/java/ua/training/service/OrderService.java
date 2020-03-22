@@ -75,6 +75,11 @@ public class OrderService {
                 ShipmentsTariffs.COEFFICIENT_FOR_ANN_PRICE);
     }
 
+    public void payForOrder(Order order) {
+        order.setOrderStatus(OrderStatus.PAID);
+        orderRepository.save(order);
+    }
+
     public Optional<Order> getOrderById(@NotNull Long id) {
         return orderRepository.findById(id);
     }
