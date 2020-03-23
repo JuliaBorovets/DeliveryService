@@ -15,6 +15,8 @@ import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.repository.UserRepository;
 
+import java.math.BigDecimal;
+
 @Slf4j
 @Service
 public class UserService implements UserDetailsService {
@@ -70,7 +72,7 @@ public class UserService implements UserDetailsService {
                 .accountNonLocked(true)
                 .credentialsNonExpired(true)
                 .enabled(true)
-                .balance(0.0)
+                .balance(BigDecimal.ZERO)
                 .build();
     }
 

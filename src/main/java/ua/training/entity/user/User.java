@@ -64,7 +64,7 @@ public class User implements UserDetails {
     private boolean enabled;
 
     @Column
-    private Double balance;
+    private BigDecimal balance;
 
 
     @Override

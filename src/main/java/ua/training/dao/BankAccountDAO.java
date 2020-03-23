@@ -9,6 +9,7 @@ import ua.training.controller.BankTransactionException;
 
 import ua.training.entity.user.User;
 import javax.persistence.EntityManager;
+import java.math.BigDecimal;
 
 @Repository
 @NoArgsConstructor
@@ -23,13 +24,13 @@ public class BankAccountDAO {
 
     // MANDATORY: Transaction must be created before.
     @Transactional
-    public void addAmount(Long id, double amount) throws BankTransactionException {
+    public void addAmount(Long id, BigDecimal amount) throws BankTransactionException {
         User account = this.findById(id);
         if (account == null) {
             throw new BankTransactionException("Account not found " + id);
         }
-        double newBalance = account.getBalance() + amount;
-        if (account.getBalance() + amount < 0) {
+        BigDecimal newBalance = account.getBalance().add(amount);
+        if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
             throw new BankTransactionException(
                     "The money in the account '" + id + "' is not enough (" + account.getBalance() + ")");
         }
@@ -39,9 +40,9 @@ public class BankAccountDAO {
     // Do not catch BankTransactionException in this method.
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             rollbackFor = BankTransactionException.class)
-    public void sendMoney(Long fromAccountId, Long toAccountId, double amount) throws BankTransactionException {
+    public void sendMoney(Long fromAccountId, Long toAccountId, BigDecimal amount) throws BankTransactionException {
         addAmount(toAccountId, amount);
-        addAmount(fromAccountId, -amount);
+        addAmount(fromAccountId, amount.negate());
     }
 
 

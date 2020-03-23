@@ -23,19 +23,19 @@
 
     <form th:action="@{/to_pay}" th:object="${sendMoneyForm}" method="POST">
 
+        <!--        <div>-->
+
+        <!--            <input type="number" id="amount" name="fromAccountId" class="amount" required>-->
+        <!--        </div>-->
+
+        <!--        <div>-->
+
+        <!--            <input type="number" id="amount" name="toAccountId" class="amount" required>-->
+        <!--        </div>-->
+
         <div>
 
-            <input type="number" id="amount" name="fromAccountId" class="amount" required>
-        </div>
-
-        <div>
-
-            <input type="number" id="amount" name="toAccountId" class="amount" required>
-        </div>
-
-        <div>
-
-            <input type="number" id="amount" name="amount" class="amount" required>
+            <input type="number" id="orderNumber" name="orderNumber" class="orderNumber" required>
         </div>
 
         <form>

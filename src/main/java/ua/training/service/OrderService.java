@@ -76,6 +76,7 @@ public class OrderService {
                 ShipmentsTariffs.COEFFICIENT_FOR_ANN_PRICE);
     }
 
+
     public void payForOrder(Order order) {
         order.setOrderStatus(OrderStatus.PAID);
         orderRepository.save(order);
@@ -85,6 +86,10 @@ public class OrderService {
 
         return orderRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
     }
+
+//    public List<Order> findNotPaidOrders(long userId) {
+//        return orderRepository.findOrderByOwnerIdAndOrderStatus(userId, OrderStatus.NOT_PAID);
+//    }
 
 
 }

@@ -2,14 +2,13 @@ package ua.training.dto;
 
 import lombok.*;
 
-import java.math.BigDecimal;
-
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Getter
-public class AddMoneyDTO {
+public class OrderPayDTO {
 
-    private BigDecimal amount;
+    private Long orderNumber;
+
 }
