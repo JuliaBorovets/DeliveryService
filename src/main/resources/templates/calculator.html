@@ -1,52 +1,72 @@
 <!DOCTYPE HTML>
-<!--suppress HtmlUnknownAttribute -->
+<!--suppress HtmlUnknownAttribute, XmlDuplicatedId -->
 <html xmlns:th="https://www.thymeleaf.org">
 <head>
-    <title>Web Test</title>
+    <title>Calculator service</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="new_order.css">
 </head>
-
 <body>
+
+
 <div class="column">
-    <h1 class="calc">Calculator page</h1>
     <br>
+    <div class="alert" th:if="${error}">
+        <h3 class="black" th:text="#{reg.error.generic}">{Reg error}</h3>
+    </div>
+
     <a class="button" href="/" th:text="#{go.to.first.page}">{To the first page}</a>
+    <br>
+    <h1 class="calc" th:text="#{calculator}">{Calculator}</h1>
 
-    <h1 th:text="#{reg.welcome}">{Welcome header}</h1>
     <div class="order">
-        <form id="newOrder" name="newOrder" action="#" th:action="@{/neworder}" th:object="${newOrder}" method="post">
+        <form th:action="@{/calculator}" th:object="${order}" method="post">
 
             <div>
-                <input type="text" id="description" name="description" class="description" th:field="*{description}"
-                       th:placeholder="#{new.order.description}" required>
-            </div>
-            <br/>
-            <div>
-                <input type="text" id="senderId" name="senderId" class="senderId" th:field="*{senderId}"
-                       th:placeholder="#{new.order.senderId}" required>
-            </div>
-            <div>
-                <input type="text" id="recipientId" name="recipientId" class="recipientId" th:field="*{recipientId}"
-                       th:placeholder="#{new.order.recipientId}" required>
-            </div>
-            <br/>
-            <div>
-                <input type="text" id="weight" name="weight" th:field="*{weight}" class="login"
+
+                <input type="number" id="weight" name="calcWeight" class="weight"
                        th:placeholder="#{new.order.weight}" required>
             </div>
             <div>
-                <input type="text" id="price" name="price" th:field="*{price}" class="email"
-                       th:placeholder="#{new.order.price}" required>
-            </div>
-            <br/>
-            <div>
-                <input type="text" id="announcedPrice" name="announcedPrice" class="announcedPrice"
+
+                <input type="number" id="calcAnnPrice" name="calcAnnPrice" class="announcedPrice"
                        th:placeholder="#{new.order.announcedPrice}" required>
             </div>
-            <div>
-                <input class="button" type="submit" th:value="#{reg.submit}">
+
+            <div class="input-field col s4">
+                <select id="type" class="order_type_calc" name="calcType" required>
+                    <option value="" disabled selected th:text="#{choose.type}"></option>
+                    <option value="SMALL" th:text="#{type.small}"></option>
+                    <option value="MIDDLE" th:text="#{type.middle}"></option>
+                    <option value="BIG" th:text="#{type.big}"></option>
+                    <option value="DOCUMENTS" th:text="#{type.documents}"></option>
+                </select>
             </div>
+            <br>
+
+            <div class="input-field col s4">
+                <select id="dest" name="calcDestination" class="destination" required>
+                    <option value="" disabled selected th:text="#{choose.destination}"></option>
+                    <option value="NONE" th:text="#{destination.none}"></option>
+                    <option value="INNER" th:text="#{destination.inner}"></option>
+                    <option value="COUNTRY" th:text="#{destination.country}"></option>
+                </select>
+            </div>
+
+
+            <br>
+            <form>
+                <div class="col s12 sign">
+                    <button class="calculate waves-effect waves-light"
+                            type="submit" name="action" th:text="#{calculator.button}">
+                    </button>
+                    <br>
+                    <span th:if="${price != null}" class="price_calculation" th:text="${price}"></span>
+                </div>
+            </form>
+
+
         </form>
     </div>
 

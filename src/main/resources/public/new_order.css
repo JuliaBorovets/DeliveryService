@@ -16,7 +16,7 @@
     box-shadow: 0 0 20px #00000060;
 }
 
-.button {
+.button, .calculate {
     position: center;
     display: unset;
     font-size: 18px;
@@ -30,6 +30,7 @@
     transition: .5s;
     background: linear-gradient(120deg, #b5badb, rgba(41, 81, 173, 0.5), rgba(56, 52, 219, 0.75)) center;
 }
+
 
 .dtoDescription, .weight, .announcedPrice {
     box-sizing: border-box;
@@ -52,7 +53,7 @@
     color: #60666d;
 }
 
-.destination {
+.destination, .order_type_calc {
     position: center;
     display: unset;
     font-family: 'Open Sans', 'Helvetica Neue', 'Segoe UI', 'Calibri', 'Arial', sans-serif;
@@ -60,5 +61,9 @@
     color: #60666d;
     width: 270px;
 }
+
+
+
+
 
 

@@ -1,6 +1,6 @@
 package ua.training.service;
 
-
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,15 +9,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ua.training.controller.RegException;
-import ua.training.dto.UserDTO;
-import ua.training.dto.UsersDTO;
+import ua.training.controller.exception.RegException;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.repository.UserRepository;
 
-import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
+@Slf4j
 @Service
 public class UserService implements UserDetailsService {
     private UserRepository userRepository;
@@ -35,13 +34,10 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    public UsersDTO getAllUsers() {
-        return new UsersDTO(userRepository.findAll());
-    }
 
     public void saveNewUser(User user) throws RegException {
         try {
-            userRepository.save(getUserWithPermissions(user));
+            userRepository.save(createUser(user));
         } catch (DataIntegrityViolationException e) {
             RegException regException = new RegException(e);
 
@@ -58,7 +54,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    private User getUserWithPermissions(User user) {
+    private User createUser(User user) {
         return User.builder()
                 .firstName(user.getFirstName())
                 .firstNameCyr(user.getFirstNameCyr())
@@ -72,6 +68,7 @@ public class UserService implements UserDetailsService {
                 .accountNonLocked(true)
                 .credentialsNonExpired(true)
                 .enabled(true)
+                .balance(BigDecimal.ZERO)
                 .build();
     }
 }

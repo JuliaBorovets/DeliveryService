@@ -1,4 +1,4 @@
-package ua.training.controller;
+package ua.training.controller.exception;
 
 import lombok.Getter;
 import lombok.Setter;

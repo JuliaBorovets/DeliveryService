@@ -48,6 +48,12 @@ h1 {
     text-align: center;
 }
 
+h3 {
+    text-align: center;
+    font-size: 20px;
+    align-items: center;
+}
+
 
 .column {
     background: linear-gradient(125deg, #5499c7, #ffffff);
@@ -56,4 +62,20 @@ h1 {
     padding: 60px;
     text-align: center;
     box-shadow: 0 0 20px #00000060;
+}
+
+
+.button {
+    position: center;
+    display: unset;
+    font-size: 18px;
+    width: 40%;
+    height: 50px;
+    border: none;
+    background-size: 200%;
+    color: #fff;
+    outline: none;
+    cursor: pointer;
+    transition: .5s;
+    background: linear-gradient(120deg, #b5badb, rgba(41, 81, 173, 0.5), rgba(56, 52, 219, 0.75)) center;
 }

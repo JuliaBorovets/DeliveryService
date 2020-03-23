@@ -1,0 +1,92 @@
+
+<div th:fragment="header_user_admin" >
+
+     <div id="container" >
+        <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom shadow-sm">
+            <h5 class="p_name mr-md-auto font-weight-bold " th:text="#{project.name}">{Project name}</h5>
+            <a class="uk_lang" href="?language=uk">Українська</a>
+            <a class="en_lang" href="?language=en">English</a>
+            <a class="btn btn-outline-primary " th:text="#{general.logout}" href="/logout_new">{Logout}</a>
+        </div>
+
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link " href="/account_page" th:text="#{about.us}">{About us}</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/calculator" th:text="#{calculator}">{Calculator}</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/create" th:text="#{create.new.order}">{Сreate new order}</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/my_shipments" th:text="#{my.shipments}">{My shipments}</a>
+            </li>
+
+
+            <li class="nav-item">
+               <a class="nav-link" href="/to_pay" th:text="#{to.pay}">{To pay}</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/add_money"  >Add money</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/admin_page"  >Admin page</a>
+            </li>
+
+        </ul>
+    </div>
+
+
+</div>
+
+<div th:fragment="header_guest">
+    <div id="container">
+
+        <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom shadow-sm">
+            <h5 class="p_name mr-md-auto font-weight-bold " th:text="#{project.name}">{Project name}</h5>
+            <a class="uk_lang" href="?language=uk">Українська</a>
+            <a class="en_lang" href="?language=en">English</a>
+            <div class="btn-group mr-2" role="group" aria-label="First group">
+                <a class="btn btn-outline-primary " th:text="#{login.proceed}" href="/login">{Sign in}</a>
+                <a class="btn btn-outline-primary" th:text="#{index.register.link}" href="/reg">{Sign up}</a>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link " href="/" th:text="#{about.us}">{About us}</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/calculator" th:text="#{calculator}">{Calculator}</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/create" th:text="#{create.new.order}">{Сreate new order}</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my_shipments" th:text="#{my.shipments}">{My shipments}</a>
+                    </li>
+
+                    <li class="nav-item" th:if="${user_role_admin}">
+                        <a class="nav-link" href="/my_account" th:text="#{my.account}">{Account}</a>
+                    </li>
+
+                    <li class="nav-item">
+                       <a class="nav-link" href="/to_pay" th:text="#{to.pay}">{To pay}</a>
+                    </li>
+
+
+                </ul>
+
+    </div>
+
+</div>
+

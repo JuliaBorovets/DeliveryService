@@ -42,3 +42,55 @@
     white-space: normal;
 }
 
+.table {
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+
+
+.validate, .calcAnnPrice {
+    box-sizing: border-box;
+    border: 2px solid #720e80;
+    border-radius: 4px;
+    outline: none;
+    color: #d2b5d1;
+    padding: 10px 6px;
+    font-size: 14px;
+    margin-bottom: 35px;
+    float: initial;
+    width: 270px;
+}
+
+.calcDestination {
+    position: center;
+    display: unset;
+    font-family: 'Open Sans', 'Helvetica Neue', 'Segoe UI', 'Calibri', 'Arial', sans-serif;
+    font-size: 18px;
+    color: #60666d;
+}
+
+.calcType {
+    position: center;
+    display: unset;
+    font-family: 'Open Sans', 'Helvetica Neue', 'Segoe UI', 'Calibri', 'Arial', sans-serif;
+    font-size: 18px;
+    color: #60666d;
+}
+
+.calculate {
+    float: top;
+    position: center;
+    display: unset;
+    width: 20%;
+    height: 30px;
+    border: none;
+    text-align: center;
+    font-size: 20px;
+    background-size: 200%;
+    color: #fff;
+    outline: none;
+    cursor: pointer;
+    transition: .5s;
+    background: linear-gradient(120deg, #b5badb, rgba(41, 81, 173, 0.5), rgba(56, 52, 219, 0.75)) center;
+}
+

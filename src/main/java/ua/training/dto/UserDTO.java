@@ -2,7 +2,6 @@ package ua.training.dto;
 
 import lombok.*;
 import ua.training.entity.user.RoleType;
-import ua.training.entity.user.User;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;

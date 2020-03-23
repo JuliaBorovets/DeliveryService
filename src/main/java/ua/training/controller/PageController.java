@@ -3,16 +3,13 @@ package ua.training.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -20,35 +17,39 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
-import ua.training.dto.LanguageDTO;
-import ua.training.dto.OrderDTO;
-import ua.training.dto.OrdersDTO;
-import ua.training.dto.UserDTO;
+import ua.training.controller.exception.RegException;
+
+import ua.training.dto.*;
 import ua.training.entity.order.Order;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
+import ua.training.service.CalculatorService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class PageController implements WebMvcConfigurer {
 
+
     private final UserService userService;
     private final OrderService orderService;
+    private final CalculatorService calculatorService;
     private LanguageDTO languageChanger = new LanguageDTO();
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public PageController(UserService userService, OrderService orderService) {
+    public PageController(UserService userService, OrderService orderService, CalculatorService calculatorService) {
         this.userService = userService;
         this.orderService = orderService;
+        this.calculatorService = calculatorService;
     }
 
     @RequestMapping("/")
@@ -56,13 +57,11 @@ public class PageController implements WebMvcConfigurer {
                            @RequestParam(value = "login", required = false) String login,
                            Model model) {
 
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
-        model.addAttribute("language", languageChanger);
-        model.addAttribute("supported", languageChanger.getSupportedLanguages());
 
+        insertLang(model);
         model.addAttribute("reg", reg != null);
         model.addAttribute("login", login != null);
-        return "index.html";
+        return "index";
     }
 
 
@@ -72,15 +71,13 @@ public class PageController implements WebMvcConfigurer {
                             @RequestParam(value = "reg", required = false) String reg,
                             Model model) {
 
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
-        model.addAttribute("language", languageChanger);
-        model.addAttribute("supported", languageChanger.getSupportedLanguages());
+        insertLang(model);
 
         model.addAttribute("error", error != null);
         model.addAttribute("logout", logout != null);
         model.addAttribute("reg", reg != null);
 
-        return "login.html";
+        return "login";
     }
 
 
@@ -89,13 +86,11 @@ public class PageController implements WebMvcConfigurer {
                              @RequestParam(value = "login", required = false) String login,
                              Model model) {
 
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
-        model.addAttribute("language", languageChanger);
-        model.addAttribute("supported", languageChanger.getSupportedLanguages());
+        insertLang(model);
 
         model.addAttribute("reg", reg != null);
         model.addAttribute("login", login != null);
-        return "index.html";
+        return "index";
     }
 
     @RequestMapping("/success")
@@ -107,12 +102,10 @@ public class PageController implements WebMvcConfigurer {
 
 
     @RequestMapping("/account_page")
-    public String accountPage(Model model) {
-        model.addAttribute("user_role_admin", currentUserRoleAdmin());
-        model.addAttribute("language", languageChanger);
+    public String accountPage(Model model, @AuthenticationPrincipal User user) {
+        insertLang(model);
         model.addAttribute("error", false);
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
-        return "account_page.html";
+        return "account_page";
     }
 
     @RequestMapping("/reg")
@@ -131,7 +124,7 @@ public class PageController implements WebMvcConfigurer {
         model.addAttribute("duplicate", duplicate != null);
         model.addAttribute("newUser", user == null ? new User() : user);
 
-        return "reg.html";
+        return "reg";
     }
 
     @RequestMapping("/newuser")
@@ -177,6 +170,7 @@ public class PageController implements WebMvcConfigurer {
         return redirectView;
     }
 
+
     @RequestMapping("/create")
     public String createOrder(@ModelAttribute OrderDTO order,
                               @RequestParam(value = "error", required = false) String error,
@@ -185,15 +179,54 @@ public class PageController implements WebMvcConfigurer {
         model.addAttribute("error", error != null);
         model.addAttribute("newOrder", order == null ? new User() : order);
 
-        return "new_order.html";
+        return "new_order";
     }
 
-    @RequestMapping("/calc")
-    public String calculatorPage(Model model) {
-        model.addAttribute("language", languageChanger);
-        model.addAttribute("user", getCurrentUser());
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
-        return "calculator.html";
+
+    @RequestMapping("/my_shipments")
+    public String shipmentsPage(Model model, @AuthenticationPrincipal User user) {
+        insertLang(model);
+
+        List<Order> orders = orderService.findAllOrders(user.getId());
+        model.addAttribute("orders", orders);
+
+        return "my_shipments";
+    }
+
+    @GetMapping("/admin_page")
+    public String calculatePage(@AuthenticationPrincipal User user, Model model) {
+
+        insertLang(model);
+
+        if (!currentUserRoleAdmin()) {
+            return "account_page";
+        }
+        model.addAttribute("admin", currentUserRoleAdmin());
+        List<Order> orders = orderService.findAllPaidOrders();
+        model.addAttribute("orders", orders);
+
+        return "admin_page";
+    }
+
+
+    @PostMapping("/admin_page")
+    public String adminPage(@AuthenticationPrincipal User user, Model model) {
+        insertLang(model);
+        log.error(String.valueOf(user.getRole().equals(RoleType.ROLE_ADMIN)));
+        if (!currentUserRoleAdmin()) {
+            return "account_page";
+        }
+        model.addAttribute("admin", currentUserRoleAdmin());
+        List<Order> orders = orderService.findAllPaidOrders();
+        model.addAttribute("orders", orders);
+
+        for (Order o : orders) {
+            orderService.orderSetShippedStatus(o);
+        }
+
+        return "admin_page";
+
+
     }
 
 
@@ -211,42 +244,19 @@ public class PageController implements WebMvcConfigurer {
 
 
     private boolean currentUserRoleAdmin() {
-        UserDTO currentUser = getCurrentUser();
-        return currentUser.getRoleType() == RoleType.ROLE_ADMIN;
-    }
-
-    private UserDTO getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserDTO currentUser;
-
-        try {
-            currentUser = (UserDTO) auth.getPrincipal();
-        } catch (ClassCastException e) {
-            return new UserDTO();
-        }
-
-        changeToCyrillic(currentUser);
-
-        return currentUser;
+        User user = (User) auth.getPrincipal();
+        return user.getRole().equals(RoleType.ROLE_ADMIN);
     }
 
 
-    private List<Order> getAllOrders() {
-        List<Order> orders = orderService.getAllOrders().getOrders();
-        return orders;
+    public void insertLang(Model model) {
+        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
+        model.addAttribute("language", languageChanger);
+        model.addAttribute("supported", languageChanger.getSupportedLanguages());
+        model.addAttribute("supported", languageChanger.getSupportedLanguages());
+
     }
-
-
-    private void changeToCyrillic(UserDTO user) {
-        if (languageChanger.getChoice().equals(SupportedLanguages.UKRAINIAN.getCode())) {
-            user.setFirstName(user.getFirstNameCyr());
-            user.setLastName(user.getLastNameCyr());
-        } else {
-            user.setFirstName(user.getFirstName());
-            user.setLastName(user.getLastName());
-        }
-    }
-
 
     @Bean
     public LocaleResolver localeResolver() {
@@ -268,4 +278,5 @@ public class PageController implements WebMvcConfigurer {
     }
 
 }
+
 

@@ -3,9 +3,6 @@ package ua.training.dto;
 import lombok.Getter;
 import ua.training.controller.SupportedLanguages;
 
-import java.util.Arrays;
-import java.util.Locale;
-
 @Getter
 public class LanguageDTO {
 
@@ -32,18 +29,6 @@ public class LanguageDTO {
 
     public SupportedLanguages[] getSupportedLanguages() {
         return SupportedLanguages.values();
-    }
-
-    public String[] getSupportedCodes() {
-        return Arrays.stream(SupportedLanguages.values()).map(SupportedLanguages::getCode).toArray(String[]::new);
-    }
-
-    public Locale getLocale() {
-        return SupportedLanguages.determineLocale(choice);
-    }
-
-    public boolean isLocaleCyrillic() {
-        return SupportedLanguages.CYRILLICS.contains(choice);
     }
 
 }
