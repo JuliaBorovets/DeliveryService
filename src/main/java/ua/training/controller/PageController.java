@@ -228,11 +228,6 @@ public class PageController implements WebMvcConfigurer {
 
     @RequestMapping(value = "/to_pay", method = RequestMethod.GET)
     public String viewSendMoneyPage(Model model) {
-
-        BankAccountDTO form = new BankAccountDTO(1L, 2L, 700d);
-
-        model.addAttribute("sendMoneyForm", form);
-
         return "payment";
     }
 
@@ -247,13 +242,38 @@ public class PageController implements WebMvcConfigurer {
             bankAccountDAO.sendMoney(sendMoneyForm.getFromAccountId(), //
                     sendMoneyForm.getToAccountId(), //
                     sendMoneyForm.getAmount());
-            orderService.payForOrder(orderService.getOrderById(1L));
+            orderService.payForOrder(orderService.getOrderById(3L));
         } catch (BankTransactionException e) {
             model.addAttribute("errorMessage", "Error: " + e.getMessage());
             return "/payment";
         }
         return "redirect:/account_page";
     }
+
+    @RequestMapping(value = "/add_money", method = RequestMethod.GET)
+    public String addMoneyPage(Model model) {
+        return "add_money";
+    }
+
+
+    @RequestMapping(value = "/add_money", method = RequestMethod.POST)
+    public String addMoney(Model model, AddMoneyDTO addMoneyForm, @AuthenticationPrincipal User modelUser,
+                           Order order) {
+
+
+        log.error(modelUser.getId().toString());
+        //  model.addAttribute("addMoneyForm", addMoneyForm);
+
+        try {
+            bankAccountDAO.addAmount(2L, 2000);
+
+        } catch (BankTransactionException e) {
+            model.addAttribute("errorMessage", "Error: " + e.getMessage());
+            return "/add_money";
+        }
+        return "redirect:/account_page";
+    }
+
 
     private boolean verifyUserFields(User user) {
         return user.getFirstName().matches(RegistrationValidation.FIRST_NAME_REGEX) &&

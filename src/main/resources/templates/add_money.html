@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<!--suppress HtmlUnknownAttribute, XmlDuplicatedId -->
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Add money service</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="new_order.css">
+</head>
+<body>
+
+
+<div class="column">
+    <br>
+    <div class="alert" th:if="${error}">
+        <h3 class="black" th:text="#{reg.error.generic}">{Reg error}</h3>
+    </div>
+
+    <a class="button" href="/account_page" th:text="#{go.to.first.page}">{To the first page}</a>
+    <br>
+    <h1 class="calc" th:text="#{to.pay}">{to pay}</h1>
+
+
+    <form th:action="@{/add_money}" method="POST">
+        <table>
+
+            <tr>
+                <td>&nbsp;</td>
+                <td><input type="submit" value="Send"/></td>
+            </tr>
+        </table>
+    </form>
+
+</div>
+</body>
+</html>
