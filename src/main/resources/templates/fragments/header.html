@@ -1,7 +1,7 @@
 
-<div th:fragment="header_user_admin">
+<div th:fragment="header_user_admin" >
 
-     <div id="container">
+     <div id="container" >
         <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom shadow-sm">
             <h5 class="p_name mr-md-auto font-weight-bold " th:text="#{project.name}">{Project name}</h5>
             <a class="uk_lang" href="?language=uk">Українська</a>
@@ -26,9 +26,6 @@
                 <a class="nav-link" href="/my_shipments" th:text="#{my.shipments}">{My shipments}</a>
             </li>
 
-            <li class="nav-item" th:if="${user_role_admin}">
-                <a class="nav-link" href="/my_account" th:text="#{my.account}">{Account}</a>
-            </li>
 
             <li class="nav-item">
                <a class="nav-link" href="/to_pay" th:text="#{to.pay}">{To pay}</a>
@@ -38,10 +35,14 @@
                 <a class="nav-link" href="/add_money"  >Add money</a>
             </li>
 
-
+            <li class="nav-item">
+                <a class="nav-link" href="/admin_page"  >Admin page</a>
+            </li>
 
         </ul>
     </div>
+
+
 </div>
 
 <div th:fragment="header_guest">

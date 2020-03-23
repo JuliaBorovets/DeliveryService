@@ -117,7 +117,6 @@ public class PaymentController {
         languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
         model.addAttribute("language", languageChanger);
         model.addAttribute("supported", languageChanger.getSupportedLanguages());
-        model.addAttribute("supported", languageChanger.getSupportedLanguages());
 
     }
 }

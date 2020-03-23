@@ -105,10 +105,8 @@ public class PageController implements WebMvcConfigurer {
 
 
     @RequestMapping("/account_page")
-    public String accountPage(Model model) {
-
+    public String accountPage(Model model, @AuthenticationPrincipal User user) {
         insertLang(model);
-
         model.addAttribute("error", false);
         return "account_page";
     }
@@ -192,13 +190,27 @@ public class PageController implements WebMvcConfigurer {
     public String shipmentsPage(Model model, @AuthenticationPrincipal User user) {
         insertLang(model);
 
-        model.addAttribute("user_role_admin", currentUserRoleAdmin());
         List<Order> orders = orderService.findAllOrders(user.getId());
         model.addAttribute("orders", orders);
 
         return "my_shipments";
     }
 
+    @RequestMapping("/admin_page")
+    public String adminPage(@AuthenticationPrincipal User user, Model model) {
+        insertLang(model);
+        log.error(String.valueOf(user.getRole().equals(RoleType.ROLE_ADMIN)));
+        if (!currentUserRoleAdmin()) {
+            return "account_page";
+        }
+        model.addAttribute("admin", currentUserRoleAdmin());
+
+        List<Order> orders = orderService.findAllOrders();
+        model.addAttribute("orders", orders);
+        return "admin_page";
+
+
+    }
 
 
     private boolean verifyUserFields(User user) {
@@ -215,36 +227,11 @@ public class PageController implements WebMvcConfigurer {
 
 
     private boolean currentUserRoleAdmin() {
-        UserDTO currentUser = getCurrentUser();
-        return currentUser.getRoleType() == RoleType.ROLE_ADMIN;
-    }
-
-
-    private UserDTO getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserDTO currentUser;
-
-        try {
-            currentUser = (UserDTO) auth.getPrincipal();
-        } catch (ClassCastException e) {
-            return new UserDTO();
-        }
-
-        changeToCyrillic(currentUser);
-
-        return currentUser;
+        User user = (User) auth.getPrincipal();
+        return user.getRole().equals(RoleType.ROLE_ADMIN);
     }
 
-
-    private void changeToCyrillic(UserDTO user) {
-        if (languageChanger.getChoice().equals(SupportedLanguages.UKRAINIAN.getCode())) {
-            user.setFirstName(user.getFirstNameCyr());
-            user.setLastName(user.getLastNameCyr());
-        } else {
-            user.setFirstName(user.getFirstName());
-            user.setLastName(user.getLastName());
-        }
-    }
 
     public void insertLang(Model model) {
         languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
