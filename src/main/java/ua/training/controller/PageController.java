@@ -205,7 +205,7 @@ public class PageController implements WebMvcConfigurer {
             return "account_page";
         }
         model.addAttribute("admin", currentUserRoleAdmin());
-        List<Order> orders = orderService.findAllOrders();
+        List<Order> orders = orderService.findAllPaidOrders();
         model.addAttribute("orders", orders);
 
         return "admin_page";
@@ -220,7 +220,7 @@ public class PageController implements WebMvcConfigurer {
             return "account_page";
         }
         model.addAttribute("admin", currentUserRoleAdmin());
-        List<Order> orders = orderService.findAllOrders();
+        List<Order> orders = orderService.findAllPaidOrders();
         model.addAttribute("orders", orders);
 
         for (Order o : orders) {

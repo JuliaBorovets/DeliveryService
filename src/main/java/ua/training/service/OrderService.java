@@ -7,10 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ua.training.controller.exception.BankTransactionException;
 import ua.training.dto.OrderDTO;
-import ua.training.entity.order.Destination;
-import ua.training.entity.order.Order;
-import ua.training.entity.order.OrderType;
-import ua.training.entity.order.OrderStatus;
+import ua.training.entity.order.*;
 import ua.training.entity.user.User;
 import ua.training.repository.OrderRepository;
 import javax.validation.constraints.NotNull;
@@ -102,9 +99,21 @@ public class OrderService {
     public void orderSetShippedStatus(Order order) {
         if (order.getOrderStatus().equals(OrderStatus.PAID)) {
             order.setOrderStatus(OrderStatus.SHIPPED);
-            order.setDeliveryDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(5));
+            order.setDeliveryDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(findDeliveryDays(order).getDay()));
             orderRepository.save(order);
         }
+    }
+
+    private DeliveryDate findDeliveryDays(Order order) {
+        switch (order.getDestination()) {
+            case NONE:
+                return DeliveryDate.IN_A_MOMENT;
+            case INNER:
+                return DeliveryDate.QUICKLY;
+            case COUNTRY:
+                return DeliveryDate.LONG;
+        }
+        return DeliveryDate.LONG;
     }
 }
 
