@@ -21,6 +21,8 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
+import ua.training.dao.BankAccountDAO;
+
 import ua.training.dto.*;
 import ua.training.entity.order.Order;
 import ua.training.entity.user.RoleType;
@@ -42,6 +44,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 public class PageController implements WebMvcConfigurer {
+
+    @Autowired
+    private BankAccountDAO bankAccountDAO;
 
     private final UserService userService;
     private final OrderService orderService;
@@ -229,19 +234,79 @@ public class PageController implements WebMvcConfigurer {
         return "calculator";
     }
 
-    //    //TODO checking fields
-//
-//
-    @RequestMapping("/to_pay")
-    public String toPayPage(
-//                            @ModelAttribute("added_money")BigDecimal money,
-            @AuthenticationPrincipal User modelUser, Model model) throws BankTransactionException {
-        insertLang(model);
+    //TODO checking fields
 
-        log.error(modelUser.getId().toString());
-//        bankService.addMoney(modelUser.getId(), BigDecimal.valueOf(200));
+
+//    @GetMapping("/to_pay")
+//    public String toPayPage(@ModelAttribute("add_money") BankAccountDTO money,
+//            @AuthenticationPrincipal User modelUser, Model model) throws BankTransactionException {
+//        insertLang(model);
+//
+//
+//        log.error(modelUser.getId().toString());
+//        model.addAttribute("user_money", modelUser.getBalance());
+//        log.error(modelUser.getBalance().toString());
+//       // log.error(bankService.findById(modelUser.getId()).getBalance().toString());
+//       // userService.addMoney(modelUser, money.getBalance());
+//        //bankService.addAmount(modelUser.getId(), BigDecimal.valueOf(2000));
+//        BankAccountDTO form = new BankAccountDTO(BigDecimal.valueOf(100), 5L, 6L);
+//        model.addAttribute("form", form);
+//        log.error(modelUser.getBalance().toString());
+//
+//        return "payment";
+//    }
+//
+//
+//    @PostMapping("/to_pay")
+//    public String toPay(BankAccountDTO bankAccountDTO,
+//                            @AuthenticationPrincipal User modelUser, Model model) throws BankTransactionException {
+//
+//        try {
+//            bankAccountDao.sendMoney(bankAccountDTO.getId(), //
+//                    bankAccountDTO.getSenderId(), //
+//                    bankAccountDTO.getBalance());
+//        } catch (BankTransactionException e) {
+//            model.addAttribute("errorMessage", "Error: " + e.getMessage());
+//            return "/account_page";
+//        }
+////        log.error(modelUser.getId().toString());
+////        model.addAttribute("user_money", modelUser.getBalance());
+//        log.error(modelUser.getBalance().toString());
+//        // log.error(bankService.findById(modelUser.getId()).getBalance().toString());
+//        // userService.addMoney(modelUser, money.getBalance());
+//        //bankService.addAmount(modelUser.getId(), BigDecimal.valueOf(2000));
+////        BankAccountDTO form = new BankAccountDTO(BigDecimal.valueOf(100), 5L, 6L);
+////        model.addAttribute("form", form);
+//        log.error(modelUser.getBalance().toString());
+//
+//        return "payment";
+//    }
+
+    @RequestMapping(value = "/to_pay", method = RequestMethod.GET)
+    public String viewSendMoneyPage(Model model) {
+
+        BankAccountDTO form = new BankAccountDTO(1L, 2L, 700d);
+
+        model.addAttribute("sendMoneyForm", form);
 
         return "payment";
+    }
+
+
+    @RequestMapping(value = "/to_pay", method = RequestMethod.POST)
+    public String processSendMoney(Model model, BankAccountDTO sendMoneyForm) {
+
+        model.addAttribute("sendMoneyForm", sendMoneyForm);
+
+        try {
+            bankAccountDAO.sendMoney(sendMoneyForm.getFromAccountId(), //
+                    sendMoneyForm.getToAccountId(), //
+                    sendMoneyForm.getAmount());
+        } catch (BankTransactionException e) {
+            model.addAttribute("errorMessage", "Error: " + e.getMessage());
+            return "/payment";
+        }
+        return "redirect:/account_page";
     }
 
     private boolean verifyUserFields(User user) {

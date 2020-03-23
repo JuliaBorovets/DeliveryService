@@ -16,18 +16,39 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "bank")
 public class BankAccount {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "sender_id", nullable = false)
-    private Long senderId;
+    @Column(name = "Full_Name", length = 128, nullable = false)
+    private String fullName;
 
-    @Column(name = "receiver_id", nullable = false)
-    private Long receiverId;
+    @Column(name = "Balance", nullable = false)
+    private double balance;
 
-    @Column(name = "balance", nullable = false)
-    private BigDecimal balance;
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
 }

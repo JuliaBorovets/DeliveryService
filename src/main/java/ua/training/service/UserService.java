@@ -1,5 +1,6 @@
 package ua.training.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ua.training.controller.BankTransactionException;
 import ua.training.controller.RegException;
 import ua.training.dto.UsersDTO;
 import ua.training.entity.BankAccount;
@@ -15,8 +18,11 @@ import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.repository.UserRepository;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Optional;
 
+@Slf4j
 @Service
 public class UserService implements UserDetailsService {
     private UserRepository userRepository;
@@ -71,13 +77,19 @@ public class UserService implements UserDetailsService {
                 .accountNonLocked(true)
                 .credentialsNonExpired(true)
                 .enabled(true)
-                .balance(BigDecimal.ZERO)
+                .balance(0.0)
                 .build();
     }
 
-    public void addMoney(User user, BigDecimal money) {
-        BigDecimal current = user.getBalance();
-        user.setBalance(current.add(money));
-        // userRepository.save(user);
-    }
+//    @Transactional
+//    public void addMoney(User user, BigDecimal money) {
+//        try {
+//            User u = (User) loadUserByUsername(user.getLogin());
+//            BigDecimal current = u.getBalance();
+//            u.setBalance(current.add(money));
+//            userRepository.save(u);
+//        } catch (NullPointerException e){
+//            log.error("null pointer");
+//        }
+//    }
 }
