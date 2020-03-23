@@ -51,4 +51,9 @@ public class Order {
 
     @Column(name = "shippingPrice", nullable = false)
     private BigDecimal shippingPrice;
+
+    @Column(name = "delivery_date")
+    private LocalDate deliveryDate;
+
 }
+

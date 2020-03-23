@@ -83,6 +83,7 @@ public class OrderService {
         } else throw new BankTransactionException("order is already paid");
     }
 
+
     public Order getOrderById(@NotNull Long id) {
 
         return orderRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
@@ -96,4 +97,14 @@ public class OrderService {
     public List<Order> findAllPaidOrders() {
         return orderRepository.findOrderByOrderStatus(OrderStatus.PAID);
     }
+
+
+    public void orderSetShippedStatus(Order order) {
+        if (order.getOrderStatus().equals(OrderStatus.PAID)) {
+            order.setOrderStatus(OrderStatus.SHIPPED);
+            order.setDeliveryDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(5));
+            orderRepository.save(order);
+        }
+    }
 }
+

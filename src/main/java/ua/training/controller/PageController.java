@@ -196,7 +196,23 @@ public class PageController implements WebMvcConfigurer {
         return "my_shipments";
     }
 
-    @RequestMapping("/admin_page")
+    @GetMapping("/admin_page")
+    public String calculatePage(@AuthenticationPrincipal User user, Model model) {
+
+        insertLang(model);
+
+        if (!currentUserRoleAdmin()) {
+            return "account_page";
+        }
+        model.addAttribute("admin", currentUserRoleAdmin());
+        List<Order> orders = orderService.findAllOrders();
+        model.addAttribute("orders", orders);
+
+        return "admin_page";
+    }
+
+
+    @PostMapping("/admin_page")
     public String adminPage(@AuthenticationPrincipal User user, Model model) {
         insertLang(model);
         log.error(String.valueOf(user.getRole().equals(RoleType.ROLE_ADMIN)));
@@ -204,9 +220,13 @@ public class PageController implements WebMvcConfigurer {
             return "account_page";
         }
         model.addAttribute("admin", currentUserRoleAdmin());
-
         List<Order> orders = orderService.findAllOrders();
         model.addAttribute("orders", orders);
+
+        for (Order o : orders) {
+            orderService.orderSetShippedStatus(o);
+        }
+
         return "admin_page";
 
 
