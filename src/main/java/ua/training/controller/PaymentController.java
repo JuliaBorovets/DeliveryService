@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ua.training.controller.exception.BankTransactionException;
 import ua.training.dao.BankAccountDAO;
 import ua.training.dto.*;
 import ua.training.entity.order.Order;
@@ -25,6 +26,7 @@ public class PaymentController {
 
     @Autowired
     private BankAccountDAO bankAccountDAO;
+
 
     private final UserService userService;
     private final OrderService orderService;
@@ -74,13 +76,12 @@ public class PaymentController {
     public String processSendMoney(Model model, OrderPayDTO orderPayDTO, @AuthenticationPrincipal User user,
                                    Order order) {
 
-        model.addAttribute("sendMoneyForm", orderPayDTO);
-
         Long ownerAccount = 1L;
-
+        model.addAttribute("sendMoneyForm", orderPayDTO);
 
         try {
 
+            //  Order orderToPay = orderService.getOrderById(orderPayDTO.getOrderNumber());
             BigDecimal amount = orderService.getOrderById(orderPayDTO.getOrderNumber()).getShippingPrice();
             bankAccountDAO.sendMoney(user.getId(),
                     ownerAccount, amount);
@@ -89,7 +90,7 @@ public class PaymentController {
             model.addAttribute("errorMessage", "Error: " + e.getMessage());
             return "/payment";
         }
-        return "redirect:/account_page";
+        return "redirect:/my_shipments";
     }
 
     @RequestMapping(value = "/add_money", method = RequestMethod.GET)

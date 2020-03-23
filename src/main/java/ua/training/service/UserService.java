@@ -9,8 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ua.training.controller.RegException;
-import ua.training.dto.UsersDTO;
+import ua.training.controller.exception.RegException;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.repository.UserRepository;
@@ -35,9 +34,6 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    public UsersDTO getAllUsers() {
-        return new UsersDTO(userRepository.findAll());
-    }
 
     public void saveNewUser(User user) throws RegException {
         try {
@@ -75,5 +71,4 @@ public class UserService implements UserDetailsService {
                 .balance(BigDecimal.ZERO)
                 .build();
     }
-
 }

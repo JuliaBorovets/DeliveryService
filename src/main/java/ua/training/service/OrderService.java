@@ -1,11 +1,11 @@
 package ua.training.service;
 
-
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ua.training.controller.exception.BankTransactionException;
 import ua.training.dto.OrderDTO;
 import ua.training.entity.order.Destination;
 import ua.training.entity.order.Order;
@@ -13,7 +13,6 @@ import ua.training.entity.order.OrderType;
 import ua.training.entity.order.OrderStatus;
 import ua.training.entity.user.User;
 import ua.training.repository.OrderRepository;
-
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -40,7 +39,7 @@ public class OrderService {
                 .description(orderDTO.getDtoDescription())
                 .destination(getDestination(orderDTO))
                 .orderType(getOrderType(orderDTO))
-                .shippingDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(1))
+                .shippingDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(2))
                 .weight(orderDTO.getDtoWeight())
                 .owner(user)
                 .announcedPrice(orderDTO.getDtoAnnouncedPrice())
@@ -77,9 +76,11 @@ public class OrderService {
     }
 
 
-    public void payForOrder(Order order) {
-        order.setOrderStatus(OrderStatus.PAID);
-        orderRepository.save(order);
+    public void payForOrder(Order order) throws BankTransactionException {
+        if (!order.getOrderStatus().equals(OrderStatus.PAID)) {
+            order.setOrderStatus(OrderStatus.PAID);
+            orderRepository.save(order);
+        } else throw new BankTransactionException("order is already paid");
     }
 
     public Order getOrderById(@NotNull Long id) {
@@ -87,9 +88,7 @@ public class OrderService {
         return orderRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
     }
 
-//    public List<Order> findNotPaidOrders(long userId) {
-//        return orderRepository.findOrderByOwnerIdAndOrderStatus(userId, OrderStatus.NOT_PAID);
-//    }
-
-
+    public List<Order> findAllOrders() {
+        return orderRepository.findAll();
+    }
 }

@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ua.training.controller.BankTransactionException;
+import ua.training.controller.exception.BankTransactionException;
 
 import ua.training.entity.user.User;
 import javax.persistence.EntityManager;

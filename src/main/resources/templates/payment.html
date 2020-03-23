@@ -5,7 +5,7 @@
     <title>Payment service</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="new_order.css">
+    <link rel="stylesheet" href="payment.css">
 </head>
 <body>
 
@@ -18,26 +18,22 @@
 
     <a class="button" href="/account_page" th:text="#{go.to.first.page}">{To the first page}</a>
     <br>
+    <br>
     <h1 class="calc" th:text="#{to.pay}">{to pay}</h1>
 
+    <br>
+    <br>
 
     <form th:action="@{/to_pay}" th:object="${sendMoneyForm}" method="POST">
 
-        <!--        <div>-->
-
-        <!--            <input type="number" id="amount" name="fromAccountId" class="amount" required>-->
-        <!--        </div>-->
-
-        <!--        <div>-->
-
-        <!--            <input type="number" id="amount" name="toAccountId" class="amount" required>-->
-        <!--        </div>-->
 
         <div>
-
-            <input type="number" id="orderNumber" name="orderNumber" class="orderNumber" required>
+            <input type="number" id="orderNumber" name="orderNumber" class="orderNumber"
+                   th:placeholder="#{enter.number.of.order}" required>
         </div>
 
+        <br>
+        <br>
         <form>
             <div class="col s12 sign">
                 <button class="calculate waves-effect waves-light"
@@ -47,26 +43,6 @@
             </div>
         </form>
 
-        <!--        <table>-->
-        <!--            -->
-
-        <!--            <tr>-->
-        <!--                <td>From Bank Account Id</td>-->
-        <!--                <td><input type="text" th:field="*{fromAccountId}"/></td>-->
-        <!--            </tr>-->
-        <!--            <tr>-->
-        <!--                <td>To Bank Account Id</td>-->
-        <!--                <td><input type="text" th:field="*{toAccountId}"/></td>-->
-        <!--            </tr>-->
-        <!--            <tr>-->
-        <!--                <td>Amount</td>-->
-        <!--                <td><input type="text" th:field="*{amount}"/></td>-->
-        <!--            </tr>-->
-        <!--            <tr>-->
-        <!--                <td>&nbsp;</td>-->
-        <!--                <td><input type="submit" value="Send"/></td>-->
-        <!--            </tr>-->
-        <!--        </table>-->
     </form>
 
 </div>
