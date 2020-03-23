@@ -1,14 +1,11 @@
 package ua.training.controller;
 
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,17 +24,12 @@ import ua.training.dto.*;
 import ua.training.entity.order.Order;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
-import ua.training.service.BankService;
 import ua.training.service.CalculatorService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
-
 import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,18 +43,16 @@ public class PageController implements WebMvcConfigurer {
     private final UserService userService;
     private final OrderService orderService;
     private final CalculatorService calculatorService;
-    private final BankService bankService;
     private LanguageDTO languageChanger = new LanguageDTO();
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public PageController(UserService userService, OrderService orderService, CalculatorService calculatorService, BankService bankService) {
+    public PageController(UserService userService, OrderService orderService, CalculatorService calculatorService) {
         this.userService = userService;
         this.orderService = orderService;
         this.calculatorService = calculatorService;
-        this.bankService = bankService;
     }
 
     @RequestMapping("/")
@@ -236,52 +226,6 @@ public class PageController implements WebMvcConfigurer {
 
     //TODO checking fields
 
-
-//    @GetMapping("/to_pay")
-//    public String toPayPage(@ModelAttribute("add_money") BankAccountDTO money,
-//            @AuthenticationPrincipal User modelUser, Model model) throws BankTransactionException {
-//        insertLang(model);
-//
-//
-//        log.error(modelUser.getId().toString());
-//        model.addAttribute("user_money", modelUser.getBalance());
-//        log.error(modelUser.getBalance().toString());
-//       // log.error(bankService.findById(modelUser.getId()).getBalance().toString());
-//       // userService.addMoney(modelUser, money.getBalance());
-//        //bankService.addAmount(modelUser.getId(), BigDecimal.valueOf(2000));
-//        BankAccountDTO form = new BankAccountDTO(BigDecimal.valueOf(100), 5L, 6L);
-//        model.addAttribute("form", form);
-//        log.error(modelUser.getBalance().toString());
-//
-//        return "payment";
-//    }
-//
-//
-//    @PostMapping("/to_pay")
-//    public String toPay(BankAccountDTO bankAccountDTO,
-//                            @AuthenticationPrincipal User modelUser, Model model) throws BankTransactionException {
-//
-//        try {
-//            bankAccountDao.sendMoney(bankAccountDTO.getId(), //
-//                    bankAccountDTO.getSenderId(), //
-//                    bankAccountDTO.getBalance());
-//        } catch (BankTransactionException e) {
-//            model.addAttribute("errorMessage", "Error: " + e.getMessage());
-//            return "/account_page";
-//        }
-////        log.error(modelUser.getId().toString());
-////        model.addAttribute("user_money", modelUser.getBalance());
-//        log.error(modelUser.getBalance().toString());
-//        // log.error(bankService.findById(modelUser.getId()).getBalance().toString());
-//        // userService.addMoney(modelUser, money.getBalance());
-//        //bankService.addAmount(modelUser.getId(), BigDecimal.valueOf(2000));
-////        BankAccountDTO form = new BankAccountDTO(BigDecimal.valueOf(100), 5L, 6L);
-////        model.addAttribute("form", form);
-//        log.error(modelUser.getBalance().toString());
-//
-//        return "payment";
-//    }
-
     @RequestMapping(value = "/to_pay", method = RequestMethod.GET)
     public String viewSendMoneyPage(Model model) {
 
@@ -294,7 +238,8 @@ public class PageController implements WebMvcConfigurer {
 
 
     @RequestMapping(value = "/to_pay", method = RequestMethod.POST)
-    public String processSendMoney(Model model, BankAccountDTO sendMoneyForm) {
+    public String processSendMoney(Model model, BankAccountDTO sendMoneyForm,
+                                   Order order) {
 
         model.addAttribute("sendMoneyForm", sendMoneyForm);
 
@@ -302,6 +247,7 @@ public class PageController implements WebMvcConfigurer {
             bankAccountDAO.sendMoney(sendMoneyForm.getFromAccountId(), //
                     sendMoneyForm.getToAccountId(), //
                     sendMoneyForm.getAmount());
+            orderService.payForOrder(orderService.getOrderById(1L));
         } catch (BankTransactionException e) {
             model.addAttribute("errorMessage", "Error: " + e.getMessage());
             return "/payment";
@@ -359,7 +305,6 @@ public class PageController implements WebMvcConfigurer {
         model.addAttribute("language", languageChanger);
         model.addAttribute("supported", languageChanger.getSupportedLanguages());
         model.addAttribute("supported", languageChanger.getSupportedLanguages());
-
 
     }
 

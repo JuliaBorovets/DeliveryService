@@ -81,15 +81,4 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-//    @Transactional
-//    public void addMoney(User user, BigDecimal money) {
-//        try {
-//            User u = (User) loadUserByUsername(user.getLogin());
-//            BigDecimal current = u.getBalance();
-//            u.setBalance(current.add(money));
-//            userRepository.save(u);
-//        } catch (NullPointerException e){
-//            log.error("null pointer");
-//        }
-//    }
 }

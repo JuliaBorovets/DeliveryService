@@ -1,6 +1,6 @@
 package ua.training.dao;
 
-
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -8,24 +8,18 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.training.controller.BankTransactionException;
 
 import ua.training.entity.user.User;
-
 import javax.persistence.EntityManager;
 
-
 @Repository
+@NoArgsConstructor
 public class BankAccountDAO {
 
     @Autowired
     private EntityManager entityManager;
 
-
-    public BankAccountDAO() {
-    }
-
     public User findById(Long id) {
         return this.entityManager.find(User.class, id);
     }
-
 
     // MANDATORY: Transaction must be created before.
     @Transactional(propagation = Propagation.MANDATORY)
@@ -46,7 +40,6 @@ public class BankAccountDAO {
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             rollbackFor = BankTransactionException.class)
     public void sendMoney(Long fromAccountId, Long toAccountId, double amount) throws BankTransactionException {
-
         addAmount(toAccountId, amount);
         addAmount(fromAccountId, -amount);
     }
