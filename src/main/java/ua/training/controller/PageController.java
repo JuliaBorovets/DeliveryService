@@ -238,11 +238,12 @@ public class PageController implements WebMvcConfigurer {
 
         model.addAttribute("sendMoneyForm", sendMoneyForm);
 
+
         try {
             bankAccountDAO.sendMoney(sendMoneyForm.getFromAccountId(), //
                     sendMoneyForm.getToAccountId(), //
                     sendMoneyForm.getAmount());
-            orderService.payForOrder(orderService.getOrderById(3L));
+            orderService.payForOrder(orderService.getOrderById(1L));
         } catch (BankTransactionException e) {
             model.addAttribute("errorMessage", "Error: " + e.getMessage());
             return "/payment";
@@ -252,24 +253,24 @@ public class PageController implements WebMvcConfigurer {
 
     @RequestMapping(value = "/add_money", method = RequestMethod.GET)
     public String addMoneyPage(Model model) {
-        return "add_money";
+        return "adding_money";
     }
 
 
     @RequestMapping(value = "/add_money", method = RequestMethod.POST)
-    public String addMoney(Model model, AddMoneyDTO addMoneyForm, @AuthenticationPrincipal User modelUser,
+    public String addMoney(Model model, @ModelAttribute("add") AddMoneyDTO addMoneyForm, @AuthenticationPrincipal User user,
                            Order order) {
-
-
-        log.error(modelUser.getId().toString());
-        //  model.addAttribute("addMoneyForm", addMoneyForm);
+//
+//
+//       // log.error(modelUser.getId().toString());
+//        model.addAttribute("addMoneyForm", addMoneyForm);
 
         try {
-            bankAccountDAO.addAmount(2L, 2000);
+            bankAccountDAO.addAmount(user.getId(), addMoneyForm.getAmount());
 
         } catch (BankTransactionException e) {
             model.addAttribute("errorMessage", "Error: " + e.getMessage());
-            return "/add_money";
+            return "/adding_money";
         }
         return "redirect:/account_page";
     }

@@ -9,18 +9,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ua.training.controller.BankTransactionException;
 import ua.training.controller.RegException;
 import ua.training.dto.UsersDTO;
-import ua.training.entity.BankAccount;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.repository.UserRepository;
-
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.Optional;
 
 @Slf4j
 @Service

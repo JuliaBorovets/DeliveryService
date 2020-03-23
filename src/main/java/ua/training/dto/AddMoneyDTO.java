@@ -9,6 +9,5 @@ import lombok.*;
 @Getter
 public class AddMoneyDTO {
 
-    private Long accountId;
-    private Long amount;
+    private Double amount;
 }
