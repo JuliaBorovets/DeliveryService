@@ -3,6 +3,7 @@ package ua.training.entity.order;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
 import lombok.*;
 import ua.training.entity.user.User;
 

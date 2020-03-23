@@ -5,11 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ua.training.controller.exception.BankTransactionException;
 import ua.training.dto.OrderDTO;
 import ua.training.entity.order.*;
 import ua.training.entity.user.User;
 import ua.training.repository.OrderRepository;
+import ua.training.repository.UserRepository;
+
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -21,13 +25,17 @@ import java.util.List;
 public class OrderService {
 
     private OrderRepository orderRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, UserRepository userRepository) {
         this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
     }
 
+
     public List<Order> findAllOrders(long userId) {
+
         return orderRepository.findOrderByOwnerId(userId);
     }
 
@@ -86,12 +94,9 @@ public class OrderService {
         return orderRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
     }
 
-    public List<Order> findAllOrders() {
-
-        return orderRepository.findAll();
-    }
 
     public List<Order> findAllPaidOrders() {
+
         return orderRepository.findOrderByOrderStatus(OrderStatus.PAID);
     }
 
@@ -114,6 +119,29 @@ public class OrderService {
                 return DeliveryDate.LONG;
         }
         return DeliveryDate.LONG;
+    }
+
+    // MANDATORY: Transaction must be created before.
+    @Transactional
+    public void addAmount(Long id, BigDecimal amount) throws BankTransactionException {
+        User account = userRepository.findUserById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
+        if (account == null) {
+            throw new BankTransactionException("Account not found " + id);
+        }
+        BigDecimal newBalance = account.getBalance().add(amount);
+        if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
+            throw new BankTransactionException(
+                    "The money in the account '" + id + "' is not enough (" + account.getBalance() + ")");
+        }
+        account.setBalance(newBalance);
+    }
+
+    // Do not catch BankTransactionException in this method.
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            rollbackFor = BankTransactionException.class)
+    public void sendMoney(Long fromAccountId, Long toAccountId, BigDecimal amount) throws BankTransactionException {
+        addAmount(toAccountId, amount);
+        addAmount(fromAccountId, amount.negate());
     }
 }
 

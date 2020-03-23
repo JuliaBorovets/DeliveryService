@@ -9,7 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.training.controller.exception.BankTransactionException;
-import ua.training.dao.BankAccountDAO;
+
 import ua.training.dto.*;
 import ua.training.entity.order.Order;
 import ua.training.entity.user.User;
@@ -23,10 +23,6 @@ import java.math.BigDecimal;
 @Slf4j
 @Controller
 public class PaymentController {
-
-    @Autowired
-    private BankAccountDAO bankAccountDAO;
-
 
     private final UserService userService;
     private final OrderService orderService;
@@ -83,7 +79,7 @@ public class PaymentController {
 
             //  Order orderToPay = orderService.getOrderById(orderPayDTO.getOrderNumber());
             BigDecimal amount = orderService.getOrderById(orderPayDTO.getOrderNumber()).getShippingPrice();
-            bankAccountDAO.sendMoney(user.getId(),
+            orderService.sendMoney(user.getId(),
                     ownerAccount, amount);
             orderService.payForOrder(orderService.getOrderById(orderPayDTO.getOrderNumber()));
         } catch (BankTransactionException e) {
@@ -104,7 +100,7 @@ public class PaymentController {
                            Order order) {
 
         try {
-            bankAccountDAO.addAmount(user.getId(), addMoneyForm.getAmount());
+            orderService.addAmount(user.getId(), addMoneyForm.getAmount());
 
         } catch (BankTransactionException e) {
             model.addAttribute("errorMessage", "Error: " + e.getMessage());

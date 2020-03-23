@@ -18,7 +18,6 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import ua.training.controller.exception.RegException;
-import ua.training.dao.BankAccountDAO;
 
 import ua.training.dto.*;
 import ua.training.entity.order.Order;
@@ -37,8 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 public class PageController implements WebMvcConfigurer {
 
-    @Autowired
-    private BankAccountDAO bankAccountDAO;
 
     private final UserService userService;
     private final OrderService orderService;
