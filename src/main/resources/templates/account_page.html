@@ -11,6 +11,14 @@
 
 <div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
 
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 th:text="#{project.name}"></h1>
+        <br>
+        <p class="lead text-muted " th:text="#{index.text}"></p>
+    </div>
+</section>
+
 <div th:include="fragments/footer :: footer" th:remove="tag"></div>
 
 </body>

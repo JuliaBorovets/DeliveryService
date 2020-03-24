@@ -18,20 +18,21 @@
 
     <a class="button" href="/" th:text="#{go.to.first.page}">{To the first page}</a>
     <br>
+    <br>
+
+    <br>
+
     <h1 class="calc" th:text="#{calculator}">{Calculator}</h1>
+
+    <br>
 
     <div class="order">
         <form th:action="@{/calculator}" th:object="${order}" method="post">
 
             <div>
 
-                <input type="number" id="weight" name="calcWeight" class="weight"
+                <input type="number" min="0" id="weight" name="calcWeight" class="weight"
                        th:placeholder="#{new.order.weight}" required>
-            </div>
-            <div>
-
-                <input type="number" id="calcAnnPrice" name="calcAnnPrice" class="announcedPrice"
-                       th:placeholder="#{new.order.announcedPrice}" required>
             </div>
 
             <div class="input-field col s4">

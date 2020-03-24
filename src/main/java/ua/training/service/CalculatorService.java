@@ -22,8 +22,7 @@ public class CalculatorService {
 
     public BigDecimal calculatePrice(CalculatorDTO orderDTO) {
         return BigDecimal.valueOf(ShipmentsTariffs.BASE_PRICE + (getDestinationPrice(orderDTO) + getTypePrice(orderDTO))
-                * ShipmentsTariffs.COEFFICIENT + orderDTO.getCalcAnnPrice().doubleValue() *
-                ShipmentsTariffs.COEFFICIENT_FOR_ANN_PRICE);
+                * ShipmentsTariffs.COEFFICIENT);
     }
 
 }

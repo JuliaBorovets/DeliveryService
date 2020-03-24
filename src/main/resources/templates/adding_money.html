@@ -29,7 +29,7 @@
 
         <div>
 
-            <input type="number" id="amount" name="amount" class="amount" th:placeholder="#{enter}" required>
+            <input type="number" min="0" id="amount" name="amount" class="amount" th:placeholder="#{enter}" required>
         </div>
 
         <br>
@@ -40,6 +40,7 @@
                         type="submit" name="action" th:text="#{reg.submit}">
                 </button>
                 <br>
+
             </div>
         </form>
     </form>

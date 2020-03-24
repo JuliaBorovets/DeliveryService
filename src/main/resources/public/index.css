@@ -15,9 +15,22 @@
     background-color: rgba(169, 163, 221, 0.23);
 }
 
-.uk_lang {
+.uk_lang, .info_amount {
     width: 100px;
     color: #480c54;
+}
+
+.jumbotron {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    margin-bottom: 0;
+    background-color: #fff;
+}
+
+.jumbotron2 {
+
+    margin-bottom: 0;
+    background-color: #fff;
 }
 
 .en_lang {
@@ -92,5 +105,9 @@
     cursor: pointer;
     transition: .5s;
     background: linear-gradient(120deg, #b5badb, rgba(41, 81, 173, 0.5), rgba(56, 52, 219, 0.75)) center;
+}
+
+.lead {
+    size: 40px;
 }
 

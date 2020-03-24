@@ -4,9 +4,11 @@
      <div id="container" >
         <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom shadow-sm">
             <h5 class="p_name mr-md-auto font-weight-bold " th:text="#{project.name}">{Project name}</h5>
+            <span class="info_amount" th:text="${info.amount}"></span>
             <a class="uk_lang" href="?language=uk">Українська</a>
             <a class="en_lang" href="?language=en">English</a>
             <a class="btn btn-outline-primary " th:text="#{general.logout}" href="/logout_new">{Logout}</a>
+
         </div>
 
         <ul class="nav nav-tabs">
@@ -32,11 +34,11 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="/add_money"  >Add money</a>
+                <a class="nav-link" href="/add_money"  th:text="#{add.money}">{Add money}</a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="/admin_page"  >Admin page</a>
+                <a class="nav-link" href="/admin_page" th:text="#{admin.page}" >{Admin page}</a>
             </li>
 
         </ul>
