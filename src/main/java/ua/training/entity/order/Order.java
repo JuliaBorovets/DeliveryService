@@ -40,9 +40,6 @@ public class Order {
     @Enumerated(value = EnumType.STRING)
     private Destination destination;
 
-    @Column(name = "announced_price")
-    private BigDecimal announcedPrice;
-
     @Column(name = "shipping_date")
     private LocalDate shippingDate;
 

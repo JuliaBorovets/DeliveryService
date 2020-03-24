@@ -1,7 +1,6 @@
 package ua.training.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -24,13 +23,11 @@ import java.math.BigDecimal;
 @Controller
 public class PaymentController {
 
-    private final UserService userService;
     private final OrderService orderService;
     private final CalculatorService calculatorService;
     private LanguageDTO languageChanger = new LanguageDTO();
 
-    public PaymentController(UserService userService, OrderService orderService, CalculatorService calculatorService) {
-        this.userService = userService;
+    public PaymentController(OrderService orderService, CalculatorService calculatorService) {
         this.orderService = orderService;
         this.calculatorService = calculatorService;
     }
@@ -60,27 +57,27 @@ public class PaymentController {
         return "calculator";
     }
 
-    //TODO checking fields
-
     @RequestMapping(value = "/to_pay", method = RequestMethod.GET)
-    public String viewSendMoneyPage(Model model) {
+    public String viewSendMoneyPage(@AuthenticationPrincipal User user, Model model) {
+
         return "payment";
     }
 
 
     @RequestMapping(value = "/to_pay", method = RequestMethod.POST)
-    public String processSendMoney(Model model, OrderPayDTO orderPayDTO, @AuthenticationPrincipal User user,
-                                   Order order) {
+    public String processSendMoney(Model model, OrderPayDTO orderPayDTO, @AuthenticationPrincipal User user) {
+
 
         Long ownerAccount = 1L;
         model.addAttribute("sendMoneyForm", orderPayDTO);
 
         try {
-
-            //  Order orderToPay = orderService.getOrderById(orderPayDTO.getOrderNumber());
-            BigDecimal amount = orderService.getOrderById(orderPayDTO.getOrderNumber()).getShippingPrice();
-            orderService.sendMoney(user.getId(),
-                    ownerAccount, amount);
+            Order order = orderService.getOrderById(orderPayDTO.getOrderNumber());
+            if (orderService.isPaid(order)) {
+                throw new BankTransactionException("order is already paid");
+            }
+            BigDecimal amount = order.getShippingPrice();
+            orderService.sendMoney(user.getId(), ownerAccount, amount);
             orderService.payForOrder(orderService.getOrderById(orderPayDTO.getOrderNumber()));
         } catch (BankTransactionException e) {
             model.addAttribute("errorMessage", "Error: " + e.getMessage());
@@ -90,7 +87,7 @@ public class PaymentController {
     }
 
     @RequestMapping(value = "/add_money", method = RequestMethod.GET)
-    public String addMoneyPage(Model model) {
+    public String addMoneyPage(@AuthenticationPrincipal User user, Model model) {
         return "adding_money";
     }
 
@@ -98,7 +95,7 @@ public class PaymentController {
     @RequestMapping(value = "/add_money", method = RequestMethod.POST)
     public String addMoney(Model model, @ModelAttribute("add") AddMoneyDTO addMoneyForm, @AuthenticationPrincipal User user,
                            Order order) {
-
+        log.info(orderService.listBankAccountInfo(user).toString());
         try {
             orderService.addAmount(user.getId(), addMoneyForm.getAmount());
 
@@ -115,4 +112,5 @@ public class PaymentController {
         model.addAttribute("supported", languageChanger.getSupportedLanguages());
 
     }
+
 }

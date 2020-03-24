@@ -103,6 +103,7 @@ public class PageController implements WebMvcConfigurer {
 
     @RequestMapping("/account_page")
     public String accountPage(Model model, @AuthenticationPrincipal User user) {
+        insertBalanceInfo(user, model);
         insertLang(model);
         model.addAttribute("error", false);
         return "account_page";
@@ -186,6 +187,7 @@ public class PageController implements WebMvcConfigurer {
     @RequestMapping("/my_shipments")
     public String shipmentsPage(Model model, @AuthenticationPrincipal User user) {
         insertLang(model);
+        insertBalanceInfo(user, model);
 
         List<Order> orders = orderService.findAllOrders(user.getId());
         model.addAttribute("orders", orders);
@@ -197,6 +199,7 @@ public class PageController implements WebMvcConfigurer {
     public String calculatePage(@AuthenticationPrincipal User user, Model model) {
 
         insertLang(model);
+        insertBalanceInfo(user, model);
 
         if (!currentUserRoleAdmin()) {
             return "account_page";
@@ -213,6 +216,7 @@ public class PageController implements WebMvcConfigurer {
     public String adminPage(@AuthenticationPrincipal User user, Model model) {
         insertLang(model);
         log.error(String.valueOf(user.getRole().equals(RoleType.ROLE_ADMIN)));
+        insertBalanceInfo(user, model);
         if (!currentUserRoleAdmin()) {
             return "account_page";
         }
@@ -277,6 +281,9 @@ public class PageController implements WebMvcConfigurer {
         registry.addInterceptor(localeChangeInterceptor());
     }
 
+    private void insertBalanceInfo(@AuthenticationPrincipal User user, Model model) {
+        model.addAttribute("info", orderService.listBankAccountInfo(user));
+    }
 }
 
 

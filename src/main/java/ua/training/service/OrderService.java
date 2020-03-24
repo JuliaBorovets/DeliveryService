@@ -1,6 +1,7 @@
 package ua.training.service;
 
 import lombok.Getter;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -8,24 +9,31 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ua.training.controller.exception.BankTransactionException;
+import ua.training.dto.AddMoneyDTO;
 import ua.training.dto.OrderDTO;
 import ua.training.entity.order.*;
 import ua.training.entity.user.User;
 import ua.training.repository.OrderRepository;
 import ua.training.repository.UserRepository;
 
+import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 
+@SuppressWarnings("ALL")
 @Getter
 @Service
 public class OrderService {
 
     private OrderRepository orderRepository;
     private UserRepository userRepository;
+
+    @Autowired
+    private EntityManager entityManager;
+
 
     @Autowired
     public OrderService(OrderRepository orderRepository, UserRepository userRepository) {
@@ -47,7 +55,6 @@ public class OrderService {
                 .shippingDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(2))
                 .weight(orderDTO.getDtoWeight())
                 .owner(user)
-                .announcedPrice(orderDTO.getDtoAnnouncedPrice())
                 .orderStatus(OrderStatus.NOT_PAID)
                 .shippingPrice(calculatePrice(orderDTO))
                 .build();
@@ -76,8 +83,7 @@ public class OrderService {
 
     public BigDecimal calculatePrice(OrderDTO orderDTO) {
         return BigDecimal.valueOf(ShipmentsTariffs.BASE_PRICE + (getDestinationPrice(orderDTO) + getTypePrice(orderDTO))
-                * ShipmentsTariffs.COEFFICIENT + orderDTO.getDtoAnnouncedPrice().doubleValue() *
-                ShipmentsTariffs.COEFFICIENT_FOR_ANN_PRICE);
+                * ShipmentsTariffs.COEFFICIENT);
     }
 
 
@@ -94,6 +100,10 @@ public class OrderService {
         return orderRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
     }
 
+    public boolean isPaid(Order order) {
+        return order.getOrderStatus().equals(OrderStatus.PAID);
+
+    }
 
     public List<Order> findAllPaidOrders() {
 
@@ -102,7 +112,7 @@ public class OrderService {
 
 
     public void orderSetShippedStatus(Order order) {
-        if (order.getOrderStatus().equals(OrderStatus.PAID)) {
+        if (isPaid(order)) {
             order.setOrderStatus(OrderStatus.SHIPPED);
             order.setDeliveryDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(findDeliveryDays(order).getDay()));
             orderRepository.save(order);
@@ -142,6 +152,14 @@ public class OrderService {
     public void sendMoney(Long fromAccountId, Long toAccountId, BigDecimal amount) throws BankTransactionException {
         addAmount(toAccountId, amount);
         addAmount(fromAccountId, amount.negate());
+    }
+
+    public Object listBankAccountInfo(User user) {
+        String sql = "Select new " + AddMoneyDTO.class.getName() + "(e.balance) " + " from " +
+                User.class.getName() + " e ";
+
+        Query query = (Query) entityManager.createQuery(sql, AddMoneyDTO.class);
+        return query.getResultList().get(user.getId().intValue() - 1);
     }
 }
 

@@ -15,9 +15,16 @@
     background-color: rgba(169, 163, 221, 0.23);
 }
 
-.uk_lang {
+.uk_lang, .info_amount {
     width: 100px;
     color: #480c54;
+}
+
+.jumbotron {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    margin-bottom: 0;
+    background-color: #fff;
 }
 
 .en_lang {
