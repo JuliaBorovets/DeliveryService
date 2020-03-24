@@ -102,8 +102,13 @@ public class OrderService {
 
     public boolean isPaid(Order order) {
         return order.getOrderStatus().equals(OrderStatus.PAID);
+    }
+
+    public boolean isShipped(Order order) {
+        return order.getOrderStatus().equals(OrderStatus.SHIPPED);
 
     }
+
 
     public List<Order> findAllPaidOrders() {
 

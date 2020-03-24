@@ -107,3 +107,7 @@
     background: linear-gradient(120deg, #b5badb, rgba(41, 81, 173, 0.5), rgba(56, 52, 219, 0.75)) center;
 }
 
+.lead {
+    size: 40px;
+}
+

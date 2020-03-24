@@ -73,7 +73,7 @@ public class PaymentController {
 
         try {
             Order order = orderService.getOrderById(orderPayDTO.getOrderNumber());
-            if (orderService.isPaid(order)) {
+            if (orderService.isPaid(order) || orderService.isShipped(order)) {
                 throw new BankTransactionException("order is already paid");
             }
             BigDecimal amount = order.getShippingPrice();
