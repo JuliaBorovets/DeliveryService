@@ -25,7 +25,6 @@ public class PaymentController {
 
     private final OrderService orderService;
     private final CalculatorService calculatorService;
-    private LanguageDTO languageChanger = new LanguageDTO();
 
     public PaymentController(OrderService orderService, CalculatorService calculatorService) {
         this.orderService = orderService;
@@ -37,7 +36,6 @@ public class PaymentController {
                                 @RequestParam(value = "error", required = false) String error,
                                 Model model) {
 
-        insertLang(model);
         model.addAttribute("error", false);
 
         return "calculator";
@@ -51,7 +49,6 @@ public class PaymentController {
         if (bindingResult.hasErrors()) {
             return "calculator";
         }
-        insertLang(model);
         model.addAttribute("error", false);
         model.addAttribute("price", calculatorService.calculatePrice(order));
         return "calculator";
@@ -104,13 +101,6 @@ public class PaymentController {
             return "/adding_money";
         }
         return "redirect:/account_page";
-    }
-
-    public void insertLang(Model model) {
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
-        model.addAttribute("language", languageChanger);
-        model.addAttribute("supported", languageChanger.getSupportedLanguages());
-
     }
 
 }

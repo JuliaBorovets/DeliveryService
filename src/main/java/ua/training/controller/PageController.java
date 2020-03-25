@@ -40,10 +40,6 @@ public class PageController implements WebMvcConfigurer {
     private final UserService userService;
     private final OrderService orderService;
     private final CalculatorService calculatorService;
-    private LanguageDTO languageChanger = new LanguageDTO();
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public PageController(UserService userService, OrderService orderService, CalculatorService calculatorService) {
@@ -57,8 +53,6 @@ public class PageController implements WebMvcConfigurer {
                            @RequestParam(value = "login", required = false) String login,
                            Model model) {
 
-
-        insertLang(model);
         model.addAttribute("reg", reg != null);
         model.addAttribute("login", login != null);
         return "index";
@@ -70,8 +64,6 @@ public class PageController implements WebMvcConfigurer {
                             @RequestParam(value = "logout", required = false) String logout,
                             @RequestParam(value = "reg", required = false) String reg,
                             Model model) {
-
-        insertLang(model);
 
         model.addAttribute("error", error != null);
         model.addAttribute("logout", logout != null);
@@ -85,8 +77,6 @@ public class PageController implements WebMvcConfigurer {
     public String logoutPage(@RequestParam(value = "reg", required = false) String reg,
                              @RequestParam(value = "login", required = false) String login,
                              Model model) {
-
-        insertLang(model);
 
         model.addAttribute("reg", reg != null);
         model.addAttribute("login", login != null);
@@ -104,7 +94,6 @@ public class PageController implements WebMvcConfigurer {
     @RequestMapping("/account_page")
     public String accountPage(Model model, @AuthenticationPrincipal User user) {
         insertBalanceInfo(user, model);
-        insertLang(model);
         model.addAttribute("error", false);
         return "account_page";
     }
@@ -129,46 +118,38 @@ public class PageController implements WebMvcConfigurer {
     }
 
     @RequestMapping("/newuser")
-    public RedirectView newUser(@ModelAttribute User modelUser, RedirectAttributes redirectAttributes) {
-        RedirectView redirectView = new RedirectView();
+    public String newUser(@ModelAttribute User modelUser, Model model) {
+
         if (!verifyUserFields(modelUser)) {
-            redirectAttributes.addFlashAttribute("user", modelUser);
-            redirectView.setUrl("/reg?error");
-            return redirectView;
+            model.addAttribute("error", true);
+            return "redirect:/reg?error";
         }
 
         try {
             userService.saveNewUser(modelUser);
         } catch (RegException e) {
-            redirectAttributes.addFlashAttribute("user", modelUser);
-            redirectView.setUrl(e.isDuplicate() ? "/reg?duplicate" : "/reg?error");
-            return redirectView;
+            return "redirect:/reg?error";
         }
 
-        redirectView.setUrl("/?reg");
-        return redirectView;
+        return "redirect:/";
     }
 
     @RequestMapping("/neworder")
-    public RedirectView newOrder(@ModelAttribute OrderDTO modelOrder,
-                                 @AuthenticationPrincipal User user,
-                                 RedirectAttributes redirectAttributes) {
-        RedirectView redirectView = new RedirectView();
+    public String newOrder(@ModelAttribute OrderDTO modelOrder,
+                           @AuthenticationPrincipal User user) {
+
         if (!verifyOrderFields(modelOrder)) {
-            redirectAttributes.addFlashAttribute("order", modelOrder);
-            redirectView.setUrl("/create?error");
-            return redirectView;
+            return "redirect:/create?error";
         }
 
         try {
             orderService.createOrder(modelOrder, user);
         } catch (Exception e) {
-            e.printStackTrace();
-            return redirectView;
+            log.error(e.getMessage());
+            return "redirect:/create?error";
         }
 
-        redirectView.setUrl("/account_page");
-        return redirectView;
+        return "redirect:/account_page";
     }
 
 
@@ -186,7 +167,6 @@ public class PageController implements WebMvcConfigurer {
 
     @RequestMapping("/my_shipments")
     public String shipmentsPage(Model model, @AuthenticationPrincipal User user) {
-        insertLang(model);
         insertBalanceInfo(user, model);
 
         List<Order> orders = orderService.findAllOrders(user.getId());
@@ -198,7 +178,6 @@ public class PageController implements WebMvcConfigurer {
     @GetMapping("/admin_page")
     public String calculatePage(@AuthenticationPrincipal User user, Model model) {
 
-        insertLang(model);
         insertBalanceInfo(user, model);
 
         if (!currentUserRoleAdmin()) {
@@ -214,7 +193,6 @@ public class PageController implements WebMvcConfigurer {
 
     @PostMapping("/admin_page")
     public String adminPage(@AuthenticationPrincipal User user, Model model) {
-        insertLang(model);
         log.error(String.valueOf(user.getRole().equals(RoleType.ROLE_ADMIN)));
         insertBalanceInfo(user, model);
         if (!currentUserRoleAdmin()) {
@@ -251,34 +229,6 @@ public class PageController implements WebMvcConfigurer {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) auth.getPrincipal();
         return user.getRole().equals(RoleType.ROLE_ADMIN);
-    }
-
-
-    public void insertLang(Model model) {
-        languageChanger.setChoice(LocaleContextHolder.getLocale().toString());
-        model.addAttribute("language", languageChanger);
-        model.addAttribute("supported", languageChanger.getSupportedLanguages());
-        model.addAttribute("supported", languageChanger.getSupportedLanguages());
-
-    }
-
-    @Bean
-    public LocaleResolver localeResolver() {
-        SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-        localeResolver.setDefaultLocale(Locale.ENGLISH);
-        return localeResolver;
-    }
-
-    @Bean
-    public LocaleChangeInterceptor localeChangeInterceptor() {
-        LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-        localeChangeInterceptor.setParamName("language");
-        return localeChangeInterceptor;
-    }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(localeChangeInterceptor());
     }
 
     private void insertBalanceInfo(@AuthenticationPrincipal User user, Model model) {
