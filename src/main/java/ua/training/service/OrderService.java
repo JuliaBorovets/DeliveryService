@@ -4,6 +4,10 @@ import lombok.Getter;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,6 +27,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -154,6 +159,27 @@ public class OrderService {
 //        Query query = (Query) entityManager.createQuery(sql, AddMoneyDTO.class);
 //        return query.getResultList().get(user.getId().intValue() - 1);
 //    }
+
+
+    public Page<OrderDTO> findPaginated(User user, Pageable pageable) {
+        List<OrderDTO> orders = orderDTOList(user.getId());
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        List<OrderDTO> list;
+
+        if (orders.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, orders.size());
+            list = orders.subList(startItem, toIndex);
+        }
+
+        Page<OrderDTO> bookPage
+                = new PageImpl<OrderDTO>(list, PageRequest.of(currentPage, pageSize), orders.size());
+
+        return bookPage;
+    }
 
 
 }

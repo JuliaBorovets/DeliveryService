@@ -2,13 +2,19 @@ package ua.training.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.jaxb.SpringDataJaxb;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.RedirectView;
 import ua.training.controller.exception.RegException;
@@ -18,6 +24,7 @@ import ua.training.dto.*;
 import ua.training.entity.order.Order;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
+import ua.training.repository.OrderRepository;
 import ua.training.service.CalculatorService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
@@ -29,6 +36,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,6 +50,10 @@ public class PageController implements WebMvcConfigurer {
     private final UserService userService;
     private final OrderService orderService;
     private final CalculatorService calculatorService;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
 
     @Autowired
     private ControllerUtil utility;
@@ -166,16 +180,26 @@ public class PageController implements WebMvcConfigurer {
     }
 
 
-    @RequestMapping("/my_shipments")
-    public String shipmentsPage(Model model, @AuthenticationPrincipal User user) {
+    @RequestMapping("/my_shipments/page/{page}")
+    public String shipmentsPage(Model model, @AuthenticationPrincipal User user,
+                                @PathVariable("page") int page) {
         //insertBalanceInfo(user, model);
-        List<OrderDTO> orders = orderService.orderDTOList(user.getId());
-        orders.forEach(this::setLocalFields);
 
-        model.addAttribute("orders", orders);
+
+        PageRequest pageable = PageRequest.of(page - 1, 5);
+        Page<OrderDTO> articlePage = orderService.findPaginated(user, pageable);
+        articlePage.getContent().forEach(this::setLocalFields);
+        int totalPages = articlePage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        model.addAttribute("orders", articlePage.getContent());
 
         return "my_shipments";
     }
+    
 
     @GetMapping("/admin_page")
     public String calculatePage(@AuthenticationPrincipal User user, Model model) {
