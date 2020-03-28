@@ -21,23 +21,15 @@
 <div>
     <br/>
 
-
     <form th:action="@{/admin_page}" method="post">
-
-        <section class="jumbotron2 text-center">
-            <div class="container">
-                <form>
-                    <div class="col s12 sign">
-                        <button class="calculate waves-effect waves-light"
-                                type="submit" name="action" th:text="#{to.ship}">
-                        </button>
-                        <br>
-                    </div>
-                </form>
+        <form>
+            <div class="col s12 sign">
+                <button class="calculate waves-effect waves-light"
+                        type="submit" name="action" th:text="#{to.ship}">
+                </button>
+                <br>
             </div>
-        </section>
-        <br>
-
+        </form>
         <br>
 
         <table class="table table-hover">
@@ -46,7 +38,6 @@
             <tr>
                 <th scope="col" th:width="80px">ID</th>
                 <th scope="col" th:width="80px">User ID</th>
-                <th scope="col" th:text="#{new.order.description}" th:width="200px">{Description}</th>
                 <th scope="col" th:text="#{order.type}">{Type}</th>
                 <th scope="col" th:text="#{order.weight}">{Weight}</th>
                 <th scope="col" th:text="#{order.destination}">{Destination}</th>
@@ -58,15 +49,14 @@
         </thead>
         <tbody>
         <tr th:each="order : ${orders}">
-            <th scope="row" th:text="${order.id}" style="width: 10px">{ID}</th>
-            <th scope="row" th:text="${order.getOwner().getId()}" style="width: 10px">{ID}</th>
-            <td th:text="${order.description}">{Description}</td>
-            <td th:text="${order.orderType}">{Order type}</td>
-            <td th:text="${order.weight}">{Order weight}</td>
-            <td th:text="${order.destination}">{Order destination}</td>
+            <th scope="row" th:text="${order.dtoId}" style="width: 10px">{ID}</th>
+            <th scope="row" th:text="${order.getDtoOwner().getId()}" style="width: 10px">{ID}</th>
+            <td th:text="${order.type}">{Order type}</td>
+            <td th:text="${order.dtoWeight}">{Order weight}</td>
+            <td th:text="${order.dtoDestination}">{Order destination}</td>
             <td th:text="${order.shippingDate}">{Order shippingDate}</td>
-            <td th:text="${order.shippingPrice}">{Order shippingPrice}</td>
-            <td th:text="${order.orderStatus}">{Order status}</td>
+            <td th:text="${order.dtoShippingPrice}">{Order shippingPrice}</td>
+            <td th:text="${order.status}">{Order status}</td>
             <td th:text="${order.deliveryDate}">{Delivery Status}</td>
         </tr>
         </tbody>

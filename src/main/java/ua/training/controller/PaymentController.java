@@ -11,6 +11,7 @@ import ua.training.controller.exception.BankTransactionException;
 
 import ua.training.dto.*;
 import ua.training.entity.order.Order;
+import ua.training.entity.order.OrderStatus;
 import ua.training.entity.user.User;
 import ua.training.service.CalculatorService;
 import ua.training.service.OrderService;
@@ -18,6 +19,7 @@ import ua.training.service.UserService;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -61,25 +63,25 @@ public class PaymentController {
     }
 
 
-    @RequestMapping(value = "/to_pay", method = RequestMethod.POST)
-    public String processSendMoney(Model model, OrderPayDTO orderPayDTO, @AuthenticationPrincipal User user) {
-
+    @GetMapping("pay/{id}")
+    String payShipment(@AuthenticationPrincipal User user,
+                       @PathVariable("id") long shipmentId, Model model) throws BankTransactionException {
 
         Long ownerAccount = 1L;
-        model.addAttribute("sendMoneyForm", orderPayDTO);
-
         try {
-            Order order = orderService.getOrderById(orderPayDTO.getOrderNumber());
-            if (orderService.isPaid(order) || orderService.isShipped(order)) {
+            Order order = orderService.getOrderById(shipmentId);
+            if (order.getOrderStatus().equals(OrderStatus.PAID) || order.getOrderStatus().equals(OrderStatus.SHIPPED)) {
                 throw new BankTransactionException("order is already paid");
             }
+
             BigDecimal amount = order.getShippingPrice();
             orderService.sendMoney(user.getId(), ownerAccount, amount);
-            orderService.payForOrder(orderService.getOrderById(orderPayDTO.getOrderNumber()));
+            orderService.payForOrder(order);
         } catch (BankTransactionException e) {
             model.addAttribute("errorMessage", "Error: " + e.getMessage());
-            return "/payment";
+            return "redirect:/my_shipments";
         }
+
         return "redirect:/my_shipments";
     }
 
@@ -92,6 +94,7 @@ public class PaymentController {
     @RequestMapping(value = "/add_money", method = RequestMethod.POST)
     public String addMoney(Model model, @ModelAttribute("add") AddMoneyDTO addMoneyForm, @AuthenticationPrincipal User user,
                            Order order) {
+        log.error(user.getBalance().toString());
        // log.info(orderService.listBankAccountInfo(user).toString());
         try {
             orderService.addAmount(user.getId(), addMoneyForm.getAmount());

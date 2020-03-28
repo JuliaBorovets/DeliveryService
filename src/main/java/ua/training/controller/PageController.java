@@ -2,6 +2,7 @@ package ua.training.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,9 +22,13 @@ import ua.training.service.CalculatorService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
 
+import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
+import java.util.Locale;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -137,9 +142,6 @@ public class PageController implements WebMvcConfigurer {
     public String newOrder(@ModelAttribute OrderDTO modelOrder,
                            @AuthenticationPrincipal User user) {
 
-        if (!verifyOrderFields(modelOrder)) {
-            return "redirect:/create?error";
-        }
 
         try {
             orderService.createOrder(modelOrder, user);
@@ -184,7 +186,8 @@ public class PageController implements WebMvcConfigurer {
             return "account_page";
         }
         model.addAttribute("admin", currentUserRoleAdmin());
-        List<Order> orders = orderService.findAllPaidOrders();
+        List<OrderDTO> orders = orderService.findAllPaidOrdersDTO();
+        orders.forEach(this::setLocalFields);
         model.addAttribute("orders", orders);
 
         return "admin_page";
@@ -199,14 +202,14 @@ public class PageController implements WebMvcConfigurer {
             return "account_page";
         }
         model.addAttribute("admin", currentUserRoleAdmin());
-        List<Order> orders = orderService.findAllPaidOrders();
+        List<OrderDTO> orders = orderService.findAllPaidOrdersDTO();
         model.addAttribute("orders", orders);
 
-        for (Order o : orders) {
+        for (OrderDTO o : orders) {
             orderService.orderSetShippedStatus(o);
         }
 
-        return "admin_page";
+        return "account_page";
 
 
     }
@@ -220,9 +223,6 @@ public class PageController implements WebMvcConfigurer {
                 user.getLogin().matches(RegistrationValidation.LOGIN_REGEX);
     }
 
-    private boolean verifyOrderFields(OrderDTO order) {
-        return order.getDtoDescription().matches(OrderValidation.DESCRIPTION);
-    }
 
 
     private boolean currentUserRoleAdmin() {
@@ -236,12 +236,21 @@ public class PageController implements WebMvcConfigurer {
 //    }
 
     private void setLocalFields(OrderDTO order) {
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(LocaleContextHolder.getLocale());
         utility.reset();
-        // order.setDeliveryDate(order.getDtoDeliveryDate().format(timeFormatter));
-        order.setDestination(utility.getMessage(order.getDtoDestination().getName()));
-        order.setType(utility.getMessage(order.getDtoOrderType().getName()));
-        order.setStatus(utility.getMessage(order.getOrderStatus().getName()));
+        String timeFormatter = DateFormat.getTimeInstance().format(DateFormat.FULL);
+        LocalDate zoned = LocalDate.now();
+        log.error(zoned.toString());
+        DateTimeFormatter pattern = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(LocaleContextHolder.getLocale());
+
+
+        log.error(zoned.format(pattern));
+        if (order.getDtoDeliveryDate() != null) {
+            order.setDeliveryDate(order.getDtoDeliveryDate().format(pattern));
+        }
+        order.setShippingDate(order.getDtoShippingDate().format(pattern));
+        order.setDestination(utility.getMessage(order.getDtoDestination().toString()));
+        order.setType(utility.getMessage(order.getDtoOrderType().toString()));
+        order.setStatus(utility.getMessage(order.getDtoOrderStatus().getName()));
     }
 
 }

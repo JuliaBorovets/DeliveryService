@@ -26,9 +26,6 @@ public class Order {
     @Enumerated(value = EnumType.STRING)
     private OrderType orderType;
 
-    @Column(name = "description", nullable = false)
-    private String description;
-
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;

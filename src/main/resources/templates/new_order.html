@@ -21,13 +21,7 @@
     <div class="order">
         <form id="newOrder" name="newOrder" action="#" th:action="@{/neworder}" th:object="${newOrder}" method="post">
             <br>
-            <div>
 
-                <input type="text" id="dtoDescription" name="dtoDescription" class="dtoDescription"
-                       th:field="*{dtoDescription}"
-                       th:placeholder="#{new.order.description}" required>
-
-            </div>
             <div>
 
                 <input type="number" id="weight" name="weight" th:field="*{dtoWeight}" class="weight"

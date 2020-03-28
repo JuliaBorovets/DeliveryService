@@ -27,4 +27,9 @@ public enum Destination {
     public int getPriceForDestination() {
         return priceForDestination;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

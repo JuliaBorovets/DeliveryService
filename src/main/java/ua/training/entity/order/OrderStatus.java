@@ -17,6 +17,6 @@ public enum OrderStatus {
 
     @Override
     public String toString() {
-        return name;
+        return "status." + name().toLowerCase();
     }
 }

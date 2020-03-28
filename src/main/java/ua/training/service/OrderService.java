@@ -54,17 +54,12 @@ public class OrderService {
     }
 
 
-    public List<Order> findAllOrders(long userId) {
-
-        return orderRepository.findOrderByOwnerId(userId);
-    }
-
     public void createOrder(OrderDTO orderDTO, User user) {
+
         Order order = Order.builder()
-                .description(orderDTO.getDtoDescription())
                 .destination(orderDTO.getDtoDestination())
                 .orderType(orderDTO.getDtoOrderType())
-                .shippingDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(2))
+                .shippingDate(LocalDate.now())
                 .weight(orderDTO.getDtoWeight())
                 .owner(user)
                 .orderStatus(OrderStatus.NOT_PAID)
@@ -97,8 +92,8 @@ public class OrderService {
         return orderRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
     }
 
-    public boolean isPaid(Order order) {
-        return order.getOrderStatus().equals(OrderStatus.PAID);
+    public boolean isPaid(OrderDTO order) {
+        return order.getDtoOrderStatus().equals(OrderStatus.PAID);
     }
 
     public boolean isShipped(Order order) {
@@ -111,20 +106,35 @@ public class OrderService {
         return orderRepository.findOrderByOrderStatus(OrderStatus.PAID);
     }
 
+    public List<OrderDTO> findAllPaidOrdersDTO() {
+
+        return orderRepository
+                .findOrderByOrderStatus(OrderStatus.PAID)
+                .stream()
+                .map(OrderDTO::new)
+                .collect(Collectors.toList());
+    }
+
 
     @Transactional
-    public void orderSetShippedStatus(Order order) {
-        if (isPaid(order)) {
+    public void orderSetShippedStatus(OrderDTO orderDTO) {
+        Order order = orderRepository.findOrderById(orderDTO.getDtoId()).orElseThrow(() -> new UsernameNotFoundException(orderDTO.getDtoId().toString()));
+        ;
+        if (isPaid(orderDTO)) {
             order.setOrderStatus(OrderStatus.SHIPPED);
-            order.setDeliveryDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(order.getDestination().getDay()));
+            order.setDeliveryDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(orderDTO.getDtoDestination().getDay()));
             orderRepository.save(order);
         }
     }
 
 
+    @Transactional
     public void addAmount(Long id, BigDecimal amount) throws BankTransactionException {
         User account = userRepository.findUserById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
         BigDecimal newBalance = account.getBalance().add(amount);
+        if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
+            throw new BankTransactionException("no money");
+        }
         account.setBalance(newBalance);
     }
 
