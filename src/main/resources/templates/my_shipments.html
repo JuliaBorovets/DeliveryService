@@ -45,14 +45,14 @@
         <tbody>
         <tr th:each="order : ${orders}">
             <th scope="row" th:text="${order.id}" style="width: 10px">{ID}</th>
-            <td th:text="${order.description}">{Description}</td>
-            <td th:text="${order.orderType}">{Order type}</td>
-            <td th:text="${order.weight}">{Order weight}</td>
-            <td th:text="${order.destination}">{Order destination}</td>
+            <td th:text="${order.dtoDescription}">{Description}</td>
+            <td th:text="${order.type}">{Order type}</td>
+            <td th:text="${order.dtoWeight}">{Order weight}</td>
+            <td th:text="${order.dtoDestination}">{Order destination}</td>
             <td th:text="${order.shippingDate}">{Order shippingDate}</td>
             <td th:text="${order.deliveryDate}">{Order deliveryDate}</td>
             <td th:text="${order.shippingPrice}">{Order shippingPrice}</td>
-            <td th:text="${order.orderStatus}">{Order status}</td>
+            <td th:text="${order.status}">{Order status}</td>
         </tr>
         </tbody>
     </table>

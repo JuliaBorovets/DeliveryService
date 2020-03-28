@@ -5,6 +5,7 @@ import ua.training.entity.user.RoleType;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 @Setter
 @Getter
@@ -12,6 +13,8 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @ToString
 public class UserDTO {
+
+    Long id;
     @NotNull
     String firstName;
 
@@ -35,5 +38,7 @@ public class UserDTO {
 
     @NotNull
     RoleType roleType;
+
+    BigDecimal balance;
 
 }

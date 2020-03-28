@@ -92,7 +92,7 @@ public class PaymentController {
     @RequestMapping(value = "/add_money", method = RequestMethod.POST)
     public String addMoney(Model model, @ModelAttribute("add") AddMoneyDTO addMoneyForm, @AuthenticationPrincipal User user,
                            Order order) {
-        log.info(orderService.listBankAccountInfo(user).toString());
+       // log.info(orderService.listBankAccountInfo(user).toString());
         try {
             orderService.addAmount(user.getId(), addMoneyForm.getAmount());
 

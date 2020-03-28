@@ -1,7 +1,22 @@
 package ua.training.entity.order;
 
 public enum OrderStatus {
-    PAID,
-    NOT_PAID,
-    SHIPPED;
+    PAID("status.paid"),
+    NOT_PAID("status.not.paid"),
+    SHIPPED("status.shipped");
+
+    private String name;
+
+    OrderStatus(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

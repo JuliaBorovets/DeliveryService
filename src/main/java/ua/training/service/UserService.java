@@ -2,6 +2,7 @@ package ua.training.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.query.Query;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.training.controller.exception.RegException;
+import ua.training.dto.AddMoneyDTO;
+import ua.training.dto.UserDTO;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.repository.UserRepository;
@@ -70,5 +73,9 @@ public class UserService implements UserDetailsService {
                 .enabled(true)
                 .balance(BigDecimal.ZERO)
                 .build();
+    }
+
+    public BigDecimal listBankAccountInfo(UserDTO user) {
+        return user.getBalance();
     }
 }

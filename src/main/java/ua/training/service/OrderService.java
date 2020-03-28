@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.training.controller.exception.BankTransactionException;
 import ua.training.dto.AddMoneyDTO;
 import ua.training.dto.OrderDTO;
+import ua.training.dto.UserDTO;
 import ua.training.entity.order.*;
 import ua.training.entity.user.User;
 import ua.training.repository.OrderRepository;
@@ -21,7 +22,10 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("ALL")
 @Getter
@@ -41,6 +45,14 @@ public class OrderService {
         this.userRepository = userRepository;
     }
 
+    public List<OrderDTO> orderDTOList(Long userId) {
+        return orderRepository
+                .findOrderByOwnerId(userId)
+                .stream()
+                .map(OrderDTO::new)
+                .collect(Collectors.toList());
+    }
+
 
     public List<Order> findAllOrders(long userId) {
 
@@ -50,8 +62,8 @@ public class OrderService {
     public void createOrder(OrderDTO orderDTO, User user) {
         Order order = Order.builder()
                 .description(orderDTO.getDtoDescription())
-                .destination(getDestination(orderDTO))
-                .orderType(getOrderType(orderDTO))
+                .destination(orderDTO.getDtoDestination())
+                .orderType(orderDTO.getDtoOrderType())
                 .shippingDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(2))
                 .weight(orderDTO.getDtoWeight())
                 .owner(user)
@@ -65,25 +77,10 @@ public class OrderService {
         }
     }
 
-    private OrderType getOrderType(OrderDTO dto) {
-        return OrderType.valueOf(dto.getDtoOrderType());
-    }
-
-    private Destination getDestination(OrderDTO dto) {
-        return Destination.valueOf(dto.getDtoDestination());
-    }
-
-    private int getDestinationPrice(OrderDTO orderDTO) {
-        return Destination.valueOf(orderDTO.getDtoDestination()).getPriceForDestination();
-    }
-
-    private int getTypePrice(OrderDTO orderDTO) {
-        return OrderType.valueOf(orderDTO.getDtoOrderType()).getPriceForType();
-    }
 
     public BigDecimal calculatePrice(OrderDTO orderDTO) {
-        return BigDecimal.valueOf(ShipmentsTariffs.BASE_PRICE + (getDestinationPrice(orderDTO) + getTypePrice(orderDTO))
-                * ShipmentsTariffs.COEFFICIENT);
+        return BigDecimal.valueOf(ShipmentsTariffs.BASE_PRICE + (orderDTO.getDtoDestination().getPriceForDestination()
+                + orderDTO.getDtoOrderType().getPriceForType()) * ShipmentsTariffs.COEFFICIENT);
     }
 
 
@@ -109,49 +106,29 @@ public class OrderService {
 
     }
 
-
     public List<Order> findAllPaidOrders() {
 
         return orderRepository.findOrderByOrderStatus(OrderStatus.PAID);
     }
 
 
+    @Transactional
     public void orderSetShippedStatus(Order order) {
         if (isPaid(order)) {
             order.setOrderStatus(OrderStatus.SHIPPED);
-            order.setDeliveryDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(findDeliveryDays(order).getDay()));
+            order.setDeliveryDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(order.getDestination().getDay()));
             orderRepository.save(order);
         }
     }
 
-    private DeliveryDate findDeliveryDays(Order order) {
-        switch (order.getDestination()) {
-            case NONE:
-                return DeliveryDate.IN_A_MOMENT;
-            case INNER:
-                return DeliveryDate.QUICKLY;
-            case COUNTRY:
-                return DeliveryDate.LONG;
-        }
-        return DeliveryDate.LONG;
-    }
 
-    // MANDATORY: Transaction must be created before.
-    @Transactional
     public void addAmount(Long id, BigDecimal amount) throws BankTransactionException {
         User account = userRepository.findUserById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
-        if (account == null) {
-            throw new BankTransactionException("Account not found " + id);
-        }
         BigDecimal newBalance = account.getBalance().add(amount);
-        if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
-            throw new BankTransactionException(
-                    "The money in the account '" + id + "' is not enough (" + account.getBalance() + ")");
-        }
         account.setBalance(newBalance);
     }
 
-    // Do not catch BankTransactionException in this method.
+
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             rollbackFor = BankTransactionException.class)
     public void sendMoney(Long fromAccountId, Long toAccountId, BigDecimal amount) throws BankTransactionException {
@@ -159,12 +136,15 @@ public class OrderService {
         addAmount(fromAccountId, amount.negate());
     }
 
-    public Object listBankAccountInfo(User user) {
-        String sql = "Select new " + AddMoneyDTO.class.getName() + "(e.balance) " + " from " +
-                User.class.getName() + " e ";
 
-        Query query = (Query) entityManager.createQuery(sql, AddMoneyDTO.class);
-        return query.getResultList().get(user.getId().intValue() - 1);
-    }
+//    public Object listBankAccountInfo(User user) {
+//        String sql = "Select new " + AddMoneyDTO.class.getName() + "(e.balance) " + " from " +
+//                User.class.getName() + " e ";
+//
+//        Query query = (Query) entityManager.createQuery(sql, AddMoneyDTO.class);
+//        return query.getResultList().get(user.getId().intValue() - 1);
+//    }
+
+
 }
 

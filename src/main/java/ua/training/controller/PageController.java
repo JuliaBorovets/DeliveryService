@@ -1,24 +1,18 @@
 package ua.training.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import ua.training.controller.exception.RegException;
 
+import ua.training.controller.utility.ControllerUtil;
 import ua.training.dto.*;
 import ua.training.entity.order.Order;
 import ua.training.entity.user.RoleType;
@@ -27,8 +21,9 @@ import ua.training.service.CalculatorService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
-import java.util.Locale;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,6 +35,10 @@ public class PageController implements WebMvcConfigurer {
     private final UserService userService;
     private final OrderService orderService;
     private final CalculatorService calculatorService;
+
+    @Autowired
+    private ControllerUtil utility;
+
 
     @Autowired
     public PageController(UserService userService, OrderService orderService, CalculatorService calculatorService) {
@@ -93,7 +92,7 @@ public class PageController implements WebMvcConfigurer {
 
     @RequestMapping("/account_page")
     public String accountPage(Model model, @AuthenticationPrincipal User user) {
-        insertBalanceInfo(user, model);
+        //insertBalanceInfo(user, model);
         model.addAttribute("error", false);
         return "account_page";
     }
@@ -167,9 +166,10 @@ public class PageController implements WebMvcConfigurer {
 
     @RequestMapping("/my_shipments")
     public String shipmentsPage(Model model, @AuthenticationPrincipal User user) {
-        insertBalanceInfo(user, model);
+        //insertBalanceInfo(user, model);
+        List<OrderDTO> orders = orderService.orderDTOList(user.getId());
+        orders.forEach(this::setLocalFields);
 
-        List<Order> orders = orderService.findAllOrders(user.getId());
         model.addAttribute("orders", orders);
 
         return "my_shipments";
@@ -178,7 +178,7 @@ public class PageController implements WebMvcConfigurer {
     @GetMapping("/admin_page")
     public String calculatePage(@AuthenticationPrincipal User user, Model model) {
 
-        insertBalanceInfo(user, model);
+        //insertBalanceInfo(user, model);
 
         if (!currentUserRoleAdmin()) {
             return "account_page";
@@ -194,7 +194,7 @@ public class PageController implements WebMvcConfigurer {
     @PostMapping("/admin_page")
     public String adminPage(@AuthenticationPrincipal User user, Model model) {
         log.error(String.valueOf(user.getRole().equals(RoleType.ROLE_ADMIN)));
-        insertBalanceInfo(user, model);
+        //insertBalanceInfo(user, model);
         if (!currentUserRoleAdmin()) {
             return "account_page";
         }
@@ -231,9 +231,19 @@ public class PageController implements WebMvcConfigurer {
         return user.getRole().equals(RoleType.ROLE_ADMIN);
     }
 
-    private void insertBalanceInfo(@AuthenticationPrincipal User user, Model model) {
-        model.addAttribute("info", orderService.listBankAccountInfo(user));
+//    private void insertBalanceInfo(@AuthenticationPrincipal User user, Model model) {
+//        model.addAttribute("info", userService.listBankAccountInfo(user));
+//    }
+
+    private void setLocalFields(OrderDTO order) {
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(LocaleContextHolder.getLocale());
+        utility.reset();
+        // order.setDeliveryDate(order.getDtoDeliveryDate().format(timeFormatter));
+        order.setDestination(utility.getMessage(order.getDtoDestination().getName()));
+        order.setType(utility.getMessage(order.getDtoOrderType().getName()));
+        order.setStatus(utility.getMessage(order.getOrderStatus().getName()));
     }
+
 }
 
 
