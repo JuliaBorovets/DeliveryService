@@ -79,10 +79,10 @@ public class PaymentController {
             orderService.payForOrder(order);
         } catch (BankTransactionException e) {
             model.addAttribute("errorMessage", "Error: " + e.getMessage());
-            return "redirect:/my_shipments";
+            return "redirect:/my_shipments/page/1";
         }
 
-        return "redirect:/my_shipments";
+        return "redirect:/my_shipments/page/1";
     }
 
     @RequestMapping(value = "/add_money", method = RequestMethod.GET)

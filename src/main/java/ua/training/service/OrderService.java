@@ -26,10 +26,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("ALL")
@@ -162,7 +159,13 @@ public class OrderService {
 
 
     public Page<OrderDTO> findPaginated(User user, Pageable pageable) {
-        List<OrderDTO> orders = orderDTOList(user.getId());
+
+        List<OrderDTO> orders = orderDTOList(user.getId())
+                .stream()
+                .sorted(Comparator.comparing(OrderDTO::getDtoId)
+                        .reversed())
+                .collect(Collectors.toList());
+
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
@@ -175,8 +178,7 @@ public class OrderService {
             list = orders.subList(startItem, toIndex);
         }
 
-        Page<OrderDTO> bookPage
-                = new PageImpl<OrderDTO>(list, PageRequest.of(currentPage, pageSize), orders.size());
+        Page<OrderDTO> bookPage = new PageImpl<OrderDTO>(list, PageRequest.of(currentPage, pageSize), orders.size());
 
         return bookPage;
     }

@@ -34,6 +34,7 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -185,21 +186,20 @@ public class PageController implements WebMvcConfigurer {
                                 @PathVariable("page") int page) {
         //insertBalanceInfo(user, model);
 
-
         PageRequest pageable = PageRequest.of(page - 1, 5);
         Page<OrderDTO> articlePage = orderService.findPaginated(user, pageable);
         articlePage.getContent().forEach(this::setLocalFields);
+
         int totalPages = articlePage.getTotalPages();
         if (totalPages > 0) {
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-
         model.addAttribute("orders", articlePage.getContent());
 
         return "my_shipments";
     }
-    
+
 
     @GetMapping("/admin_page")
     public String calculatePage(@AuthenticationPrincipal User user, Model model) {
@@ -209,6 +209,7 @@ public class PageController implements WebMvcConfigurer {
         if (!currentUserRoleAdmin()) {
             return "account_page";
         }
+
         model.addAttribute("admin", currentUserRoleAdmin());
         List<OrderDTO> orders = orderService.findAllPaidOrdersDTO();
         orders.forEach(this::setLocalFields);
@@ -234,8 +235,6 @@ public class PageController implements WebMvcConfigurer {
         }
 
         return "account_page";
-
-
     }
 
 
