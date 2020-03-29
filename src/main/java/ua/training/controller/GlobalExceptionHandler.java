@@ -17,12 +17,12 @@ import ua.training.dto.UserDTO;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-//    @ExceptionHandler(Exception.class)
-//    public ModelAndView handleApplicationException() {
-//        ModelAndView modelAndView = new ModelAndView("index");
-//        modelAndView.addObject("error", true);
-//        return modelAndView;
-//    }
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleApplicationException() {
+        ModelAndView modelAndView = new ModelAndView("index");
+        modelAndView.addObject("error", true);
+        return modelAndView;
+    }
 
     @ExceptionHandler(BankTransactionException.class)
     public String handleRegException() {

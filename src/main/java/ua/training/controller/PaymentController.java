@@ -7,11 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import ua.training.controller.exception.BankTransactionException;
-
 import ua.training.controller.exception.OrderNotFoundException;
-import ua.training.controller.exception.RegException;
 import ua.training.dto.*;
 import ua.training.entity.order.Order;
 import ua.training.entity.order.OrderStatus;

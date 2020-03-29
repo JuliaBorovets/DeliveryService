@@ -1,6 +1,5 @@
 package ua.training.dto;
 
-
 import lombok.*;
 
 import javax.validation.constraints.*;

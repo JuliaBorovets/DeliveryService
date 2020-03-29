@@ -1,7 +1,6 @@
 package ua.training.service;
 
 import lombok.Getter;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,7 +23,6 @@ import ua.training.repository.OrderRepository;
 import ua.training.repository.UserRepository;
 
 import javax.persistence.EntityManager;
-import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;

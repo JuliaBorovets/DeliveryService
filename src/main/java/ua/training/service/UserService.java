@@ -15,7 +15,6 @@ import ua.training.entity.user.User;
 import ua.training.repository.UserRepository;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 @Slf4j
 @Service
