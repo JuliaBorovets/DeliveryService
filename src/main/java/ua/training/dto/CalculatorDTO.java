@@ -13,11 +13,15 @@ import java.math.BigDecimal;
 @ToString
 public class CalculatorDTO {
 
+    @Min(1)
     private BigDecimal calcWeight;
 
+    @NotNull
     private String calcDestination;
 
+    @NotNull
     private String calcType;
 
+    @NotNull
     private BigDecimal calcAnnPrice;
 }

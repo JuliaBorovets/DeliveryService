@@ -13,10 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ua.training.controller.exception.BankTransactionException;
+import ua.training.controller.exception.OrderCreateException;
 import ua.training.dto.AddMoneyDTO;
 import ua.training.dto.OrderDTO;
 import ua.training.dto.UserDTO;
 import ua.training.entity.order.*;
+import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.repository.OrderRepository;
 import ua.training.repository.UserRepository;
@@ -56,7 +58,7 @@ public class OrderService {
     }
 
 
-    public void createOrder(OrderDTO orderDTO, User user) {
+    public void createOrder(OrderDTO orderDTO, User user) throws OrderCreateException {
 
         Order order = Order.builder()
                 .destination(orderDTO.getDtoDestination())
@@ -70,7 +72,7 @@ public class OrderService {
         try {
             orderRepository.save(order);
         } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException();
+            throw new OrderCreateException("Can not create order");
         }
     }
 
@@ -80,28 +82,39 @@ public class OrderService {
                 + orderDTO.getDtoOrderType().getPriceForType()) * ShipmentsTariffs.COEFFICIENT);
     }
 
+    private Long getAdminAccount() {
+        User admin = userRepository.findUserByRole(RoleType.ROLE_ADMIN)
+                .orElseThrow(() -> new UsernameNotFoundException("no admin"));
+
+        return admin.getId();
+    }
 
     public void payForOrder(Order order) throws BankTransactionException {
-        if (!order.getOrderStatus().equals(OrderStatus.PAID)) {
+        if (!isShipped(order) && !isPaid(order)) {
             order.setOrderStatus(OrderStatus.PAID);
+            BigDecimal amount = order.getShippingPrice();
+            sendMoney(order.getOwner().getId(), getAdminAccount(), amount);
             orderRepository.save(order);
         } else throw new BankTransactionException("order is already paid");
     }
 
 
-    public Order getOrderById(@NotNull Long id) {
+    public Order getOrderById(Long id) {
 
-        return orderRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException(id.toString()));
     }
 
-    public boolean isPaid(OrderDTO order) {
-        return order.getDtoOrderStatus().equals(OrderStatus.PAID);
+    public boolean isPaid(Order order) {
+
+        return order.getOrderStatus().equals(OrderStatus.PAID);
     }
 
     public boolean isShipped(Order order) {
-        return order.getOrderStatus().equals(OrderStatus.SHIPPED);
 
+        return order.getOrderStatus().equals(OrderStatus.SHIPPED);
     }
+
 
     public List<Order> findAllPaidOrders() {
 
@@ -119,12 +132,12 @@ public class OrderService {
 
 
     @Transactional
-    public void orderSetShippedStatus(OrderDTO orderDTO) {
-        Order order = orderRepository.findOrderById(orderDTO.getDtoId()).orElseThrow(() -> new UsernameNotFoundException(orderDTO.getDtoId().toString()));
-        ;
-        if (isPaid(orderDTO)) {
+    public void orderSetShippedStatus(Long id) {
+        Order order = orderRepository.findOrderById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
+
+        if (isPaid(order)) {
             order.setOrderStatus(OrderStatus.SHIPPED);
-            order.setDeliveryDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(orderDTO.getDtoDestination().getDay()));
+            order.setDeliveryDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(order.getDestination().getDay()));
             orderRepository.save(order);
         }
     }
@@ -143,19 +156,10 @@ public class OrderService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             rollbackFor = BankTransactionException.class)
-    public void sendMoney(Long fromAccountId, Long toAccountId, BigDecimal amount) throws BankTransactionException {
+    private void sendMoney(Long fromAccountId, Long toAccountId, BigDecimal amount) throws BankTransactionException {
         addAmount(toAccountId, amount);
         addAmount(fromAccountId, amount.negate());
     }
-
-
-//    public Object listBankAccountInfo(User user) {
-//        String sql = "Select new " + AddMoneyDTO.class.getName() + "(e.balance) " + " from " +
-//                User.class.getName() + " e ";
-//
-//        Query query = (Query) entityManager.createQuery(sql, AddMoneyDTO.class);
-//        return query.getResultList().get(user.getId().intValue() - 1);
-//    }
 
 
     public Page<OrderDTO> findPaginated(User user, Pageable pageable) {

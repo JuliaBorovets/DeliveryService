@@ -5,25 +5,28 @@
     <title>Payment service</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="payment.css">
+    <link rel="stylesheet" href="index.css">
+
 </head>
 <body>
 
+<div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
 
 <div class="column">
-    <br>
-    <div class="alert" th:if="${error}">
-        <h3 class="black" th:text="#{reg.error.generic}">{Reg error}</h3>
-    </div>
 
-    <a class="button" href="/account_page" th:text="#{go.to.first.page}">{To the first page}</a>
-    <br>
-    <br>
+    <section class="jumbotron2 text-center">
 
-    <h1 class="calc" th:text="#{add.money}">{add money}</h1>
+        <br>
+        <div class="alert" th:if="${error}">
+            <h3 class="black" th:text="#{reg.error.generic}">{Reg error}</h3>
+        </div>
 
-    <br>
-    <br>
+        <br>
+
+        <h1 class="calc" th:text="#{add.money}">{add money}</h1>
+
+        <br>
+        <br>
 
     <form th:action="@{/add_money}" th:object="${add}" method="POST">
 
@@ -43,8 +46,19 @@
 
             </div>
         </form>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
     </form>
 
+    </section>
+
 </div>
+
+<div th:include="fragments/footer :: footer" th:remove="tag"></div>
+
 </body>
 </html>

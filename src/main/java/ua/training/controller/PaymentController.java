@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import ua.training.controller.exception.BankTransactionException;
 
 import ua.training.dto.*;
@@ -26,10 +27,12 @@ import java.util.Optional;
 public class PaymentController {
 
     private final OrderService orderService;
+    private final UserService userService;
     private final CalculatorService calculatorService;
 
-    public PaymentController(OrderService orderService, CalculatorService calculatorService) {
+    public PaymentController(OrderService orderService, UserService userService, CalculatorService calculatorService) {
         this.orderService = orderService;
+        this.userService = userService;
         this.calculatorService = calculatorService;
     }
 
@@ -40,45 +43,40 @@ public class PaymentController {
 
         model.addAttribute("error", false);
 
+
         return "calculator";
     }
 
     @PostMapping("/calculator")
     public String calculatePrice(@ModelAttribute("order") @Valid CalculatorDTO order,
-                                 @ModelAttribute User modelUser,
+                                 BindingResult bindingResult,
                                  @RequestParam(value = "error", required = false) String error,
-                                 BindingResult bindingResult, Model model) {
+                                 @ModelAttribute User modelUser, Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("error", true);
             return "calculator";
+        } else {
+            model.addAttribute("price", calculatorService.calculatePrice(order));
         }
-        model.addAttribute("error", false);
-        model.addAttribute("price", calculatorService.calculatePrice(order));
+
         return "calculator";
     }
 
     @RequestMapping(value = "/to_pay", method = RequestMethod.GET)
     public String viewSendMoneyPage(@AuthenticationPrincipal User user, Model model) {
-
+        insertBalanceInfo(user, model);
         return "payment";
     }
 
 
-    @GetMapping("pay/{id}")
-    String payShipment(@AuthenticationPrincipal User user,
-                       @PathVariable("id") long shipmentId, Model model) throws BankTransactionException {
+    @RequestMapping("pay/{id}")
+    String payShipment(@PathVariable("id") long shipmentId) {
 
-        Long ownerAccount = 1L;
         try {
             Order order = orderService.getOrderById(shipmentId);
-            if (order.getOrderStatus().equals(OrderStatus.PAID) || order.getOrderStatus().equals(OrderStatus.SHIPPED)) {
-                throw new BankTransactionException("order is already paid");
-            }
-
-            BigDecimal amount = order.getShippingPrice();
-            orderService.sendMoney(user.getId(), ownerAccount, amount);
             orderService.payForOrder(order);
+
         } catch (BankTransactionException e) {
-            model.addAttribute("errorMessage", "Error: " + e.getMessage());
             return "redirect:/my_shipments/page/1";
         }
 
@@ -87,23 +85,32 @@ public class PaymentController {
 
     @RequestMapping(value = "/add_money", method = RequestMethod.GET)
     public String addMoneyPage(@AuthenticationPrincipal User user, Model model) {
+        insertBalanceInfo(user, model);
         return "adding_money";
     }
 
 
     @RequestMapping(value = "/add_money", method = RequestMethod.POST)
-    public String addMoney(Model model, @ModelAttribute("add") AddMoneyDTO addMoneyForm, @AuthenticationPrincipal User user,
-                           Order order) {
+    public String addMoney(Model model, @ModelAttribute("add") AddMoneyDTO addMoneyForm, @AuthenticationPrincipal User user) {
         log.error(user.getBalance().toString());
-       // log.info(orderService.listBankAccountInfo(user).toString());
         try {
             orderService.addAmount(user.getId(), addMoneyForm.getAmount());
 
         } catch (BankTransactionException e) {
-            model.addAttribute("errorMessage", "Error: " + e.getMessage());
             return "/adding_money";
         }
         return "redirect:/account_page";
     }
 
+    private void insertBalanceInfo(@AuthenticationPrincipal User user, Model model) {
+        log.error(userService.listBankAccountInfo(user.getId()).toString());
+        model.addAttribute("info", userService.listBankAccountInfo(user.getId()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleApplicationException(Exception exception) {
+        ModelAndView modelAndView = new ModelAndView("index");
+        modelAndView.addObject("error", true);
+        return modelAndView;
+    }
 }

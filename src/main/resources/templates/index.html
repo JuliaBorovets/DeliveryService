@@ -12,6 +12,10 @@
 
 <div th:include="fragments/header :: header_guest" th:remove="tag"></div>
 
+<div class="alert" th:if="${error}">
+    <h3 class="black" th:text="#{reg.error.generic}">{Reg error}</h3>
+</div>
+
 
 <section class="jumbotron text-center">
     <div class="container">

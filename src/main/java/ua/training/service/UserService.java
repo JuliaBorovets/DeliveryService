@@ -38,7 +38,7 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public void saveNewUser(User user) throws RegException {
+    public void saveNewUser(UserDTO user) throws RegException {
         try {
             userRepository.save(createUser(user));
         } catch (DataIntegrityViolationException e) {
@@ -57,15 +57,15 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    private User createUser(User user) {
+    private User createUser(UserDTO userDTO) {
         return User.builder()
-                .firstName(user.getFirstName())
-                .firstNameCyr(user.getFirstNameCyr())
-                .lastName(user.getLastName())
-                .lastNameCyr(user.getLastNameCyr())
-                .login(user.getLogin())
-                .email(user.getEmail())
-                .password(passwordEncoder.encode(user.getPassword()))
+                .firstName(userDTO.getFirstName())
+                .firstNameCyr(userDTO.getFirstNameCyr())
+                .lastName(userDTO.getLastName())
+                .lastNameCyr(userDTO.getLastNameCyr())
+                .login(userDTO.getLogin())
+                .email(userDTO.getEmail())
+                .password(passwordEncoder.encode(userDTO.getPassword()))
                 .role(RoleType.ROLE_USER)
                 .accountNonExpired(true)
                 .accountNonLocked(true)
@@ -75,7 +75,8 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    public BigDecimal listBankAccountInfo(UserDTO user) {
+    public BigDecimal listBankAccountInfo(Long id) {
+        User user = userRepository.findUserById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
         return user.getBalance();
     }
 }
