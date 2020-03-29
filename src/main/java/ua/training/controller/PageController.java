@@ -10,6 +10,7 @@ import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -102,24 +103,12 @@ public class PageController implements WebMvcConfigurer {
         return "login";
     }
 
-
-    @RequestMapping("/logout_new")
-    public String logoutPage(@RequestParam(value = "reg", required = false) String reg,
-                             @RequestParam(value = "login", required = false) String login,
-                             Model model) {
-
-        model.addAttribute("reg", reg != null);
-        model.addAttribute("login", login != null);
-        return "index";
-    }
-
     @RequestMapping("/success")
     public RedirectView localRedirect() {
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl("/account_page");
         return redirectView;
     }
-
 
     @RequestMapping("/account_page")
     public String accountPage(Model model, @AuthenticationPrincipal User user) {
@@ -141,9 +130,11 @@ public class PageController implements WebMvcConfigurer {
                           BindingResult bindingResult, Model model) throws RegException {
 
         if (bindingResult.hasErrors()) {
+            log.error("registration error");
             model.addAttribute("error", true);
             return "reg";
         } else {
+            log.info("saved user  with id=" + modelUser.getId());
             userService.saveNewUser(modelUser);
             return "redirect:/";
         }
@@ -175,6 +166,7 @@ public class PageController implements WebMvcConfigurer {
     @RequestMapping("/my_shipments/page/{page}")
     public String shipmentsPage(Model model, @AuthenticationPrincipal User user,
                                 @PathVariable("page") int page) {
+
         insertBalanceInfo(user, model);
 
         PageRequest pageable = PageRequest.of(page - 1, 5);
@@ -191,7 +183,6 @@ public class PageController implements WebMvcConfigurer {
         return "my_shipments";
     }
 
-
     @GetMapping("/admin_page")
     public String calculatePage(@AuthenticationPrincipal User user, Model model) {
 
@@ -201,7 +192,6 @@ public class PageController implements WebMvcConfigurer {
             return "account_page";
         }
 
-        model.addAttribute("admin", currentUserRoleAdmin());
         List<OrderDTO> orders = orderService.findAllPaidOrdersDTO();
         orders.forEach(this::setLocalFields);
         model.addAttribute("orders", orders);
@@ -210,14 +200,12 @@ public class PageController implements WebMvcConfigurer {
     }
 
 
-    @PostMapping("/admin_page")
-    public String adminPage(@AuthenticationPrincipal User user, Model model) throws OrderNotFoundException {
-        log.error(String.valueOf(user.getRole().equals(RoleType.ROLE_ADMIN)));
+    @PostMapping(value = "/admin_page")
+    public String adminPage(@AuthenticationPrincipal User user,
+                            Model model) throws OrderNotFoundException {
+
         insertBalanceInfo(user, model);
-        if (!currentUserRoleAdmin()) {
-            return "account_page";
-        }
-        model.addAttribute("admin", currentUserRoleAdmin());
+
         List<OrderDTO> orders = orderService.findAllPaidOrdersDTO();
         model.addAttribute("orders", orders);
 
@@ -243,16 +231,18 @@ public class PageController implements WebMvcConfigurer {
         if (order.getDtoDeliveryDate() != null) {
             order.setDeliveryDate(order.getDtoDeliveryDate().format(pattern));
         }
+
         order.setShippingDate(order.getDtoShippingDate().format(pattern));
         order.setDestination(utility.getMessage(order.getDtoDestination().toString()));
         order.setType(utility.getMessage(order.getDtoOrderType().toString()));
         order.setStatus(utility.getMessage(order.getDtoOrderStatus().getName()));
     }
 
+
     private void insertBalanceInfo(@AuthenticationPrincipal User user, Model model) {
-        log.error(userService.listBankAccountInfo(user.getId()).toString());
         model.addAttribute("info", userService.listBankAccountInfo(user.getId()));
     }
+
 
     @ExceptionHandler(Exception.class)
     public ModelAndView handleApplicationException(Exception exception) {

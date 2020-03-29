@@ -1,7 +1,6 @@
 package ua.training.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,17 +10,15 @@ import org.springframework.web.servlet.ModelAndView;
 import ua.training.controller.exception.BankTransactionException;
 
 import ua.training.controller.exception.OrderNotFoundException;
+import ua.training.controller.exception.RegException;
 import ua.training.dto.*;
 import ua.training.entity.order.Order;
-import ua.training.entity.order.OrderStatus;
 import ua.training.entity.user.User;
 import ua.training.service.CalculatorService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
-import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -43,8 +40,6 @@ public class PaymentController {
                                 Model model) {
 
         model.addAttribute("error", false);
-
-
         return "calculator";
     }
 
@@ -71,15 +66,10 @@ public class PaymentController {
 
 
     @RequestMapping("pay/{id}")
-    String payShipment(@PathVariable("id") long shipmentId) {
+    String payShipment(@PathVariable("id") long shipmentId) throws BankTransactionException, OrderNotFoundException {
 
-        try {
-            Order order = orderService.getOrderById(shipmentId);
-            orderService.payForOrder(order);
-
-        } catch (BankTransactionException | OrderNotFoundException e) {
-            return "redirect:/my_shipments/page/1";
-        }
+        Order order = orderService.getOrderById(shipmentId);
+        orderService.payForOrder(order);
 
         return "redirect:/my_shipments/page/1";
     }
@@ -92,14 +82,10 @@ public class PaymentController {
 
 
     @RequestMapping(value = "/add_money", method = RequestMethod.POST)
-    public String addMoney(Model model, @ModelAttribute("add") AddMoneyDTO addMoneyForm, @AuthenticationPrincipal User user) {
-        log.error(user.getBalance().toString());
-        try {
-            orderService.addAmount(user.getId(), addMoneyForm.getAmount());
+    public String addMoney(Model model, @ModelAttribute("add") AddMoneyDTO addMoneyForm,
+                           @AuthenticationPrincipal User user) throws BankTransactionException {
+        orderService.addAmount(user.getId(), addMoneyForm.getAmount());
 
-        } catch (BankTransactionException e) {
-            return "/adding_money";
-        }
         return "redirect:/account_page";
     }
 
@@ -108,10 +94,16 @@ public class PaymentController {
         model.addAttribute("info", userService.listBankAccountInfo(user.getId()));
     }
 
-    @ExceptionHandler(Exception.class)
-    public ModelAndView handleApplicationException(Exception exception) {
-        ModelAndView modelAndView = new ModelAndView("index");
-        modelAndView.addObject("error", true);
-        return modelAndView;
+
+    @ExceptionHandler(BankTransactionException.class)
+    String handleRegException(BankTransactionException e, Model model) {
+        log.error("BankTransaction Exception");
+        return "/adding_money";
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    String handleOrderNotFoundException(OrderNotFoundException e, Model model) {
+        log.error("OrderNotFound Exception");
+        return "redirect:/my_shipments/page/1";
     }
 }

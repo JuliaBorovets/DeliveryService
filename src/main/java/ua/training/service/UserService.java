@@ -42,18 +42,7 @@ public class UserService implements UserDetailsService {
         try {
             userRepository.save(createUser(user));
         } catch (DataIntegrityViolationException e) {
-            RegException regException = new RegException(e);
-
-            if (e.getCause() != null && e.getCause() instanceof ConstraintViolationException) {
-                regException.setDuplicate(true);
-            } else {
-                e.printStackTrace();
-            }
-            throw regException;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RegException(e);
+            throw new RegException("saveNewUser exception");
         }
     }
 
@@ -76,7 +65,7 @@ public class UserService implements UserDetailsService {
     }
 
     public BigDecimal listBankAccountInfo(Long id) {
-        User user = userRepository.findUserById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
+        User user = findUserById(id);
         return user.getBalance();
     }
 

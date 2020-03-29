@@ -30,6 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/js/*.js", "/*.css", "/", "/account_page", "/login", "/calculator", "/reg", "/newuser").permitAll()
+                .antMatchers("admin_page").hasRole("USER_ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -38,7 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .successForwardUrl("/success")
                 .and()
                 .logout()
-                .logoutUrl("/logout_new")
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll();
     }
 

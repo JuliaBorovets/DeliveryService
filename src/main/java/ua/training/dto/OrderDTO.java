@@ -7,9 +7,6 @@ import ua.training.entity.order.OrderStatus;
 import ua.training.entity.order.OrderType;
 import ua.training.entity.user.User;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -58,17 +55,5 @@ public class OrderDTO {
         this.dtoDeliveryDate = order.getDeliveryDate();
     }
 
-
-//    public OrderDTO(Order order,OrderStatus status, OrderType type, Destination destination) {
-//        this.dtoId = order.getId();
-//        this.dtoOwner = order.getOwner();
-//        this.dtoWeight = order.getWeight();
-//        this.dtoShippingPrice = order.getShippingPrice();
-//        this.dtoShippingDate = order.getShippingDate();
-//        this.dtoDeliveryDate = order.getDeliveryDate();
-//        this.status = status.toString();
-//        this.type = type.toString();
-//        this.destination = destination.toString();
-//    }
 }
 
