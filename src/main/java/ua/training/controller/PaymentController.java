@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import ua.training.controller.exception.BankTransactionException;
 
+import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.*;
 import ua.training.entity.order.Order;
 import ua.training.entity.order.OrderStatus;
@@ -76,7 +77,7 @@ public class PaymentController {
             Order order = orderService.getOrderById(shipmentId);
             orderService.payForOrder(order);
 
-        } catch (BankTransactionException e) {
+        } catch (BankTransactionException | OrderNotFoundException e) {
             return "redirect:/my_shipments/page/1";
         }
 

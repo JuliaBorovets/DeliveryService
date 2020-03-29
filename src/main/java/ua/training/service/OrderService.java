@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ua.training.controller.exception.BankTransactionException;
 import ua.training.controller.exception.OrderCreateException;
+import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.AddMoneyDTO;
 import ua.training.dto.OrderDTO;
 import ua.training.dto.UserDTO;
@@ -31,22 +32,22 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("ALL")
+
 @Getter
 @Service
 public class OrderService {
 
     private OrderRepository orderRepository;
     private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
     private EntityManager entityManager;
 
-
-    @Autowired
-    public OrderService(OrderRepository orderRepository, UserRepository userRepository) {
+    public OrderService(OrderRepository orderRepository, UserRepository userRepository, UserService userService) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     public List<OrderDTO> orderDTOList(Long userId) {
@@ -99,10 +100,9 @@ public class OrderService {
     }
 
 
-    public Order getOrderById(Long id) {
-
+    public Order getOrderById(Long id) throws OrderNotFoundException {
         return orderRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException(id.toString()));
+                .orElseThrow(() -> new OrderNotFoundException("order " + id + " not found"));
     }
 
     public boolean isPaid(Order order) {
@@ -115,12 +115,6 @@ public class OrderService {
         return order.getOrderStatus().equals(OrderStatus.SHIPPED);
     }
 
-
-    public List<Order> findAllPaidOrders() {
-
-        return orderRepository.findOrderByOrderStatus(OrderStatus.PAID);
-    }
-
     public List<OrderDTO> findAllPaidOrdersDTO() {
 
         return orderRepository
@@ -131,9 +125,8 @@ public class OrderService {
     }
 
 
-    @Transactional
-    public void orderSetShippedStatus(Long id) {
-        Order order = orderRepository.findOrderById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
+    public void orderSetShippedStatus(Long id) throws OrderNotFoundException {
+        Order order = getOrderById(id);
 
         if (isPaid(order)) {
             order.setOrderStatus(OrderStatus.SHIPPED);
@@ -143,20 +136,20 @@ public class OrderService {
     }
 
 
-    @Transactional
     public void addAmount(Long id, BigDecimal amount) throws BankTransactionException {
-        User account = userRepository.findUserById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
+        User account = userService.findUserById(id);
         BigDecimal newBalance = account.getBalance().add(amount);
         if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
             throw new BankTransactionException("no money");
         }
         account.setBalance(newBalance);
+        userRepository.save(account);
     }
 
 
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             rollbackFor = BankTransactionException.class)
-    private void sendMoney(Long fromAccountId, Long toAccountId, BigDecimal amount) throws BankTransactionException {
+    void sendMoney(Long fromAccountId, Long toAccountId, BigDecimal amount) throws BankTransactionException {
         addAmount(toAccountId, amount);
         addAmount(fromAccountId, amount.negate());
     }
@@ -182,11 +175,8 @@ public class OrderService {
             list = orders.subList(startItem, toIndex);
         }
 
-        Page<OrderDTO> bookPage = new PageImpl<OrderDTO>(list, PageRequest.of(currentPage, pageSize), orders.size());
-
-        return bookPage;
+        return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), orders.size());
     }
-
-
+    
 }
 

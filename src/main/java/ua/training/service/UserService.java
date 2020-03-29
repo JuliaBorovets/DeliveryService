@@ -79,4 +79,10 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findUserById(id).orElseThrow(() -> new UsernameNotFoundException(id.toString()));
         return user.getBalance();
     }
+
+    public User findUserById(Long id) {
+        return userRepository.findUserById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("user with id " + id + " not found"));
+
+    }
 }

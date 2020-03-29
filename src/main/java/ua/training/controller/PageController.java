@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.RedirectView;
 import ua.training.controller.exception.OrderCreateException;
+import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.controller.exception.RegException;
 
 import ua.training.controller.utility.ControllerUtil;
@@ -210,7 +211,7 @@ public class PageController implements WebMvcConfigurer {
 
 
     @PostMapping("/admin_page")
-    public String adminPage(@AuthenticationPrincipal User user, Model model) {
+    public String adminPage(@AuthenticationPrincipal User user, Model model) throws OrderNotFoundException {
         log.error(String.valueOf(user.getRole().equals(RoleType.ROLE_ADMIN)));
         insertBalanceInfo(user, model);
         if (!currentUserRoleAdmin()) {
