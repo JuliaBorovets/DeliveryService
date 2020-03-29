@@ -6,8 +6,10 @@ import ua.training.entity.order.Order;
 import ua.training.entity.order.OrderStatus;
 import ua.training.entity.order.OrderType;
 import ua.training.entity.user.User;
+import ua.training.service.ShipmentsTariffs;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 
 @Setter
@@ -34,6 +36,9 @@ public class OrderDTO {
 
     BigDecimal dtoShippingPrice;
 
+    BigDecimal dtoShippingPriceEN;
+
+
     LocalDate dtoDeliveryDate;
 
 
@@ -52,6 +57,7 @@ public class OrderDTO {
         this.dtoShippingDate = order.getShippingDate();
         this.dtoOrderStatus = order.getOrderStatus();
         this.dtoShippingPrice = order.getShippingPrice();
+        this.dtoShippingPriceEN = dtoShippingPrice.divide(ShipmentsTariffs.DOLLAR, 2, RoundingMode.HALF_UP);
         this.dtoDeliveryDate = order.getDeliveryDate();
     }
 

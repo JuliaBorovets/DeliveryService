@@ -56,7 +56,7 @@
                     <td th:text="${order.dtoWeight}">{Order weight}</td>
                     <td th:text="${order.destination}">{Order destination}</td>
                     <td th:text="${order.shippingDate}">{Order shippingDate}</td>
-                    <td th:text="${order.dtoShippingPrice}">{Order shippingPrice}</td>
+                    <td th:text="${order.dtoShippingPrice} + #{enter}">{Order shippingPrice}</td>
                     <td th:text="${order.status}">{Order status}</td>
 
                 </tr>

@@ -1,7 +1,8 @@
 package ua.training.service;
 
 import lombok.Getter;
-import org.hibernate.query.Query;
+import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -15,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.training.controller.exception.BankTransactionException;
 import ua.training.controller.exception.OrderCreateException;
 import ua.training.controller.exception.OrderNotFoundException;
-import ua.training.dto.AddMoneyDTO;
 import ua.training.dto.OrderDTO;
-import ua.training.dto.UserDTO;
 import ua.training.entity.order.*;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
@@ -25,14 +24,14 @@ import ua.training.repository.OrderRepository;
 import ua.training.repository.UserRepository;
 
 import javax.persistence.EntityManager;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Getter
 @Service
 public class OrderService {
@@ -50,9 +49,18 @@ public class OrderService {
         this.userService = userService;
     }
 
-    public List<OrderDTO> orderDTOList(Long userId) {
+    public List<OrderDTO> orderDTOList(Long userId, boolean isLocaleEN) {
         return orderRepository
                 .findOrderByOwnerId(userId)
+                .stream()
+                .map(OrderDTO::new)
+                .collect(Collectors.toList());
+    }
+
+
+    public List<OrderDTO> findAllPaidOrdersDTO() {
+        return orderRepository
+                .findOrderByOrderStatus(OrderStatus.PAID)
                 .stream()
                 .map(OrderDTO::new)
                 .collect(Collectors.toList());
@@ -115,14 +123,6 @@ public class OrderService {
         return order.getOrderStatus().equals(OrderStatus.SHIPPED);
     }
 
-    public List<OrderDTO> findAllPaidOrdersDTO() {
-
-        return orderRepository
-                .findOrderByOrderStatus(OrderStatus.PAID)
-                .stream()
-                .map(OrderDTO::new)
-                .collect(Collectors.toList());
-    }
 
 
     public void orderSetShippedStatus(Long id) throws OrderNotFoundException {
@@ -155,9 +155,9 @@ public class OrderService {
     }
 
 
-    public Page<OrderDTO> findPaginated(User user, Pageable pageable) {
+    public Page<OrderDTO> findPaginated(User user, Pageable pageable, boolean isLocaleEN) {
 
-        List<OrderDTO> orders = orderDTOList(user.getId())
+        List<OrderDTO> orders = orderDTOList(user.getId(), isLocaleEN)
                 .stream()
                 .sorted(Comparator.comparing(OrderDTO::getDtoId)
                         .reversed())
@@ -177,6 +177,6 @@ public class OrderService {
 
         return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), orders.size());
     }
-    
+
 }
 

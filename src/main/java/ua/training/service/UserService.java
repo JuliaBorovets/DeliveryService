@@ -1,8 +1,6 @@
 package ua.training.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.query.Query;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,13 +9,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.training.controller.exception.RegException;
-import ua.training.dto.AddMoneyDTO;
 import ua.training.dto.UserDTO;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.repository.UserRepository;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Slf4j
 @Service
@@ -64,9 +62,10 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    public BigDecimal listBankAccountInfo(Long id) {
-        User user = findUserById(id);
-        return user.getBalance();
+    public UserDTO findUserDTOById(Long id) {
+        return new UserDTO(userRepository.findUserById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("user with id " + id + " not found")));
+
     }
 
     public User findUserById(Long id) {
@@ -74,4 +73,17 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("user with id " + id + " not found"));
 
     }
+
+
+    public BigDecimal listBankAccountInfo(Long id, boolean isLocaleEn) {
+
+        UserDTO user = findUserDTOById(id);
+        if (isLocaleEn) {
+            user.setBalance(user.getBalanceEN());
+        } else user.setBalance(user.getBalance());
+
+        return user.getBalance();
+    }
+
+
 }

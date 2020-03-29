@@ -59,7 +59,6 @@ public class PageController implements WebMvcConfigurer {
 
     private final UserService userService;
     private final OrderService orderService;
-    private final CalculatorService calculatorService;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -72,7 +71,6 @@ public class PageController implements WebMvcConfigurer {
     public PageController(UserService userService, OrderService orderService, CalculatorService calculatorService) {
         this.userService = userService;
         this.orderService = orderService;
-        this.calculatorService = calculatorService;
     }
 
     @RequestMapping("/")
@@ -170,7 +168,7 @@ public class PageController implements WebMvcConfigurer {
         insertBalanceInfo(user, model);
 
         PageRequest pageable = PageRequest.of(page - 1, 5);
-        Page<OrderDTO> articlePage = orderService.findPaginated(user, pageable);
+        Page<OrderDTO> articlePage = orderService.findPaginated(user, pageable, isLocaleEn());
         articlePage.getContent().forEach(this::setLocalFields);
 
         int totalPages = articlePage.getTotalPages();
@@ -186,11 +184,8 @@ public class PageController implements WebMvcConfigurer {
     @GetMapping("/admin_page")
     public String calculatePage(@AuthenticationPrincipal User user, Model model) {
 
-        insertBalanceInfo(user, model);
 
-        if (!currentUserRoleAdmin()) {
-            return "account_page";
-        }
+        insertBalanceInfo(user, model);
 
         List<OrderDTO> orders = orderService.findAllPaidOrdersDTO();
         orders.forEach(this::setLocalFields);
@@ -216,20 +211,18 @@ public class PageController implements WebMvcConfigurer {
         return "account_page";
     }
 
-
-    private boolean currentUserRoleAdmin() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) auth.getPrincipal();
-        return user.getRole().equals(RoleType.ROLE_ADMIN);
-    }
-
-
     private void setLocalFields(OrderDTO order) {
         utility.reset();
         DateTimeFormatter pattern = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(LocaleContextHolder.getLocale());
 
         if (order.getDtoDeliveryDate() != null) {
             order.setDeliveryDate(order.getDtoDeliveryDate().format(pattern));
+        }
+
+        if (isLocaleEn()) {
+            order.setDtoShippingPrice(order.getDtoShippingPriceEN());
+        } else {
+            order.setDtoShippingPrice(order.getDtoShippingPrice());
         }
 
         order.setShippingDate(order.getDtoShippingDate().format(pattern));
@@ -240,30 +233,14 @@ public class PageController implements WebMvcConfigurer {
 
 
     private void insertBalanceInfo(@AuthenticationPrincipal User user, Model model) {
-        model.addAttribute("info", userService.listBankAccountInfo(user.getId()));
+        model.addAttribute("info", userService.listBankAccountInfo(user.getId(), isLocaleEn()));
     }
 
 
-    @ExceptionHandler(Exception.class)
-    public ModelAndView handleApplicationException(Exception exception) {
-        ModelAndView modelAndView = new ModelAndView("index");
-        modelAndView.addObject("error", true);
-        return modelAndView;
+    boolean isLocaleEn() {
+        return LocaleContextHolder.getLocale().toString().equals("en");
     }
 
-    @ExceptionHandler(RegException.class)
-    String handleRegException(RegException e, Model model) {
-        model.addAttribute("newUser", new UserDTO());
-        model.addAttribute("duplicate", true);
-        return "reg";
-    }
-
-    @ExceptionHandler(OrderCreateException.class)
-    String handleOrderCreateException(OrderCreateException e, Model model) {
-        model.addAttribute("newOrder", new OrderDTO());
-        model.addAttribute("error", true);
-        return "redirect:/create?error";
-    }
 }
 
 

@@ -1,6 +1,7 @@
 package ua.training.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,12 +14,14 @@ import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.controller.exception.RegException;
 import ua.training.dto.*;
 import ua.training.entity.order.Order;
+import ua.training.entity.order.OrderStatus;
 import ua.training.entity.user.User;
 import ua.training.service.CalculatorService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 
 @Slf4j
 @Controller
@@ -69,7 +72,9 @@ public class PaymentController {
     String payShipment(@PathVariable("id") long shipmentId) throws BankTransactionException, OrderNotFoundException {
 
         Order order = orderService.getOrderById(shipmentId);
-        orderService.payForOrder(order);
+
+        if (!order.getOrderStatus().equals(OrderStatus.PAID) && !order.getOrderStatus().equals(OrderStatus.SHIPPED))
+            orderService.payForOrder(order);
 
         return "redirect:/my_shipments/page/1";
     }
@@ -84,26 +89,20 @@ public class PaymentController {
     @RequestMapping(value = "/add_money", method = RequestMethod.POST)
     public String addMoney(Model model, @ModelAttribute("add") AddMoneyDTO addMoneyForm,
                            @AuthenticationPrincipal User user) throws BankTransactionException {
-        orderService.addAmount(user.getId(), addMoneyForm.getAmount());
+
+        BigDecimal money = isLocaleEn() ? addMoneyForm.getAmountEN() : addMoneyForm.getAmount();
+        orderService.addAmount(user.getId(), money);
 
         return "redirect:/account_page";
     }
 
     private void insertBalanceInfo(@AuthenticationPrincipal User user, Model model) {
-        log.error(userService.listBankAccountInfo(user.getId()).toString());
-        model.addAttribute("info", userService.listBankAccountInfo(user.getId()));
+
+        model.addAttribute("info", userService.listBankAccountInfo(user.getId(), isLocaleEn()));
     }
 
-
-    @ExceptionHandler(BankTransactionException.class)
-    String handleRegException(BankTransactionException e, Model model) {
-        log.error("BankTransaction Exception");
-        return "/adding_money";
+    boolean isLocaleEn() {
+        return LocaleContextHolder.getLocale().toString().equals("en");
     }
 
-    @ExceptionHandler(OrderNotFoundException.class)
-    String handleOrderNotFoundException(OrderNotFoundException e, Model model) {
-        log.error("OrderNotFound Exception");
-        return "redirect:/my_shipments/page/1";
-    }
 }
