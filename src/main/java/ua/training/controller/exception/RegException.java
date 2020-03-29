@@ -9,8 +9,7 @@ public class RegException extends Exception {
 
     private boolean duplicate = false;
 
-    public RegException(Exception e) {
-        super(e);
+    public RegException(String message) {
+        super(message);
     }
-
 }

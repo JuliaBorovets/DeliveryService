@@ -5,6 +5,8 @@ import ua.training.entity.user.RoleType;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import java.math.BigDecimal;
 
 @Setter
 @Getter
@@ -12,19 +14,25 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @ToString
 public class UserDTO {
-    @NotNull
+
+    Long id;
+
+
+    @Pattern(regexp = "[A-Z][a-z]{2,20}")
     String firstName;
 
-    @NotNull
+    @Pattern(regexp = "[А-ЩЮЯҐІЇЄ][а-щьюяґіїє']{2,20}")
     String firstNameCyr;
 
-    @NotNull
+
+    @Pattern(regexp = "[a-zA-Z]+'?-?[a-zA-Z]+\\s?([a-zA-Z]+)?")
     String lastName;
 
-    @NotNull
+
+    @Pattern(regexp = "[А-ЩЮЯҐІЇЄ][а-щьюяґіїє']{1,25}([-][А-ЩЮЯҐІЇЄ][а-щьюяґіїє']{1,25})?")
     String lastNameCyr;
 
-    @NotNull
+    @Pattern(regexp = "[a-z0-9_-]{3,20}")
     String login;
 
     @Email
@@ -33,7 +41,9 @@ public class UserDTO {
     @NotNull
     String password;
 
-    @NotNull
+
     RoleType roleType;
+
+    BigDecimal balance;
 
 }

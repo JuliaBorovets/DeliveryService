@@ -2,6 +2,7 @@ package ua.training.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.query.Query;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.training.controller.exception.RegException;
+import ua.training.dto.AddMoneyDTO;
+import ua.training.dto.UserDTO;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.repository.UserRepository;
@@ -35,34 +38,23 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public void saveNewUser(User user) throws RegException {
+    public void saveNewUser(UserDTO user) throws RegException {
         try {
             userRepository.save(createUser(user));
         } catch (DataIntegrityViolationException e) {
-            RegException regException = new RegException(e);
-
-            if (e.getCause() != null && e.getCause() instanceof ConstraintViolationException) {
-                regException.setDuplicate(true);
-            } else {
-                e.printStackTrace();
-            }
-            throw regException;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RegException(e);
+            throw new RegException("saveNewUser exception");
         }
     }
 
-    private User createUser(User user) {
+    private User createUser(UserDTO userDTO) {
         return User.builder()
-                .firstName(user.getFirstName())
-                .firstNameCyr(user.getFirstNameCyr())
-                .lastName(user.getLastName())
-                .lastNameCyr(user.getLastNameCyr())
-                .login(user.getLogin())
-                .email(user.getEmail())
-                .password(passwordEncoder.encode(user.getPassword()))
+                .firstName(userDTO.getFirstName())
+                .firstNameCyr(userDTO.getFirstNameCyr())
+                .lastName(userDTO.getLastName())
+                .lastNameCyr(userDTO.getLastNameCyr())
+                .login(userDTO.getLogin())
+                .email(userDTO.getEmail())
+                .password(passwordEncoder.encode(userDTO.getPassword()))
                 .role(RoleType.ROLE_USER)
                 .accountNonExpired(true)
                 .accountNonLocked(true)
@@ -70,5 +62,16 @@ public class UserService implements UserDetailsService {
                 .enabled(true)
                 .balance(BigDecimal.ZERO)
                 .build();
+    }
+
+    public BigDecimal listBankAccountInfo(Long id) {
+        User user = findUserById(id);
+        return user.getBalance();
+    }
+
+    public User findUserById(Long id) {
+        return userRepository.findUserById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("user with id " + id + " not found"));
+
     }
 }

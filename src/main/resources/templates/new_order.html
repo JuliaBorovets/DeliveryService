@@ -4,65 +4,76 @@
 <head>
     <title>New order</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link rel="stylesheet" href="new_order.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
+<div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
+
 <div class="column">
-    <br>
-    <div class="alert" th:if="${error}">
-        <h3 class="black" th:text="#{reg.error.generic}">{Reg error}</h3>
-    </div>
+    <section class="jumbotron2 text-center">
 
-    <a class="button" href="/account_page" th:text="#{go.to.first.page}">{To the first page}</a>
-    <br>
-    <h1 class="calc" th:text="#{create.new.order}">{Create new order}</h1>
+        <br>
+        <div class="alert" th:if="${error}">
+            <h3 class="black" th:text="#{reg.error.generic}">{Reg error}</h3>
+        </div>
 
-    <div class="order">
-        <form id="newOrder" name="newOrder" action="#" th:action="@{/neworder}" th:object="${newOrder}" method="post">
-            <br>
-            <div>
 
-                <input type="text" id="dtoDescription" name="dtoDescription" class="dtoDescription"
-                       th:field="*{dtoDescription}"
-                       th:placeholder="#{new.order.description}" required>
+        <h1 class="calc" th:text="#{create.new.order}">{Create new order}</h1>
 
-            </div>
-            <div>
+        <div class="order">
+            <form id="newOrder" name="newOrder" action="#" th:action="@{/neworder}" th:object="${newOrder}"
+                  method="post">
+                <br>
 
-                <input type="number" id="weight" name="weight" th:field="*{dtoWeight}" class="weight"
-                       th:placeholder="#{new.order.weight}" required>
-            </div>
+                <div>
 
-            <div class="input-field col s4">
-                <select id="type" class="order_type" name="type" th:field="*{dtoOrderType}" required>
-                    <option value="" disabled selected th:text="#{choose.type}"></option>
-                    <option value="SMALL" th:text="#{type.small}"></option>
-                    <option value="MIDDLE" th:text="#{type.middle}"></option>
-                    <option value="BIG" th:text="#{type.big}"></option>
-                    <option value="DOCUMENTS" th:text="#{type.documents}"></option>
-                </select>
-            </div>
-            <br>
+                    <input type="number" id="weight" name="weight" th:field="*{dtoWeight}" class="weight"
+                           th:placeholder="#{new.order.weight}" required>
+                </div>
 
-            <div class="input-field col s4">
-                <select id="dest" name="type" class="destination" th:field="*{dtoDestination}" required>
-                    <option value="" disabled selected th:text="#{choose.destination}"></option>
-                    <option value="NONE" th:text="#{destination.none}"></option>
-                    <option value="INNER" th:text="#{destination.inner}"></option>
-                    <option value="COUNTRY" th:text="#{destination.country}"></option>
-                </select>
-            </div>
+                <br>
 
-            <br>
-            <form>
-                <input class="button" type="submit" value="Submit">
+                <br>
+
+
+                <div class="input-field col s4">
+                    <select id="type" class="order_type" name="type" th:field="*{dtoOrderType}" required>
+                        <option value="" disabled selected th:text="#{choose.type}"></option>
+                        <option value="SMALL" th:text="#{type.small}"></option>
+                        <option value="MIDDLE" th:text="#{type.middle}"></option>
+                        <option value="BIG" th:text="#{type.big}"></option>
+                        <option value="DOCUMENTS" th:text="#{type.documents}"></option>
+                    </select>
+                </div>
+                <br>
+                <br>
+
+
+                <div class="input-field col s4">
+                    <select id="dest" name="type" class="destination" th:field="*{dtoDestination}" required>
+                        <option value="" disabled selected th:text="#{choose.destination}"></option>
+                        <option value="NONE" th:text="#{destination.none}"></option>
+                        <option value="INNER" th:text="#{destination.inner}"></option>
+                        <option value="COUNTRY" th:text="#{destination.country}"></option>
+                    </select>
+                </div>
+
+                <br>
+                <form>
+                    <input class="calculate waves-effect waves-light" type="submit" value="Submit">
+                </form>
+                <br>
+
+                <br>
+
+
             </form>
-
-
-        </form>
-    </div>
-
+        </div>
+    </section>
 </div>
+<div th:include="fragments/footer :: footer" th:remove="tag"></div>
+
 </body>
 </html>

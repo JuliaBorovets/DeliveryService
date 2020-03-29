@@ -4,13 +4,17 @@
 <head>
     <title>My shipments</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <base href="/">
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="index.css">
+
+
 </head>
 
 <body>
 
-<div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
+<div th:include="fragments/header :: header_my_shipments" th:remove="tag"></div>
 <br>
 
 <div class="alert" th:if="${error}">
@@ -24,43 +28,79 @@
         <div class="container">
             <h3 th:text="#{my.shipments} + ':'">{Here goes shipments table}</h3>
         </div>
+
+
+        <br>
+
+        <br/>
+
+        <div class="orders">
+            <div class="card-deck mb-3 text-center" th:each="order : ${orders}">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header">
+                        <h4 class="my-0 font-weight-normal" th:text="${order.dtoId}"></h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li th:text="#{order.status} + '  :   ' + ${order.status}">{Order status}</li>
+                            <li th:text="#{order.type} + '  :  ' + ${order.type}">{Order type}</li>
+                            <li th:text="#{order.weight} + '  :   ' + ${order.dtoWeight}">{Order weight}</li>
+                            <li th:text="#{order.destination} + '  :   ' + ${order.destination}">{Order destination}
+                            </li>
+                            <li th:text="#{order.shipping.date} + '  :   ' + ${order.shippingDate}">{Order
+                                shippingDate}
+                            </li>
+                            <li th:text="#{order.delivery.date} + '  :  ' + ${order.deliveryDate}">{Order
+                                deliveryDate}
+                            </li>
+                            <li th:text="#{order.shipment.price} + '  :  ' + ${order.dtoShippingPrice} +  #{enter}">
+                                {Order shippingPrice}
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+
+                <form th:action="@{pay/{id}(id=${order.dtoId})}">
+                    <form>
+                        <div class="col s12 sign">
+                            <button class="button_pay btn-lg btn-block btn-outline-primary"
+                                    type="submit" name="action" th:text="#{to.pay}">
+                            </button>
+                            <br>
+
+                        </div>
+                    </form>
+                </form>
+            </div>
+        </div>
+
     </section>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <nav aria-label="Pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:each="pageNumber : ${pageNumbers}">
+                        <a class="page-link" th:href="@{|/my_shipments/page/${pageNumber}|}" th:text=${pageNumber}>1</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
 
-    <br>
-    <table class="table table-hover">
-
-        <thead>
-        <tr>
-            <th scope="col" th:width="50px">ID</th>
-            <th scope="col" th:text="#{new.order.description}" th:width="200px">{Description}</th>
-            <th scope="col" th:text="#{order.type}">{Type}</th>
-            <th scope="col" th:text="#{order.weight}">{Weight}</th>
-            <th scope="col" th:text="#{order.destination}">{Destination}</th>
-            <th scope="col" th:text="#{order.shipping.date}">{Shipping Date}</th>
-            <th scope="col" th:text="#{order.delivery.date}">{Delivery Date}</th>
-            <th scope="col" th:text="#{order.shipment.price}">{Shipping price}</th>
-            <th scope="col" th:text="#{order.status}">{Shipping Status}</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="order : ${orders}">
-            <th scope="row" th:text="${order.id}" style="width: 10px">{ID}</th>
-            <td th:text="${order.description}">{Description}</td>
-            <td th:text="${order.orderType}">{Order type}</td>
-            <td th:text="${order.weight}">{Order weight}</td>
-            <td th:text="${order.destination}">{Order destination}</td>
-            <td th:text="${order.shippingDate}">{Order shippingDate}</td>
-            <td th:text="${order.deliveryDate}">{Order deliveryDate}</td>
-            <td th:text="${order.shippingPrice}">{Order shippingPrice}</td>
-            <td th:text="${order.orderStatus}">{Order status}</td>
-        </tr>
-        </tbody>
-    </table>
-
-    <br/>
 </div>
 
+<!--</div>-->
+<!--    <div th:if="${ordersPage.totalPages > 0}" class="pagination"-->
+<!--         th:each="pageNumber : ${pageNumbers}">-->
+<!--        <a th:href="@{/my_shipments(size=${ordersPage.size}, page=${pageNumber})}"-->
+<!--           th:text=${pageNumber}-->
+<!--           th:class="${pageNumber==page.number + 1} ? active"></a>-->
+<!--    </div>-->
 <div th:include="fragments/footer :: footer" th:remove="tag"></div>
+
 
 </body>
 </html>

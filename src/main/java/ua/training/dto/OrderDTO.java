@@ -1,34 +1,59 @@
 package ua.training.dto;
 
 import lombok.*;
+import ua.training.entity.order.Destination;
+import ua.training.entity.order.Order;
 import ua.training.entity.order.OrderStatus;
+import ua.training.entity.order.OrderType;
+import ua.training.entity.user.User;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Setter
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 public class OrderDTO {
 
-    @Size(min = 2, max = 90)
-    String dtoDescription;
+    Long dtoId;
 
-    @NotNull
-    String dtoOrderType;
+    OrderType dtoOrderType;
 
-    @NotNull
+    User dtoOwner;
+
     BigDecimal dtoWeight;
 
-    @NotNull
-    BigDecimal dtoAnnouncedPrice;
+    Destination dtoDestination;
 
-    @NotNull
-    String dtoDestination;
+    LocalDate dtoShippingDate;
 
-    OrderStatus orderStatus;
+    OrderStatus dtoOrderStatus;
+
+    BigDecimal dtoShippingPrice;
+
+    LocalDate dtoDeliveryDate;
+
+
+    String shippingDate;
+    String deliveryDate;
+    String status;
+    String type;
+    String destination;
+
+    public OrderDTO(Order order) {
+        this.dtoId = order.getId();
+        this.dtoOrderType = order.getOrderType();
+        this.dtoOwner = order.getOwner();
+        this.dtoWeight = order.getWeight();
+        this.dtoDestination = order.getDestination();
+        this.dtoShippingDate = order.getShippingDate();
+        this.dtoOrderStatus = order.getOrderStatus();
+        this.dtoShippingPrice = order.getShippingPrice();
+        this.dtoDeliveryDate = order.getDeliveryDate();
+    }
 
 }
+

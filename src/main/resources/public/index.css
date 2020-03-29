@@ -51,8 +51,9 @@
 
 .info {
     font-kerning: initial;
-    font-size: 20px;
+    font-size: 16px;
     white-space: normal;
+    width: 100px;
 }
 
 .table {
@@ -82,7 +83,7 @@
     color: #60666d;
 }
 
-.calcType {
+.calcType, .order_type, .destination {
     position: center;
     display: unset;
     font-family: 'Open Sans', 'Helvetica Neue', 'Segoe UI', 'Calibri', 'Arial', sans-serif;
@@ -109,5 +110,24 @@
 
 .lead {
     size: 40px;
+}
+
+.card {
+    max-width: 700px;
+    max-height: 300px;
+    font-size: 15px;
+
+}
+
+.button_pay {
+    margin-top: 130px;
+    margin-left: 40px;
+    max-height: 130px;
+    width: 140px;
+    background-color: #fff;
+}
+
+.orders {
+    margin-left: 200px;
 }
 
