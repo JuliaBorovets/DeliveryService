@@ -23,7 +23,7 @@
         <h1 class="calc" th:text="#{create.new.order}">{Create new order}</h1>
 
         <div class="order">
-            <form id="newOrder" name="newOrder" action="#" th:action="@{/neworder}" th:object="${newOrder}"
+            <form id="newOrder" name="newOrder" action="#" th:action="@{/create}" th:object="${newOrder}"
                   method="post">
                 <br>
 
@@ -41,10 +41,10 @@
                 <div class="input-field col s4">
                     <select id="type" class="order_type" name="type" th:field="*{dtoOrderType}" required>
                         <option value="" disabled selected th:text="#{choose.type}"></option>
-                        <option value="SMALL" th:text="#{type.small}"></option>
-                        <option value="MIDDLE" th:text="#{type.middle}"></option>
-                        <option value="BIG" th:text="#{type.big}"></option>
-                        <option value="DOCUMENTS" th:text="#{type.documents}"></option>
+                        <option value="SMALL" th:text="#{type.SMALL}"></option>
+                        <option value="MIDDLE" th:text="#{type.MIDDLE}"></option>
+                        <option value="BIG" th:text="#{type.BIG}"></option>
+                        <option value="DOCUMENTS" th:text="#{type.DOCUMENTS}"></option>
                     </select>
                 </div>
                 <br>
@@ -54,9 +54,9 @@
                 <div class="input-field col s4">
                     <select id="dest" name="type" class="destination" th:field="*{dtoDestination}" required>
                         <option value="" disabled selected th:text="#{choose.destination}"></option>
-                        <option value="NONE" th:text="#{destination.none}"></option>
-                        <option value="INNER" th:text="#{destination.inner}"></option>
-                        <option value="COUNTRY" th:text="#{destination.country}"></option>
+                        <option value="NONE" th:text="#{destination.NONE}"></option>
+                        <option value="INNER" th:text="#{destination.INNER}"></option>
+                        <option value="COUNTRY" th:text="#{destination.COUNTRY}"></option>
                     </select>
                 </div>
 

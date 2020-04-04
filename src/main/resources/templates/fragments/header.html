@@ -30,7 +30,7 @@
 
 
             <li class="nav-item">
-                <a class="nav-link" href="/add_money"  th:text="#{add.money}">{Add money}</a>
+                <a class="nav-link" href="/adding_money"  th:text="#{add.money}">{Add money}</a>
             </li>
 
             <li class="nav-item">
@@ -53,7 +53,7 @@
             <span class="info" th:text="${info} + #{enter} + '  '"></span>
             <a class="uk_lang" href="/my_shipments/page/1?language=uk">Українська</a>
             <a class="en_lang" href="/my_shipments/page/1?language=en">English</a>
-            <a class="btn btn-outline-primary " th:text="#{general.logout}" href="/logout_new">{Logout}</a>
+            <a class="btn btn-outline-primary " th:text="#{general.logout}" href="/logout">{Logout}</a>
 
         </div>
 
@@ -76,7 +76,7 @@
 
 
             <li class="nav-item">
-                <a class="nav-link" href="/add_money"  th:text="#{add.money}">{Add money}</a>
+                <a class="nav-link" href="/adding_money"  th:text="#{add.money}">{Add money}</a>
             </li>
 
             <li class="nav-item">
@@ -112,22 +112,7 @@
                         <a class="nav-link" href="/calculator" th:text="#{calculator}">{Calculator}</a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="/create" th:text="#{create.new.order}">{Сreate new order}</a>
-                    </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="/my_shipments/page/1" th:text="#{my.shipments}">{My shipments}</a>
-                    </li>
-
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/add_money"  th:text="#{add.money}">{Add money}</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin_page" th:text="#{admin.page}" >{Admin page}</a>
-                    </li>
 
                 </ul>
 

@@ -30,36 +30,14 @@ public class OrderDTO {
 
     Destination dtoDestination;
 
-    LocalDate dtoShippingDate;
+    String shippingDate;
 
     OrderStatus dtoOrderStatus;
 
     BigDecimal dtoShippingPrice;
 
-    BigDecimal dtoShippingPriceEN;
-
-
-    LocalDate dtoDeliveryDate;
-
-
-    String shippingDate;
     String deliveryDate;
-    String status;
-    String type;
-    String destination;
 
-    public OrderDTO(Order order) {
-        this.dtoId = order.getId();
-        this.dtoOrderType = order.getOrderType();
-        this.dtoOwner = order.getOwner();
-        this.dtoWeight = order.getWeight();
-        this.dtoDestination = order.getDestination();
-        this.dtoShippingDate = order.getShippingDate();
-        this.dtoOrderStatus = order.getOrderStatus();
-        this.dtoShippingPrice = order.getShippingPrice();
-        this.dtoShippingPriceEN = dtoShippingPrice.divide(ShipmentsTariffs.DOLLAR, 2, RoundingMode.HALF_UP);
-        this.dtoDeliveryDate = order.getDeliveryDate();
-    }
 
 }
 

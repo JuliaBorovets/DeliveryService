@@ -3,6 +3,7 @@ package ua.training.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,10 +25,18 @@ public class GlobalExceptionHandler {
         return modelAndView;
     }
 
+
+    @ExceptionHandler({org.springframework.validation.BindException.class, IllegalStateException.class})
+    public String handleApplicationException(Model model) {
+        model.addAttribute("newUser", new UserDTO());
+        model.addAttribute("error", true);
+        return "registration";
+    }
+
     @ExceptionHandler(BankTransactionException.class)
     public String handleRegException() {
         log.error("BankTransaction Exception");
-        return "/adding_money";
+        return "redirect:/adding_money";
     }
 
     @ExceptionHandler(OrderNotFoundException.class)

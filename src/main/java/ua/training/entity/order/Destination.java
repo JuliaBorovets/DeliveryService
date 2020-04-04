@@ -1,23 +1,19 @@
 package ua.training.entity.order;
 
 public enum Destination {
-    NONE(0, "destination.none", 0),
-    INNER(10, "destination.inner", 2),
-    COUNTRY(20, "destination.country", 5);
+    NONE(0, 0),
+    INNER(10, 2),
+    COUNTRY(20, 5);
 
     private final int priceForDestination;
-    private String name;
+
     private int day;
 
 
-    Destination(int priceForDestination, String name, int day) {
+    Destination(int priceForDestination, int day) {
         this.priceForDestination = priceForDestination;
-        this.name = name;
-        this.day = day;
-    }
 
-    public String getName() {
-        return name;
+        this.day = day;
     }
 
     public int getDay() {
@@ -28,8 +24,4 @@ public enum Destination {
         return priceForDestination;
     }
 
-    @Override
-    public String toString() {
-        return name;
-    }
 }

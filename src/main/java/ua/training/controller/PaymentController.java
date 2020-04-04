@@ -25,48 +25,24 @@ import java.math.BigDecimal;
 public class PaymentController {
 
     private final OrderService orderService;
-    private final UserService userService;
     private final CalculatorService calculatorService;
 
-    public PaymentController(OrderService orderService, UserService userService, CalculatorService calculatorService) {
+    public PaymentController(OrderService orderService, CalculatorService calculatorService) {
         this.orderService = orderService;
-        this.userService = userService;
         this.calculatorService = calculatorService;
     }
 
-    @GetMapping("/calculator")
-    public String calculatePage(@ModelAttribute OrderDTO modelOrder,
-                                @RequestParam(value = "error", required = false) String error,
-                                Model model) {
 
-        model.addAttribute("error", false);
-        return "calculator";
-    }
-
-    @PostMapping("/calculator")
+    @PostMapping("/calculate")
     public String calculatePrice(@ModelAttribute("order") @Valid CalculatorDTO order,
-                                 BindingResult bindingResult,
-                                 @RequestParam(value = "error", required = false) String error,
                                  @ModelAttribute User modelUser, Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("error", true);
-            return "calculator";
-        } else {
-            model.addAttribute("price", calculatorService.calculatePrice(order));
-        }
 
+        model.addAttribute("price", calculatorService.calculatePrice(order));
         return "calculator";
     }
 
-    @RequestMapping(value = "/to_pay", method = RequestMethod.GET)
-    public String viewSendMoneyPage(@AuthenticationPrincipal User user, Model model) {
-        insertBalanceInfo(user, model);
-        return "payment";
-    }
-
-
-    @RequestMapping("pay/{id}")
-    String payShipment(@PathVariable("id") long shipmentId) throws BankTransactionException, OrderNotFoundException {
+    @RequestMapping(value = "pay/{id}")
+    public String payShipment(@PathVariable("id") long shipmentId) throws BankTransactionException, OrderNotFoundException {
 
         Order order = orderService.getOrderById(shipmentId);
 
@@ -76,27 +52,17 @@ public class PaymentController {
         return "redirect:/my_shipments/page/1";
     }
 
-    @RequestMapping(value = "/add_money", method = RequestMethod.GET)
-    public String addMoneyPage(@AuthenticationPrincipal User user, Model model) {
-        insertBalanceInfo(user, model);
-        return "adding_money";
-    }
 
-
-    @RequestMapping(value = "/add_money", method = RequestMethod.POST)
+    @PostMapping(value = "/add_money")
     public String addMoney(Model model, @ModelAttribute("add") AddMoneyDTO addMoneyForm,
                            @AuthenticationPrincipal User user) throws BankTransactionException {
 
-        BigDecimal money = isLocaleEn() ? addMoneyForm.getAmountEN() : addMoneyForm.getAmount();
-        orderService.addAmount(user.getId(), money);
+        orderService.addAmount(user.getId(), addMoneyForm.getAmount());
 
-        return "redirect:/account_page";
+        return "redirect:/adding_money";
+
     }
 
-    private void insertBalanceInfo(@AuthenticationPrincipal User user, Model model) {
-
-        model.addAttribute("info", userService.listBankAccountInfo(user.getId(), isLocaleEn()));
-    }
 
     boolean isLocaleEn() {
         return LocaleContextHolder.getLocale().toString().equals("en");

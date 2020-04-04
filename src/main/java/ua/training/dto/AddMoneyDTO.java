@@ -14,11 +14,4 @@ public class AddMoneyDTO {
 
     private BigDecimal amount;
 
-    private BigDecimal amountEN;
-
-
-    public BigDecimal getAmountEN() {
-        return amount.multiply(ShipmentsTariffs.DOLLAR);
-    }
-
 }

@@ -77,11 +77,8 @@ public class UserService implements UserDetailsService {
     public BigDecimal listBankAccountInfo(Long id, boolean isLocaleEn) {
 
         UserDTO user = findUserDTOById(id);
-        if (isLocaleEn) {
-            user.setBalance(user.getBalanceEN());
-        } else user.setBalance(user.getBalance());
 
-        return user.getBalance();
+        return isLocaleEn ? user.getBalanceEN() : user.getBalance();
     }
 
 

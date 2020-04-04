@@ -22,7 +22,7 @@
     <br/>
     <section class="jumbotron2 text-center">
 
-        <form th:action="@{/admin_page}" method="post">
+        <form th:action="@{/to_ship}" method="post">
             <form>
                 <div class="col s12 sign">
                     <button class="calculate waves-effect waves-light"
@@ -52,12 +52,12 @@
                 <tr th:each="order : ${orders}">
                     <th scope="row" th:text="${order.dtoId}" style="width: 10px">{ID}</th>
                     <th scope="row" th:text="${order.getDtoOwner().getId()}" style="width: 10px">{ID}</th>
-                    <td th:text="${order.type}">{Order type}</td>
+                    <td th:text="#{type +'.' + ${order.dtoOrderType}}">{Order type}</td>
                     <td th:text="${order.dtoWeight}">{Order weight}</td>
-                    <td th:text="${order.destination}">{Order destination}</td>
+                    <td th:text="#{destination + '.' +${order.dtoDestination}}">{Order destination}</td>
                     <td th:text="${order.shippingDate}">{Order shippingDate}</td>
                     <td th:text="${order.dtoShippingPrice} + #{enter}">{Order shippingPrice}</td>
-                    <td th:text="${order.status}">{Order status}</td>
+                    <td th:text="#{status + '.'+${order.dtoOrderStatus}}">{Order status}</td>
 
                 </tr>
                 </tbody>

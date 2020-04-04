@@ -3,10 +3,10 @@ package ua.training.service;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -24,8 +24,11 @@ import ua.training.repository.UserRepository;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,21 +50,53 @@ public class OrderService {
         this.userService = userService;
     }
 
-    public List<OrderDTO> orderDTOList(Long userId, boolean isLocaleEN) {
-        return orderRepository
-                .findOrderByOwnerId(userId)
+    public Page<OrderDTO> findAllUserOrder(Long userId, Pageable pageable) {
+
+        return new PageImpl<>(orderRepository.findOrderByOwnerId(pageable, userId)
+                .getContent()
                 .stream()
-                .map(OrderDTO::new)
-                .collect(Collectors.toList());
+                .map(order -> OrderDTO.builder()
+                        .dtoId(order.getId())
+                        .dtoOrderType(order.getOrderType())
+                        .dtoDestination(order.getDestination())
+                        .dtoOrderStatus(order.getOrderStatus())
+                        .dtoOwner(order.getOwner())
+                        .dtoWeight(order.getWeight())
+                        .shippingDate(order.getShippingDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
+                                .withLocale(LocaleContextHolder.getLocale())))
+                        .deliveryDate(order.getOrderStatus().equals(OrderStatus.SHIPPED) ? order.getDeliveryDate().
+                                format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
+                                        .withLocale(LocaleContextHolder.getLocale())) : " ")
+                        .dtoShippingPrice(isLocaleUa() ? order.getShippingPriceUkr() : order.getShippingPriceEn())
+                        .build())
+                .collect(Collectors.toList()));
+
+    }
+
+    public Page<OrderDTO> findAllPaidOrdersDTO(Pageable pageable) {
+
+        return new PageImpl<>(orderRepository
+                .findOrderByOrderStatus(pageable, OrderStatus.PAID)
+                .getContent()
+                .stream()
+                .map(order -> OrderDTO.builder()
+                        .dtoId(order.getId())
+                        .dtoOrderType(order.getOrderType())
+                        .dtoDestination(order.getDestination())
+                        .dtoOrderStatus(order.getOrderStatus())
+                        .dtoOwner(order.getOwner())
+                        .dtoWeight(order.getWeight())
+                        .shippingDate(order.getShippingDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
+                                .withLocale(LocaleContextHolder.getLocale())))
+                        .dtoShippingPrice(isLocaleUa() ? order.getShippingPriceUkr() : order.getShippingPriceEn())
+                        .build())
+                .collect(Collectors.toList()));
+
     }
 
 
-    public List<OrderDTO> findAllPaidOrdersDTO() {
-        return orderRepository
-                .findOrderByOrderStatus(OrderStatus.PAID)
-                .stream()
-                .map(OrderDTO::new)
-                .collect(Collectors.toList());
+    private boolean isLocaleUa() {
+        return LocaleContextHolder.getLocale().equals(new Locale("uk"));
     }
 
 
@@ -70,17 +105,26 @@ public class OrderService {
         Order order = Order.builder()
                 .destination(orderDTO.getDtoDestination())
                 .orderType(orderDTO.getDtoOrderType())
+                .orderStatus(OrderStatus.NOT_PAID)
                 .shippingDate(LocalDate.now())
                 .weight(orderDTO.getDtoWeight())
                 .owner(user)
-                .orderStatus(OrderStatus.NOT_PAID)
-                .shippingPrice(calculatePrice(orderDTO))
+                .shippingPriceUkr(calculatePrice(orderDTO))
+                .shippingPriceEn(convertPriceToLocale(calculatePrice(orderDTO), new Locale("en")))
                 .build();
         try {
             orderRepository.save(order);
         } catch (DataIntegrityViolationException e) {
             throw new OrderCreateException("Can not create order");
         }
+    }
+
+    private BigDecimal convertPriceToLocale(BigDecimal price, Locale locale) {
+        return isLocaleUa() ? price : price.divide(ShipmentsTariffs.DOLLAR, 2, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal convertPriceFromLocale(BigDecimal price) {
+        return isLocaleUa() ? price : price.multiply(ShipmentsTariffs.DOLLAR);
     }
 
 
@@ -98,9 +142,9 @@ public class OrderService {
 
     public void payForOrder(Order order) throws BankTransactionException {
         if (!isShipped(order) && !isPaid(order)) {
-            order.setOrderStatus(OrderStatus.PAID);
-            BigDecimal amount = order.getShippingPrice();
+            BigDecimal amount = order.getShippingPriceUkr();
             sendMoney(order.getOwner().getId(), getAdminAccount(), amount);
+            order.setOrderStatus(OrderStatus.PAID);
             orderRepository.save(order);
         } else throw new BankTransactionException("order is already paid");
     }
@@ -128,7 +172,7 @@ public class OrderService {
 
         if (isPaid(order)) {
             order.setOrderStatus(OrderStatus.SHIPPED);
-            order.setDeliveryDate(LocalDate.now(ZoneId.of("Europe/Kiev")).plusDays(order.getDestination().getDay()));
+            order.setDeliveryDate(LocalDate.now().plusDays(order.getDestination().getDay()));
             orderRepository.save(order);
         }
     }
@@ -136,7 +180,7 @@ public class OrderService {
 
     public void addAmount(Long id, BigDecimal amount) throws BankTransactionException {
         User account = userService.findUserById(id);
-        BigDecimal newBalance = account.getBalance().add(amount);
+        BigDecimal newBalance = account.getBalance().add(convertPriceFromLocale(amount));
         if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
             throw new BankTransactionException("no money");
         }
@@ -152,29 +196,6 @@ public class OrderService {
         addAmount(fromAccountId, amount.negate());
     }
 
-
-    public Page<OrderDTO> findPaginated(User user, Pageable pageable, boolean isLocaleEN) {
-
-        List<OrderDTO> orders = orderDTOList(user.getId(), isLocaleEN)
-                .stream()
-                .sorted(Comparator.comparing(OrderDTO::getDtoId)
-                        .reversed())
-                .collect(Collectors.toList());
-
-        int pageSize = pageable.getPageSize();
-        int currentPage = pageable.getPageNumber();
-        int startItem = currentPage * pageSize;
-        List<OrderDTO> list;
-
-        if (orders.size() < startItem) {
-            list = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + pageSize, orders.size());
-            list = orders.subList(startItem, toIndex);
-        }
-
-        return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), orders.size());
-    }
 
 }
 

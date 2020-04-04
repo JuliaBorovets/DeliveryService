@@ -3,28 +3,21 @@ package ua.training.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.view.RedirectView;
 import ua.training.controller.exception.OrderCreateException;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.controller.exception.RegException;
-import ua.training.controller.utility.ControllerUtil;
 import ua.training.dto.*;
 import ua.training.entity.user.User;
 import ua.training.service.CalculatorService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
 import javax.validation.Valid;
 
@@ -36,47 +29,22 @@ public class PageController implements WebMvcConfigurer {
     private final OrderService orderService;
 
     @Autowired
-    private ControllerUtil utility;
-
-    @Autowired
     public PageController(UserService userService, OrderService orderService, CalculatorService calculatorService) {
         this.userService = userService;
         this.orderService = orderService;
     }
 
     @RequestMapping("/")
-    public String mainPage(Model model,
-                           @RequestParam(value = "error", required = false) String error,
-                           @RequestParam(value = "logout", required = false) String logout,
-                           @RequestParam(value = "reg", required = false) String reg) {
-
-        model.addAttribute("error", error != null);
-        model.addAttribute("logout", logout != null);
-        model.addAttribute("reg", reg != null);
-
+    public String mainPage() {
         return "index";
     }
 
 
     @RequestMapping("/login")
-    public String loginPage(@RequestParam(value = "error", required = false) String error,
-                            @RequestParam(value = "logout", required = false) String logout,
-                            @RequestParam(value = "reg", required = false) String reg,
-                            Model model) {
-
-        model.addAttribute("error", error != null);
-        model.addAttribute("logout", logout != null);
-        model.addAttribute("reg", reg != null);
-
+    public String loginPage() {
         return "login";
     }
 
-    @RequestMapping("/success")
-    public RedirectView localRedirect() {
-        RedirectView redirectView = new RedirectView();
-        redirectView.setUrl("/account_page");
-        return redirectView;
-    }
 
     @RequestMapping("/account_page")
     public String accountPage(Model model, @AuthenticationPrincipal User user) {
@@ -85,120 +53,86 @@ public class PageController implements WebMvcConfigurer {
     }
 
     @GetMapping("/reg")
-    public String registerUser(@ModelAttribute("newUser") UserDTO user,
-                               @RequestParam(value = "error", required = false) String error,
-                               Model model) {
+    public String registerUser(@ModelAttribute("newUser") UserDTO user, Model model) {
 
-        model.addAttribute("error", error != null);
-        return "reg";
+        model.addAttribute("newOrder", user == null ? new UserDTO() : user);
+        return "registration";
     }
 
     @PostMapping("/reg")
-    public String newUser(@ModelAttribute("newUser") @Valid UserDTO modelUser,
-                          BindingResult bindingResult, Model model) throws RegException {
+    public void newUser(@ModelAttribute("newUser") @Valid UserDTO modelUser) throws RegException {
 
-        if (bindingResult.hasErrors()) {
-            log.error("registration error");
-            model.addAttribute("error", true);
-            return "reg";
-        } else {
-            log.info("saved user  with id=" + modelUser.getId());
-            userService.saveNewUser(modelUser);
-            return "redirect:/";
-        }
+        userService.saveNewUser(modelUser);
     }
 
 
-    @PostMapping("/neworder")
-    public String newOrder(@ModelAttribute OrderDTO modelOrder,
-                           @AuthenticationPrincipal User user) throws OrderCreateException {
+    @GetMapping("/my_shipments/page/{page}")
+    public String shipmentsPage(Model model, @AuthenticationPrincipal User user,
+                                @PathVariable("page") int page,
+                                @PageableDefault Pageable pageable) {
 
-        orderService.createOrder(modelOrder, user);
+        insertBalanceInfo(user, model);
 
-        return "redirect:/account_page";
+        model.addAttribute("orders", orderService.findAllUserOrder(user.getId(), pageable));
+
+        return "my_shipments";
+    }
+
+    @GetMapping(value = "/adding_money")
+    public String addMoneyPage(@AuthenticationPrincipal User user, Model model) {
+        insertBalanceInfo(user, model);
+        return "adding_money";
+    }
+
+    @GetMapping("/admin_page")
+    public String calculatePage(@AuthenticationPrincipal User user, Model model,
+                                @PageableDefault Pageable pageable) {
+
+        if (!user.getRole().name().equals("ROLE_ADMIN")) {
+            return "redirect:/account_page";
+        }
+
+        insertBalanceInfo(user, model);
+        model.addAttribute("orders", orderService.findAllPaidOrdersDTO(pageable));
+
+        return "admin_page";
+    }
+
+    @GetMapping("/calculator")
+    public String calculatePage(@ModelAttribute OrderDTO modelOrder) {
+        return "calculator";
     }
 
     @GetMapping("/create")
-    public String createOrder(@ModelAttribute OrderDTO order, @AuthenticationPrincipal User user,
-                              @RequestParam(value = "error", required = false) String error,
+    public String createOrder(@ModelAttribute("newOrder") OrderDTO order, @AuthenticationPrincipal User user,
                               Model model) {
         insertBalanceInfo(user, model);
 
-        model.addAttribute("error", error != null);
         model.addAttribute("newOrder", order == null ? new OrderDTO() : order);
 
         return "new_order";
     }
 
+    @PostMapping("/create")
+    public String newOrder(@ModelAttribute OrderDTO modelOrder, @AuthenticationPrincipal User user) throws OrderCreateException {
 
-    @RequestMapping("/my_shipments/page/{page}")
-    public String shipmentsPage(Model model, @AuthenticationPrincipal User user,
-                                @PathVariable("page") int page) {
+        orderService.createOrder(modelOrder, user);
+        return "redirect:/my_shipments/page/1";
 
-        insertBalanceInfo(user, model);
-
-        PageRequest pageable = PageRequest.of(page - 1, 5);
-        Page<OrderDTO> articlePage = orderService.findPaginated(user, pageable, isLocaleEn());
-        articlePage.getContent().forEach(this::setLocalFields);
-
-        int totalPages = articlePage.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
-            model.addAttribute("pageNumbers", pageNumbers);
-        }
-        model.addAttribute("orders", articlePage.getContent());
-
-        return "my_shipments";
     }
 
-    @GetMapping("/admin_page")
-    public String calculatePage(@AuthenticationPrincipal User user, Model model) {
+    @PostMapping(value = "/to_ship")
+    public String adminPage(@AuthenticationPrincipal User user, Model model,
+                            @PageableDefault Pageable pageable) throws OrderNotFoundException {
+        //insertBalanceInfo(user, model);
 
-
-        insertBalanceInfo(user, model);
-
-        List<OrderDTO> orders = orderService.findAllPaidOrdersDTO();
-        orders.forEach(this::setLocalFields);
-        model.addAttribute("orders", orders);
-
-        return "admin_page";
-    }
-
-
-    @PostMapping(value = "/admin_page")
-    public String adminPage(@AuthenticationPrincipal User user,
-                            Model model) throws OrderNotFoundException {
-
-        insertBalanceInfo(user, model);
-
-        List<OrderDTO> orders = orderService.findAllPaidOrdersDTO();
-        model.addAttribute("orders", orders);
-
+        Page<OrderDTO> orders = orderService.findAllPaidOrdersDTO(pageable);
         for (OrderDTO o : orders) {
             orderService.orderSetShippedStatus(o.getDtoId());
         }
 
-        return "account_page";
-    }
+        return "redirect:/admin_page";
 
-    private void setLocalFields(OrderDTO order) {
-        utility.reset();
-        DateTimeFormatter pattern = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(LocaleContextHolder.getLocale());
-
-        if (order.getDtoDeliveryDate() != null) {
-            order.setDeliveryDate(order.getDtoDeliveryDate().format(pattern));
-        }
-
-        if (isLocaleEn()) {
-            order.setDtoShippingPrice(order.getDtoShippingPriceEN());
-        } else {
-            order.setDtoShippingPrice(order.getDtoShippingPrice());
-        }
-
-        order.setShippingDate(order.getDtoShippingDate().format(pattern));
-        order.setDestination(utility.getMessage(order.getDtoDestination().toString()));
-        order.setType(utility.getMessage(order.getDtoOrderType().toString()));
-        order.setStatus(utility.getMessage(order.getDtoOrderStatus().getName()));
     }
 
 
@@ -207,7 +141,6 @@ public class PageController implements WebMvcConfigurer {
     }
 
     boolean isLocaleEn() {
-
         return LocaleContextHolder.getLocale().toString().equals("en");
     }
 
