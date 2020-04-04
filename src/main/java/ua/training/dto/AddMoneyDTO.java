@@ -1,7 +1,6 @@
 package ua.training.dto;
 
 import lombok.*;
-import ua.training.service.ShipmentsTariffs;
 
 import java.math.BigDecimal;
 

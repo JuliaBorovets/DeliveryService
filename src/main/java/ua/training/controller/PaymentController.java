@@ -63,9 +63,4 @@ public class PaymentController {
 
     }
 
-
-    boolean isLocaleEn() {
-        return LocaleContextHolder.getLocale().toString().equals("en");
-    }
-
 }

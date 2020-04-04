@@ -1,6 +1,9 @@
 package ua.training.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,14 +18,27 @@ import ua.training.entity.user.User;
 import ua.training.repository.UserRepository;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Locale;
 
 @Slf4j
 @Service
+@PropertySource("classpath:constants.properties")
 public class UserService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Value("${constants.BASE.PRICE}")
+    Integer BASE_PRICE;
+
+    @Value("${constant.DOLLAR}")
+    BigDecimal DOLLAR;
+
+    @Value("${constants.COEFFICIENT}")
+    Double COEFFICIENT;
+
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
@@ -62,23 +78,33 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDTO findUserDTOById(Long id) {
-        return new UserDTO(userRepository.findUserById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("user with id " + id + " not found")));
-
+        return userRepository
+                .findUserById(id)
+                .map(UserDTO::new)
+                .orElseThrow(() -> new UsernameNotFoundException("user with id " + id + " not found"));
     }
 
     public User findUserById(Long id) {
-        return userRepository.findUserById(id)
+        return userRepository
+                .findUserById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("user with id " + id + " not found"));
-
     }
 
 
-    public BigDecimal listBankAccountInfo(Long id, boolean isLocaleEn) {
+    public BigDecimal listBankAccountInfo(Long id) {
 
         UserDTO user = findUserDTOById(id);
 
-        return isLocaleEn ? user.getBalanceEN() : user.getBalance();
+        return isLocaleUa() ? user.getBalance() : convertBalanceToLocale(user.getBalance());
+    }
+
+    private BigDecimal convertBalanceToLocale(BigDecimal balance) {
+        log.error("converting to locale");
+        return balance.divide(DOLLAR, 2, RoundingMode.HALF_UP);
+    }
+
+    private boolean isLocaleUa() {
+        return LocaleContextHolder.getLocale().equals(new Locale("uk"));
     }
 
 

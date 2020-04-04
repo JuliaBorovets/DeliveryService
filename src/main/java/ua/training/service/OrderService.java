@@ -3,10 +3,13 @@ package ua.training.service;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -26,7 +29,6 @@ import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
@@ -35,11 +37,22 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 @Service
+@PropertySource("classpath:constants.properties")
 public class OrderService {
 
     private OrderRepository orderRepository;
     private UserRepository userRepository;
     private UserService userService;
+
+    @Value("${constants.BASE.PRICE}")
+    Integer BASE_PRICE;
+
+    @Value("${constant.DOLLAR}")
+    BigDecimal DOLLAR;
+
+    @Value("${constants.COEFFICIENT}")
+    Double COEFFICIENT;
+
 
     @Autowired
     private EntityManager entityManager;
@@ -50,10 +63,9 @@ public class OrderService {
         this.userService = userService;
     }
 
-    public Page<OrderDTO> findAllUserOrder(Long userId, Pageable pageable) {
+    public List<OrderDTO> findAllUserOrder(Long userId) {
 
-        return new PageImpl<>(orderRepository.findOrderByOwnerId(pageable, userId)
-                .getContent()
+        return orderRepository.findOrderByOwnerId(userId)
                 .stream()
                 .map(order -> OrderDTO.builder()
                         .dtoId(order.getId())
@@ -69,15 +81,14 @@ public class OrderService {
                                         .withLocale(LocaleContextHolder.getLocale())) : " ")
                         .dtoShippingPrice(isLocaleUa() ? order.getShippingPriceUkr() : order.getShippingPriceEn())
                         .build())
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
 
     }
 
-    public Page<OrderDTO> findAllPaidOrdersDTO(Pageable pageable) {
+    public List<OrderDTO> findAllPaidOrdersDTO(Pageable pageable) {
 
-        return new PageImpl<>(orderRepository
-                .findOrderByOrderStatus(pageable, OrderStatus.PAID)
-                .getContent()
+        return orderRepository
+                .findOrderByOrderStatus(OrderStatus.PAID)
                 .stream()
                 .map(order -> OrderDTO.builder()
                         .dtoId(order.getId())
@@ -90,7 +101,7 @@ public class OrderService {
                                 .withLocale(LocaleContextHolder.getLocale())))
                         .dtoShippingPrice(isLocaleUa() ? order.getShippingPriceUkr() : order.getShippingPriceEn())
                         .build())
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
 
     }
 
@@ -120,17 +131,17 @@ public class OrderService {
     }
 
     private BigDecimal convertPriceToLocale(BigDecimal price, Locale locale) {
-        return isLocaleUa() ? price : price.divide(ShipmentsTariffs.DOLLAR, 2, RoundingMode.HALF_UP);
+        return isLocaleUa() ? price : price.divide(DOLLAR, 2, RoundingMode.HALF_UP);
     }
 
     private BigDecimal convertPriceFromLocale(BigDecimal price) {
-        return isLocaleUa() ? price : price.multiply(ShipmentsTariffs.DOLLAR);
+        return isLocaleUa() ? price : price.multiply(DOLLAR);
     }
 
 
     public BigDecimal calculatePrice(OrderDTO orderDTO) {
-        return BigDecimal.valueOf(ShipmentsTariffs.BASE_PRICE + (orderDTO.getDtoDestination().getPriceForDestination()
-                + orderDTO.getDtoOrderType().getPriceForType()) * ShipmentsTariffs.COEFFICIENT);
+        return BigDecimal.valueOf(BASE_PRICE + (orderDTO.getDtoDestination().getPriceForDestination()
+                + orderDTO.getDtoOrderType().getPriceForType()) * COEFFICIENT);
     }
 
     private Long getAdminAccount() {
@@ -166,7 +177,6 @@ public class OrderService {
     }
 
 
-
     public void orderSetShippedStatus(Long id) throws OrderNotFoundException {
         Order order = getOrderById(id);
 
@@ -175,6 +185,29 @@ public class OrderService {
             order.setDeliveryDate(LocalDate.now().plusDays(order.getDestination().getDay()));
             orderRepository.save(order);
         }
+    }
+
+    public Page<OrderDTO> findPaginated(User user, Pageable pageable) {
+
+        List<OrderDTO> orders = findAllUserOrder(user.getId())
+                .stream()
+                .sorted(Comparator.comparing(OrderDTO::getDtoId)
+                        .reversed())
+                .collect(Collectors.toList());
+
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        List<OrderDTO> list;
+
+        if (orders.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, orders.size());
+            list = orders.subList(startItem, toIndex);
+        }
+
+        return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), orders.size());
     }
 
 

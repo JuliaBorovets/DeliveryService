@@ -12,13 +12,9 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    // List<Order> findOrderByOwnerId(long ownerId);
+    List<Order> findOrderByOwnerId(long ownerId);
 
-    //List<Order> findOrderByOrderStatus(OrderStatus orderStatus);
-
-    Page<Order> findOrderByOwnerId(Pageable pageable, long ownerId);
-
-    Page<Order> findOrderByOrderStatus(Pageable pageable, OrderStatus orderStatus);
+    List<Order> findOrderByOrderStatus(OrderStatus orderStatus);
 
 
 }

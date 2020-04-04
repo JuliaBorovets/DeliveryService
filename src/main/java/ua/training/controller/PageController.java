@@ -3,6 +3,7 @@ package ua.training.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.view.RedirectView;
 import ua.training.controller.exception.OrderCreateException;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.controller.exception.RegException;
@@ -19,7 +21,11 @@ import ua.training.service.CalculatorService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Slf4j
 @Controller
@@ -52,6 +58,12 @@ public class PageController implements WebMvcConfigurer {
         return "account_page";
     }
 
+    @RequestMapping("/success")
+    public String localRedirect() {
+        return "redirect:/account_page";
+    }
+
+
     @GetMapping("/reg")
     public String registerUser(@ModelAttribute("newUser") UserDTO user, Model model) {
 
@@ -68,12 +80,17 @@ public class PageController implements WebMvcConfigurer {
 
     @GetMapping("/my_shipments/page/{page}")
     public String shipmentsPage(Model model, @AuthenticationPrincipal User user,
-                                @PathVariable("page") int page,
-                                @PageableDefault Pageable pageable) {
+                                @PathVariable("page") int page) {
 
         insertBalanceInfo(user, model);
 
-        model.addAttribute("orders", orderService.findAllUserOrder(user.getId(), pageable));
+        PageRequest pageable = PageRequest.of(page - 1, 5);
+        Page<OrderDTO> articlePage = orderService.findPaginated(user, pageable);
+
+        int totalPages = articlePage.getTotalPages();
+        List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+        model.addAttribute("pageNumbers", pageNumbers);
+        model.addAttribute("orders", articlePage.getContent());
 
         return "my_shipments";
     }
@@ -127,6 +144,7 @@ public class PageController implements WebMvcConfigurer {
         //insertBalanceInfo(user, model);
 
         Page<OrderDTO> orders = orderService.findAllPaidOrdersDTO(pageable);
+
         for (OrderDTO o : orders) {
             orderService.orderSetShippedStatus(o.getDtoId());
         }
@@ -137,11 +155,7 @@ public class PageController implements WebMvcConfigurer {
 
 
     private void insertBalanceInfo(@AuthenticationPrincipal User user, Model model) {
-        model.addAttribute("info", userService.listBankAccountInfo(user.getId(), isLocaleEn()));
-    }
-
-    boolean isLocaleEn() {
-        return LocaleContextHolder.getLocale().toString().equals("en");
+        model.addAttribute("info", userService.listBankAccountInfo(user.getId()));
     }
 
 }
