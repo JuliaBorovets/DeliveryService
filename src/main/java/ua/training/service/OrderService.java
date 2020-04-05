@@ -174,9 +174,9 @@ public class OrderService {
 
     }
 
-    public Page<OrderDTO> findPaginated(User user, Pageable pageable) {
+    public Page<OrderDTO> findPaginated(Pageable pageable, List<OrderDTO> orders) {
 
-        List<OrderDTO> orders = findAllUserOrder(user.getId())
+        List<OrderDTO> sortedOrders = orders
                 .stream()
                 .sorted(Comparator.comparing(OrderDTO::getDtoId)
                         .reversed())
@@ -187,11 +187,11 @@ public class OrderService {
         int startItem = currentPage * pageSize;
         List<OrderDTO> list;
 
-        if (orders.size() < startItem) {
+        if (sortedOrders.size() < startItem) {
             list = Collections.emptyList();
         } else {
             int toIndex = Math.min(startItem + pageSize, orders.size());
-            list = orders.subList(startItem, toIndex);
+            list = sortedOrders.subList(startItem, toIndex);
         }
 
         return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), orders.size());

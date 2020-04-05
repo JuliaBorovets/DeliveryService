@@ -19,6 +19,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ModelAndView handleApplicationException() {
+        log.error("global exception");
         ModelAndView modelAndView = new ModelAndView("index");
         modelAndView.addObject("error", true);
         return modelAndView;
@@ -27,6 +28,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({org.springframework.validation.BindException.class, IllegalStateException.class})
     public String handleApplicationException(Model model) {
+        log.error("registration exception. Binding result.");
         model.addAttribute("newUser", new UserDTO());
         model.addAttribute("error", true);
         return "registration";
@@ -35,6 +37,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RegException.class)
     public String handleRegException(Model model) {
+        log.error("registration exception. Duplicate user.");
         model.addAttribute("newUser", new UserDTO());
         model.addAttribute("duplicate", true);
         return "registration";
@@ -55,6 +58,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(OrderCreateException.class)
     public String handleOrderCreateException(Model model) {
+        log.error("OrderCreate exception");
         model.addAttribute("newOrder", new OrderDTO());
         model.addAttribute("error", true);
         return "redirect:/create?error";

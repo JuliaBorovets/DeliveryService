@@ -34,6 +34,7 @@ public class PaymentController {
                                  @ModelAttribute User modelUser, Model model) {
 
         model.addAttribute("price", calculatorService.calculatePrice(order));
+        log.info("calculating order price");
         return "calculator";
     }
 
@@ -44,6 +45,7 @@ public class PaymentController {
 
         if (!order.getOrderStatus().equals(OrderStatus.PAID) && !order.getOrderStatus().equals(OrderStatus.SHIPPED))
             orderService.payForOrder(order);
+        log.info("order paying");
 
         return "redirect:/my_shipments/page/1";
     }
@@ -54,6 +56,7 @@ public class PaymentController {
                            @AuthenticationPrincipal User user) throws BankTransactionException {
 
         orderService.addAmount(user.getId(), addMoneyForm.getAmount());
+        log.info("adding money");
 
         return "redirect:/adding_money";
 
