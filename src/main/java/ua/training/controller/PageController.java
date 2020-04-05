@@ -1,6 +1,7 @@
 package ua.training.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,15 @@ public class PageController implements WebMvcConfigurer {
 
     private final UserService userService;
     private final OrderService orderService;
+
+    @Value("${pagination.user.shipments.size}")
+    Integer USER_SHIPMENTS_SIZE;
+
+    @Value("${pagination.admin.size}")
+    Integer ADMIN_SHIPMENTS_SIZE;
+
+    @Value("${first.page.number}")
+    Integer FIRST_PAGE;
 
     @Autowired
     public PageController(UserService userService, OrderService orderService, CalculatorService calculatorService) {
@@ -83,13 +93,9 @@ public class PageController implements WebMvcConfigurer {
 
         insertBalanceInfo(user, model);
 
-        PageRequest pageable = PageRequest.of(page - 1, 5);
-        Page<OrderDTO> articlePage = orderService.findPaginated(user, pageable);
+        List<OrderDTO> orders = orderService.findAllUserOrder(user.getId());
 
-        int totalPages = articlePage.getTotalPages();
-        List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
-        model.addAttribute("pageNumbers", pageNumbers);
-        model.addAttribute("orders", articlePage.getContent());
+        insertPaginatedOrders(page, USER_SHIPMENTS_SIZE, model, orders);
 
         return "my_shipments";
     }
@@ -100,16 +106,20 @@ public class PageController implements WebMvcConfigurer {
         return "adding_money";
     }
 
-    //TODO pagination
-    @GetMapping("/admin_page")
-    public String calculatePage(@AuthenticationPrincipal User user, Model model) {
+
+    @GetMapping("/admin_page/page/{page}")
+    public String calculatePage(@AuthenticationPrincipal User user, Model model,
+                                @PathVariable("page") int page) {
 
         if (!user.getRole().name().equals("ROLE_ADMIN")) {
             return "redirect:/account_page";
         }
 
+
         insertBalanceInfo(user, model);
-        model.addAttribute("orders", orderService.findAllPaidOrdersDTO());
+        List<OrderDTO> orders = orderService.findAllPaidOrdersDTO();
+
+        insertPaginatedOrders(page, ADMIN_SHIPMENTS_SIZE, model, orders);
 
         return "admin_page";
     }
@@ -142,13 +152,24 @@ public class PageController implements WebMvcConfigurer {
                             @PageableDefault Pageable pageable) throws OrderNotFoundException {
         orderService.orderToShip();
 
-        return "redirect:/admin_page";
+        return "redirect:/admin_page/page/1";
 
     }
 
 
     private void insertBalanceInfo(@AuthenticationPrincipal User user, Model model) {
         model.addAttribute("info", userService.listBankAccountInfo(user.getId()));
+    }
+
+
+    private void insertPaginatedOrders(int page, int size, Model model, List<OrderDTO> orders) {
+        PageRequest pageable = PageRequest.of(page - 1, size);
+        Page<OrderDTO> articlePage = orderService.findPaginated(pageable, orders);
+
+        int totalPages = articlePage.getTotalPages();
+        List<Integer> pageNumbers = IntStream.rangeClosed(FIRST_PAGE, totalPages).boxed().collect(Collectors.toList());
+        model.addAttribute("pageNumbers", pageNumbers);
+        model.addAttribute("orders", articlePage.getContent());
     }
 
 }
