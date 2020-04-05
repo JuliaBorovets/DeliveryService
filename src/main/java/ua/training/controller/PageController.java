@@ -81,8 +81,8 @@ public class PageController implements WebMvcConfigurer {
 
     @PostMapping("/reg")
     public String newUser(@ModelAttribute("newUser") @Valid UserDTO modelUser) throws RegException {
-
         userService.saveNewUser(modelUser);
+        log.info("new user registration");
         return "redirect:/login";
     }
 
@@ -143,6 +143,8 @@ public class PageController implements WebMvcConfigurer {
     public String newOrder(@ModelAttribute OrderDTO modelOrder, @AuthenticationPrincipal User user) throws OrderCreateException {
 
         orderService.createOrder(modelOrder, user);
+        log.info("new order creation");
+
         return "redirect:/my_shipments/page/1";
 
     }
@@ -152,6 +154,7 @@ public class PageController implements WebMvcConfigurer {
                             @PageableDefault Pageable pageable) throws OrderNotFoundException {
         orderService.orderToShip();
 
+        log.info("shipping orders");
         return "redirect:/admin_page/page/1";
 
     }
