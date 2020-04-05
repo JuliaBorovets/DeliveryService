@@ -1,6 +1,5 @@
 package ua.training.dto;
 
-
 public interface RegexConstants {
 
     String firstNameRegexp = "[A-Z][a-z]{2,20}";

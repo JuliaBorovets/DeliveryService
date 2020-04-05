@@ -1,11 +1,9 @@
 package ua.training.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.training.controller.exception.BankTransactionException;
 import ua.training.controller.exception.OrderNotFoundException;
@@ -15,10 +13,8 @@ import ua.training.entity.order.OrderStatus;
 import ua.training.entity.user.User;
 import ua.training.service.CalculatorService;
 import ua.training.service.OrderService;
-import ua.training.service.UserService;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
 
 @Slf4j
 @Controller

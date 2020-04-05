@@ -20,14 +20,12 @@ import ua.training.controller.exception.OrderCreateException;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.OrderDTO;
 import ua.training.entity.order.*;
-import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.repository.OrderRepository;
 import ua.training.repository.UserRepository;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -40,31 +38,29 @@ import java.util.stream.Collectors;
 @PropertySource("classpath:constants.properties")
 public class OrderService {
 
+    @Autowired
+    private EntityManager entityManager;
+
     private OrderRepository orderRepository;
     private UserRepository userRepository;
     private UserService userService;
+    private ConverterService converterService;
+
+    public OrderService(OrderRepository orderRepository, UserRepository userRepository, UserService userService,
+                        ConverterService converterService) {
+        this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
+        this.userService = userService;
+        this.converterService = converterService;
+    }
 
     @Value("${constants.BASE.PRICE}")
     Integer BASE_PRICE;
 
-    @Value("${constant.DOLLAR}")
-    BigDecimal DOLLAR;
-
     @Value("${constants.COEFFICIENT}")
     Double COEFFICIENT;
 
-
-    @Autowired
-    private EntityManager entityManager;
-
-    public OrderService(OrderRepository orderRepository, UserRepository userRepository, UserService userService) {
-        this.orderRepository = orderRepository;
-        this.userRepository = userRepository;
-        this.userService = userService;
-    }
-
     public List<OrderDTO> findAllUserOrder(Long userId) {
-
         return orderRepository.findOrderByOwnerId(userId)
                 .stream()
                 .map(order -> OrderDTO.builder()
@@ -76,13 +72,12 @@ public class OrderService {
                         .dtoWeight(order.getWeight())
                         .shippingDate(order.getShippingDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
                                 .withLocale(LocaleContextHolder.getLocale())))
-                        .deliveryDate(order.getOrderStatus().equals(OrderStatus.SHIPPED) ? order.getDeliveryDate().
+                        .deliveryDate(isShipped(order) ? order.getDeliveryDate().
                                 format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
                                         .withLocale(LocaleContextHolder.getLocale())) : " ")
                         .dtoShippingPrice(isLocaleUa() ? order.getShippingPriceUkr() : order.getShippingPriceEn())
                         .build())
                 .collect(Collectors.toList());
-
     }
 
     public List<OrderDTO> findAllPaidOrdersDTO() {
@@ -121,23 +116,13 @@ public class OrderService {
                 .weight(orderDTO.getDtoWeight())
                 .owner(user)
                 .shippingPriceUkr(calculatePrice(orderDTO))
-                .shippingPriceEn(convertPriceToLocale(calculatePrice(orderDTO), "en"))
+                .shippingPriceEn(converterService.convertPriceToLocale(calculatePrice(orderDTO), "en"))
                 .build();
         try {
             orderRepository.save(order);
         } catch (DataIntegrityViolationException e) {
             throw new OrderCreateException("Can not create order");
         }
-    }
-
-    private BigDecimal convertPriceToLocale(BigDecimal price, String locale) {
-
-
-        return locale.equals("en") ? price.divide(DOLLAR, 2, RoundingMode.HALF_UP) : price;
-    }
-
-    private BigDecimal convertPriceFromLocale(BigDecimal price) {
-        return isLocaleUa() ? price : price.multiply(DOLLAR);
     }
 
 
@@ -151,15 +136,6 @@ public class OrderService {
                 .orElseThrow(() -> new UsernameNotFoundException("no admin"));
 
         return admin.getId();
-    }
-
-    public void payForOrder(Order order) throws BankTransactionException {
-        if (!isShipped(order) && !isPaid(order)) {
-            BigDecimal amount = isLocaleUa() ? order.getShippingPriceUkr() : convertPriceFromLocale(order.getShippingPriceEn());
-            sendMoney(order.getOwner().getId(), getAdminAccount(), amount);
-            order.setOrderStatus(OrderStatus.PAID);
-            orderRepository.save(order);
-        } else throw new BankTransactionException("order is already paid");
     }
 
 
@@ -198,7 +174,6 @@ public class OrderService {
 
     }
 
-
     public Page<OrderDTO> findPaginated(User user, Pageable pageable) {
 
         List<OrderDTO> orders = findAllUserOrder(user.getId())
@@ -225,7 +200,7 @@ public class OrderService {
 
     public void addAmount(Long id, BigDecimal amount) throws BankTransactionException {
         User account = userService.findUserById(id);
-        BigDecimal newBalance = account.getBalance().add(convertPriceFromLocale(amount));
+        BigDecimal newBalance = account.getBalance().add(converterService.convertPriceFromLocale(amount, localeName()));
         if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
             throw new BankTransactionException("no money");
         }
@@ -234,13 +209,26 @@ public class OrderService {
     }
 
 
+    public void payForOrder(Order order) throws BankTransactionException {
+        if (!isShipped(order) && !isPaid(order)) {
+            BigDecimal amount = isLocaleUa() ? order.getShippingPriceUkr() : order.getShippingPriceEn();
+            sendMoney(order.getOwner().getId(), getAdminAccount(), amount);
+            order.setOrderStatus(OrderStatus.PAID);
+            orderRepository.save(order);
+        } else throw new BankTransactionException("order is already paid");
+    }
+
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             rollbackFor = BankTransactionException.class)
     void sendMoney(Long fromAccountId, Long toAccountId, BigDecimal amount) throws BankTransactionException {
-        addAmount(toAccountId, amount);
         addAmount(fromAccountId, amount.negate());
+        addAmount(toAccountId, amount);
+
     }
 
+    private String localeName() {
+        return LocaleContextHolder.getLocale().toString();
+    }
 
 }
 

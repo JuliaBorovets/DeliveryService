@@ -3,7 +3,6 @@ package ua.training.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -33,6 +32,14 @@ public class GlobalExceptionHandler {
         return "registration";
     }
 
+
+    @ExceptionHandler(RegException.class)
+    public String handleRegException(Model model) {
+        model.addAttribute("newUser", new UserDTO());
+        model.addAttribute("duplicate", true);
+        return "registration";
+    }
+
     @ExceptionHandler(BankTransactionException.class)
     public String handleRegException() {
         log.error("BankTransaction Exception");
@@ -45,13 +52,6 @@ public class GlobalExceptionHandler {
         return "redirect:/my_shipments/page/1";
     }
 
-
-    @ExceptionHandler(RegException.class)
-    public String handleRegException(Model model) {
-        model.addAttribute("newUser", new UserDTO());
-        model.addAttribute("duplicate", true);
-        return "reg";
-    }
 
     @ExceptionHandler(OrderCreateException.class)
     public String handleOrderCreateException(Model model) {

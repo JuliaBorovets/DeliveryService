@@ -1,7 +1,6 @@
 package ua.training.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.view.RedirectView;
 import ua.training.controller.exception.OrderCreateException;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.controller.exception.RegException;
@@ -142,8 +140,6 @@ public class PageController implements WebMvcConfigurer {
     @PostMapping(value = "/to_ship")
     public String adminPage(@AuthenticationPrincipal User user, Model model,
                             @PageableDefault Pageable pageable) throws OrderNotFoundException {
-        //insertBalanceInfo(user, model);
-
         orderService.orderToShip();
 
         return "redirect:/admin_page";

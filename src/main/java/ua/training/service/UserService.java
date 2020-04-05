@@ -1,7 +1,6 @@
 package ua.training.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,38 +18,28 @@ import ua.training.repository.UserRepository;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Locale;
 
 @Slf4j
 @Service
 @PropertySource("classpath:constants.properties")
 public class UserService implements UserDetailsService {
+
     private UserRepository userRepository;
+    private ConverterService converterService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Value("${constants.BASE.PRICE}")
-    Integer BASE_PRICE;
-
-    @Value("${constant.DOLLAR}")
-    BigDecimal DOLLAR;
-
-    @Value("${constants.COEFFICIENT}")
-    Double COEFFICIENT;
-
+    public UserService(UserRepository userRepository, ConverterService converterService) {
+        this.userRepository = userRepository;
+        this.converterService = converterService;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         return userRepository.findByLogin(login).orElseThrow(() -> new UsernameNotFoundException(login));
     }
-
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
 
     public void saveNewUser(UserDTO user) throws RegException {
         try {
@@ -89,9 +78,13 @@ public class UserService implements UserDetailsService {
                 .lastName("Admin")
                 .login("admin")
                 .email("admin@gmail.com")
-                .password("password")
+                .password(passwordEncoder.encode("password"))
                 .balance(BigDecimal.ZERO)
                 .role(RoleType.ROLE_ADMIN)
+                .accountNonExpired(true)
+                .accountNonLocked(true)
+                .credentialsNonExpired(true)
+                .enabled(true)
                 .build();
 
         try {
@@ -120,16 +113,16 @@ public class UserService implements UserDetailsService {
 
         UserDTO user = findUserDTOById(id);
 
-        return isLocaleUa() ? user.getBalance() : convertBalanceToLocale(user.getBalance());
+        return isLocaleUa() ? user.getBalance() : converterService.convertPriceToLocale(user.getBalance(), localeName());
     }
 
-    private BigDecimal convertBalanceToLocale(BigDecimal balance) {
-        log.error("converting to locale");
-        return balance.divide(DOLLAR, 2, RoundingMode.HALF_UP);
-    }
 
     private boolean isLocaleUa() {
         return LocaleContextHolder.getLocale().equals(new Locale("uk"));
+    }
+
+    private String localeName() {
+        return LocaleContextHolder.getLocale().toString();
     }
 
 }
