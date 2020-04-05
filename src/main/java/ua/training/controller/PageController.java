@@ -72,9 +72,10 @@ public class PageController implements WebMvcConfigurer {
     }
 
     @PostMapping("/reg")
-    public void newUser(@ModelAttribute("newUser") @Valid UserDTO modelUser) throws RegException {
+    public String newUser(@ModelAttribute("newUser") @Valid UserDTO modelUser) throws RegException {
 
         userService.saveNewUser(modelUser);
+        return "redirect:/login";
     }
 
 
@@ -101,16 +102,16 @@ public class PageController implements WebMvcConfigurer {
         return "adding_money";
     }
 
+    //TODO pagination
     @GetMapping("/admin_page")
-    public String calculatePage(@AuthenticationPrincipal User user, Model model,
-                                @PageableDefault Pageable pageable) {
+    public String calculatePage(@AuthenticationPrincipal User user, Model model) {
 
         if (!user.getRole().name().equals("ROLE_ADMIN")) {
             return "redirect:/account_page";
         }
 
         insertBalanceInfo(user, model);
-        model.addAttribute("orders", orderService.findAllPaidOrdersDTO(pageable));
+        model.addAttribute("orders", orderService.findAllPaidOrdersDTO());
 
         return "admin_page";
     }
@@ -143,11 +144,7 @@ public class PageController implements WebMvcConfigurer {
                             @PageableDefault Pageable pageable) throws OrderNotFoundException {
         //insertBalanceInfo(user, model);
 
-        Page<OrderDTO> orders = orderService.findAllPaidOrdersDTO(pageable);
-
-        for (OrderDTO o : orders) {
-            orderService.orderSetShippedStatus(o.getDtoId());
-        }
+        orderService.orderToShip();
 
         return "redirect:/admin_page";
 

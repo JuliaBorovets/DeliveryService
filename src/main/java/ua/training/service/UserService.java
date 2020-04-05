@@ -17,6 +17,7 @@ import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.repository.UserRepository;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Locale;
@@ -77,6 +78,30 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
+    @PostConstruct
+    private void createAdmin() throws RegException {
+        if (userRepository.findByLogin("admin").isPresent()) {
+            return;
+        }
+
+        User admin = User.builder()
+                .firstName("Admin")
+                .lastName("Admin")
+                .login("admin")
+                .email("admin@gmail.com")
+                .password("password")
+                .balance(BigDecimal.ZERO)
+                .role(RoleType.ROLE_ADMIN)
+                .build();
+
+        try {
+            userRepository.save(admin);
+        } catch (DataIntegrityViolationException e) {
+            throw new RegException("can nit save admin");
+        }
+    }
+
+
     public UserDTO findUserDTOById(Long id) {
         return userRepository
                 .findUserById(id)
@@ -106,6 +131,5 @@ public class UserService implements UserDetailsService {
     private boolean isLocaleUa() {
         return LocaleContextHolder.getLocale().equals(new Locale("uk"));
     }
-
 
 }

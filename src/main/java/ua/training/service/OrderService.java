@@ -85,7 +85,7 @@ public class OrderService {
 
     }
 
-    public List<OrderDTO> findAllPaidOrdersDTO(Pageable pageable) {
+    public List<OrderDTO> findAllPaidOrdersDTO() {
 
         return orderRepository
                 .findOrderByOrderStatus(OrderStatus.PAID)
@@ -121,7 +121,7 @@ public class OrderService {
                 .weight(orderDTO.getDtoWeight())
                 .owner(user)
                 .shippingPriceUkr(calculatePrice(orderDTO))
-                .shippingPriceEn(convertPriceToLocale(calculatePrice(orderDTO), new Locale("en")))
+                .shippingPriceEn(convertPriceToLocale(calculatePrice(orderDTO), "en"))
                 .build();
         try {
             orderRepository.save(order);
@@ -130,8 +130,10 @@ public class OrderService {
         }
     }
 
-    private BigDecimal convertPriceToLocale(BigDecimal price, Locale locale) {
-        return isLocaleUa() ? price : price.divide(DOLLAR, 2, RoundingMode.HALF_UP);
+    private BigDecimal convertPriceToLocale(BigDecimal price, String locale) {
+
+
+        return locale.equals("en") ? price.divide(DOLLAR, 2, RoundingMode.HALF_UP) : price;
     }
 
     private BigDecimal convertPriceFromLocale(BigDecimal price) {
@@ -145,7 +147,7 @@ public class OrderService {
     }
 
     private Long getAdminAccount() {
-        User admin = userRepository.findUserByRole(RoleType.ROLE_ADMIN)
+        User admin = userRepository.findByLogin("admin")
                 .orElseThrow(() -> new UsernameNotFoundException("no admin"));
 
         return admin.getId();
@@ -153,7 +155,7 @@ public class OrderService {
 
     public void payForOrder(Order order) throws BankTransactionException {
         if (!isShipped(order) && !isPaid(order)) {
-            BigDecimal amount = order.getShippingPriceUkr();
+            BigDecimal amount = isLocaleUa() ? order.getShippingPriceUkr() : convertPriceFromLocale(order.getShippingPriceEn());
             sendMoney(order.getOwner().getId(), getAdminAccount(), amount);
             order.setOrderStatus(OrderStatus.PAID);
             orderRepository.save(order);
@@ -177,15 +179,25 @@ public class OrderService {
     }
 
 
-    public void orderSetShippedStatus(Long id) throws OrderNotFoundException {
+    private void orderSetShippedStatus(Long id) throws OrderNotFoundException {
         Order order = getOrderById(id);
-
         if (isPaid(order)) {
             order.setOrderStatus(OrderStatus.SHIPPED);
             order.setDeliveryDate(LocalDate.now().plusDays(order.getDestination().getDay()));
             orderRepository.save(order);
         }
+
     }
+
+    public void orderToShip() throws OrderNotFoundException {
+        List<OrderDTO> orders = findAllPaidOrdersDTO();
+
+        for (OrderDTO o : orders) {
+            orderSetShippedStatus(o.getDtoId());
+        }
+
+    }
+
 
     public Page<OrderDTO> findPaginated(User user, Pageable pageable) {
 

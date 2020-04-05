@@ -30,13 +30,13 @@ public class User implements UserDetails {
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "first_name_cyr", nullable = false)
+    @Column(name = "first_name_cyr")
     private String firstNameCyr;
 
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "last_name_cyr", nullable = false)
+    @Column(name = "last_name_cyr")
     private String lastNameCyr;
 
     @Column(nullable = false)
@@ -52,19 +52,19 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private boolean accountNonExpired;
 
-    @Column(nullable = false)
+    @Column
     private boolean accountNonLocked;
 
-    @Column(nullable = false)
+    @Column
     private boolean credentialsNonExpired;
 
-    @Column(nullable = false)
+    @Column
     private boolean enabled;
 
-    @Column
+    @Column(nullable = false)
     private BigDecimal balance;
 
 

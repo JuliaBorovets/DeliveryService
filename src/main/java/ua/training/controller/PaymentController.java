@@ -33,7 +33,7 @@ public class PaymentController {
     }
 
 
-    @PostMapping("/calculate")
+    @PostMapping("/calculator")
     public String calculatePrice(@ModelAttribute("order") @Valid CalculatorDTO order,
                                  @ModelAttribute User modelUser, Model model) {
 
