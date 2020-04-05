@@ -1,22 +1,8 @@
 package ua.training.entity.order;
 
 public enum OrderStatus {
-    PAID("status.paid"),
-    NOT_PAID("status.not.paid"),
-    SHIPPED("status.shipped");
+    PAID,
+    NOT_PAID,
+    SHIPPED;
 
-    private String name;
-
-    OrderStatus(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String toString() {
-        return "status." + name().toLowerCase();
-    }
 }

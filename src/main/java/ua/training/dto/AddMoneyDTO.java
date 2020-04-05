@@ -5,11 +5,12 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 @Getter
 public class AddMoneyDTO {
 
     private BigDecimal amount;
+
 }

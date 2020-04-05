@@ -1,6 +1,9 @@
 package ua.training.service;
 
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import ua.training.dto.CalculatorDTO;
 import ua.training.entity.order.Destination;
@@ -12,6 +15,19 @@ import java.math.BigDecimal;
 @Service
 public class CalculatorService {
 
+    @Value("${constants.BASE.PRICE}")
+    Integer BASE_PRICE;
+
+    @Value("${constants.COEFFICIENT}")
+    Double COEFFICIENT;
+
+    private ConverterService converterService;
+
+    @Autowired
+    public CalculatorService(ConverterService converterService) {
+        this.converterService = converterService;
+    }
+
     private int getDestinationPrice(CalculatorDTO orderDTO) {
         return Destination.valueOf(orderDTO.getCalcDestination()).getPriceForDestination();
     }
@@ -21,8 +37,12 @@ public class CalculatorService {
     }
 
     public BigDecimal calculatePrice(CalculatorDTO orderDTO) {
-        return BigDecimal.valueOf(ShipmentsTariffs.BASE_PRICE + (getDestinationPrice(orderDTO) + getTypePrice(orderDTO))
-                * ShipmentsTariffs.COEFFICIENT);
+        return converterService.convertPriceToLocale(BigDecimal.valueOf(+(getDestinationPrice(orderDTO) + getTypePrice(orderDTO))
+                * COEFFICIENT), localeName());
+    }
+
+    private String localeName() {
+        return LocaleContextHolder.getLocale().toString();
     }
 
 }

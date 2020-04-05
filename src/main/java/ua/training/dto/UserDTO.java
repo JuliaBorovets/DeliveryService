@@ -2,11 +2,14 @@ package ua.training.dto;
 
 import lombok.*;
 import ua.training.entity.user.RoleType;
+import ua.training.entity.user.User;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
+
+import static ua.training.dto.RegexConstants.*;
 
 @Setter
 @Getter
@@ -17,22 +20,19 @@ public class UserDTO {
 
     Long id;
 
-
-    @Pattern(regexp = "[A-Z][a-z]{2,20}")
+    @Pattern(regexp = firstNameRegexp)
     String firstName;
 
-    @Pattern(regexp = "[А-ЩЮЯҐІЇЄ][а-щьюяґіїє']{2,20}")
+    @Pattern(regexp = firstNameCyrRegexp)
     String firstNameCyr;
 
-
-    @Pattern(regexp = "[a-zA-Z]+'?-?[a-zA-Z]+\\s?([a-zA-Z]+)?")
+    @Pattern(regexp = lastNameRegexp)
     String lastName;
 
-
-    @Pattern(regexp = "[А-ЩЮЯҐІЇЄ][а-щьюяґіїє']{1,25}([-][А-ЩЮЯҐІЇЄ][а-щьюяґіїє']{1,25})?")
+    @Pattern(regexp = lastNameCyrRegexp)
     String lastNameCyr;
 
-    @Pattern(regexp = "[a-z0-9_-]{3,20}")
+    @Pattern(regexp = loginRegexp)
     String login;
 
     @Email
@@ -41,9 +41,20 @@ public class UserDTO {
     @NotNull
     String password;
 
-
     RoleType roleType;
 
     BigDecimal balance;
 
+
+    public UserDTO(User user) {
+        this.id = user.getId();
+        this.firstName = user.getFirstName();
+        this.firstNameCyr = user.getFirstNameCyr();
+        this.lastName = user.getLastName();
+        this.lastNameCyr = user.getLastNameCyr();
+        this.login = user.getLogin();
+        this.email = user.getEmail();
+        this.roleType = user.getRole();
+        this.balance = user.getBalance();
+    }
 }

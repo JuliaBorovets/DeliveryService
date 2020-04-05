@@ -1,6 +1,5 @@
 package ua.training.dto;
 
-
 import lombok.*;
 
 import javax.validation.constraints.*;
@@ -13,7 +12,6 @@ import java.math.BigDecimal;
 @ToString
 public class CalculatorDTO {
 
-    @Min(1)
     private BigDecimal calcWeight;
 
     @NotNull
@@ -22,6 +20,4 @@ public class CalculatorDTO {
     @NotNull
     private String calcType;
 
-    @NotNull
-    private BigDecimal calcAnnPrice;
 }

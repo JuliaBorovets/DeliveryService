@@ -37,15 +37,18 @@ public class Order {
     @Enumerated(value = EnumType.STRING)
     private Destination destination;
 
-    @Column(name = "shipping_date")
-    private LocalDate shippingDate;
-
     @Column(name = "order_status")
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @Column(name = "shippingPrice", nullable = false)
-    private BigDecimal shippingPrice;
+    @Column(name = "shippingPriceUkr")
+    private BigDecimal shippingPriceUkr;
+
+    @Column(name = "shippingPriceEn")
+    private BigDecimal shippingPriceEn;
+
+    @Column(name = "shipping_date")
+    private LocalDate shippingDate;
 
     @Column(name = "delivery_date")
     private LocalDate deliveryDate;
