@@ -1,27 +1,36 @@
 package ua.training.entity.order;
 
-public enum Destination {
-    NONE(0, 0),
-    INNER(10, 2),
-    COUNTRY(20, 5);
+import lombok.*;
 
-    private final int priceForDestination;
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.List;
 
-    private int day;
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@ToString
 
+@Entity
+@Table(name = "destination")
+public class Destination {
 
-    Destination(int priceForDestination, int day) {
-        this.priceForDestination = priceForDestination;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-        this.day = day;
-    }
+    private String cityFrom;
 
-    public int getDay() {
-        return day;
-    }
+    private String cityTo;
 
-    public int getPriceForDestination() {
-        return priceForDestination;
-    }
+    private Long daysToDeliver;
 
+    private BigDecimal kilometers;
+
+    private BigDecimal priceOnCentsForKilometer;
+
+    @OneToMany(mappedBy = "destination")
+    private List<Order> orders;
 }

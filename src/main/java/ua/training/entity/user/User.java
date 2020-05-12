@@ -3,6 +3,8 @@ package ua.training.entity.user;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import ua.training.entity.order.Order;
+import ua.training.entity.order.OrderCheck;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -19,53 +21,51 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"login"})})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"login", "id"})})
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "first_name_cyr")
-    private String firstNameCyr;
-
-    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "last_name_cyr")
+    private String firstNameCyr;
+
     private String lastNameCyr;
 
-    @Column(nullable = false)
     private String login;
 
-    @Column(nullable = false)
     private String email;
 
-    @Column(name = "role")
-    @Enumerated(EnumType.STRING)
-    private RoleType role;
-
-    @Column(nullable = false)
     private String password;
 
-    @Column
+    private BigDecimal balance;
+
+    @Enumerated(value = EnumType.STRING)
+    private RoleType role;
+
+    @OneToMany(mappedBy = "owner")
+    private Set<Order> orders;
+
+    @OneToMany(mappedBy = "user")
+    private Set<OrderCheck> checks;
+
+    @ManyToMany(cascade = CascadeType.REFRESH)
+    @JoinTable(name = "user_card",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "card_id"))
+    private Set<BankCard> cards;
+
     private boolean accountNonExpired;
 
-    @Column
     private boolean accountNonLocked;
 
-    @Column
     private boolean credentialsNonExpired;
 
-    @Column
     private boolean enabled;
-
-    @Column(nullable = false)
-    private BigDecimal balance;
 
 
     @Override
@@ -79,4 +79,10 @@ public class User implements UserDetails {
     public String getUsername() {
         return getLogin();
     }
+
+    public void addBankCard(BankCard bankCard){
+        cards.add(bankCard);
+        bankCard.getUsers().add(this);
+    }
+
 }

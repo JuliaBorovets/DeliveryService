@@ -1,11 +1,12 @@
 package ua.training.entity.order;
 
+import lombok.*;
+import ua.training.entity.user.User;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
-import lombok.*;
-import ua.training.entity.user.User;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -22,36 +23,34 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "order_type")
-    @Enumerated(value = EnumType.STRING)
+    @ManyToOne
     private OrderType orderType;
 
     @ManyToOne
-    @JoinColumn(name = "owner_id")
     private User owner;
 
-    @Column(name = "weight", nullable = false)
     private BigDecimal weight;
 
-    @Column(name = "destination")
-    @Enumerated(value = EnumType.STRING)
+    @ManyToOne
     private Destination destination;
 
-    @Column(name = "order_status")
     @Enumerated(value = EnumType.STRING)
-    private OrderStatus orderStatus;
+    private Status status;
 
-    @Column(name = "shippingPriceUkr")
-    private BigDecimal shippingPriceUkr;
-
-    @Column(name = "shippingPriceEn")
-    private BigDecimal shippingPriceEn;
-
-    @Column(name = "shipping_date")
     private LocalDate shippingDate;
 
-    @Column(name = "delivery_date")
     private LocalDate deliveryDate;
 
+    @ManyToMany
+    @JoinTable(name = "order_service",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id"))
+    private Set<Service> services;
+
+    @OneToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "check_id", referencedColumnName = "id", unique = true)
+    private OrderCheck check;
+
 }
+
 

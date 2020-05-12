@@ -1,4 +1,4 @@
-package ua.training.controller;
+package ua.training.controller.utility;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

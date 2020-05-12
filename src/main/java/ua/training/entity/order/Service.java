@@ -1,6 +1,5 @@
 package ua.training.entity.order;
 
-
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,9 +14,8 @@ import java.util.Set;
 @ToString
 
 @Entity
-@Table(name = "type",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
-public class OrderType {
+@Table(name = "service")
+public class Service {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +25,6 @@ public class OrderType {
 
     private BigDecimal priceInCents;
 
-    @OneToMany(mappedBy = "orderType")
-    private Set<Order> orderSet;
-
+    @ManyToMany(mappedBy = "services")
+    private Set<Order> orders;
 }

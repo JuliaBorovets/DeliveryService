@@ -2,7 +2,7 @@ package ua.training.dto;
 
 import lombok.*;
 import ua.training.entity.order.Destination;
-import ua.training.entity.order.OrderStatus;
+//import ua.training.entity.order.OrderStatus;
 import ua.training.entity.order.OrderType;
 import ua.training.entity.user.User;
 
@@ -28,7 +28,7 @@ public class OrderDTO {
 
     String shippingDate;
 
-    OrderStatus dtoOrderStatus;
+  //  OrderStatus dtoOrderStatus;
 
     BigDecimal dtoShippingPrice;
 
