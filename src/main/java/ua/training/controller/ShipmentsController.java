@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ua.training.controller.exception.OrderCreateException;
-import ua.training.dto.OrderDTO;
+import ua.training.dto.OrderDto;
 import ua.training.entity.user.User;
 import ua.training.service.serviceImpl.OrderServiceImpl;
 
@@ -53,17 +53,17 @@ public class ShipmentsController {
     }
 
     @GetMapping("/create")
-    public String createOrder(@ModelAttribute("newOrder") OrderDTO order, @AuthenticationPrincipal User user,
+    public String createOrder(@ModelAttribute("newOrder") OrderDto order, @AuthenticationPrincipal User user,
                               Model model) {
         //insertBalanceInfo(user, model);
 
-        model.addAttribute("newOrder", order == null ? new OrderDTO() : order);
+        model.addAttribute("newOrder", order == null ? new OrderDto() : order);
 
         return "new_order";
     }
 
     @PostMapping("/create")
-    public String newOrder(@ModelAttribute OrderDTO modelOrder, @AuthenticationPrincipal User user) throws OrderCreateException {
+    public String newOrder(@ModelAttribute OrderDto modelOrder, @AuthenticationPrincipal User user) throws OrderCreateException {
 
         //orderService.createOrder(modelOrder, user);
         log.info("new order creation");
@@ -73,9 +73,9 @@ public class ShipmentsController {
     }
 
 
-    private void insertPaginatedOrders(int page, int size, Model model, List<OrderDTO> orders) {
+    private void insertPaginatedOrders(int page, int size, Model model, List<OrderDto> orders) {
         PageRequest pageable = PageRequest.of(page - 1, size);
-        Page<OrderDTO> articlePage = orderService.findPaginated(pageable, orders);
+        Page<OrderDto> articlePage = orderService.findPaginated(pageable, orders);
 
         int totalPages = articlePage.getTotalPages();
         List<Integer> pageNumbers = IntStream.rangeClosed(FIRST_PAGE, totalPages).boxed().collect(Collectors.toList());

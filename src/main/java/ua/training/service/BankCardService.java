@@ -1,19 +1,17 @@
 package ua.training.service;
 
 import ua.training.controller.exception.BankException;
-import ua.training.dto.BankCardDTO;
-import ua.training.dto.UserDTO;
-import ua.training.entity.user.BankCard;
+import ua.training.dto.BankCardDto;
+import ua.training.dto.UserDto;
 import ua.training.entity.user.User;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 public interface BankCardService {
 
 
-    BankCardDTO saveBankCardDTO(BankCardDTO bankCardDTO, User user) throws BankException;
+    BankCardDto saveBankCardDTO(BankCardDto bankCardDTO, User user) throws BankException;
 
     void deleteBankCard(Long bankId) throws BankException;
 
@@ -21,6 +19,6 @@ public interface BankCardService {
 
     void sendMoney(Long fromAccountId, Long toAccountId, BigDecimal amount) throws BankException;
 
-    List<BankCardDTO> getAllUserBankCards(UserDTO user);
+    List<BankCardDto> getAllUserBankCards(UserDto user);
 }
 

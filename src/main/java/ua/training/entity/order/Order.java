@@ -6,6 +6,7 @@ import ua.training.entity.user.User;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -45,7 +46,7 @@ public class Order {
     @JoinTable(name = "order_service",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id"))
-    private Set<Service> services;
+    private List<Service> services;
 
     @OneToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "check_id", referencedColumnName = "id", unique = true)

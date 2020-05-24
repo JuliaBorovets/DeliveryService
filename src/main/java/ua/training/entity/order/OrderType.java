@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -28,6 +29,6 @@ public class OrderType {
     private BigDecimal priceInCents;
 
     @OneToMany(mappedBy = "orderType")
-    private Set<Order> orderSet;
+    private List<Order> orderSet;
 
 }

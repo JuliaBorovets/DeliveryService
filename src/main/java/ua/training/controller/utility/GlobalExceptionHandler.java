@@ -10,8 +10,8 @@ import ua.training.controller.exception.BankTransactionException;
 import ua.training.controller.exception.OrderCreateException;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.controller.exception.RegException;
-import ua.training.dto.OrderDTO;
-import ua.training.dto.UserDTO;
+import ua.training.dto.OrderDto;
+import ua.training.dto.UserDto;
 
 @Slf4j
 @ControllerAdvice
@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({org.springframework.validation.BindException.class, IllegalStateException.class})
     public String handleApplicationException(Model model) {
         log.error("registration exception. Binding result.");
-        model.addAttribute("newUser", new UserDTO());
+        model.addAttribute("newUser", new UserDto());
         model.addAttribute("error", true);
         return "registration";
     }
@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RegException.class)
     public String handleRegException(Model model) {
         log.error("registration exception. Duplicate user.");
-        model.addAttribute("newUser", new UserDTO());
+        model.addAttribute("newUser", new UserDto());
         model.addAttribute("duplicate", true);
         return "registration";
     }
@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OrderCreateException.class)
     public String handleOrderCreateException(Model model) {
         log.error("OrderCreate exception");
-        model.addAttribute("newOrder", new OrderDTO());
+        model.addAttribute("newOrder", new OrderDto());
         model.addAttribute("error", true);
         return "redirect:/create?error";
     }

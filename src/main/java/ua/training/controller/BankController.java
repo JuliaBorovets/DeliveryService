@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.training.controller.exception.BankException;
 import ua.training.controller.exception.BankTransactionException;
 import ua.training.controller.exception.OrderNotFoundException;
-import ua.training.dto.BankCardDTO;
-import ua.training.entity.user.BankCard;
+import ua.training.dto.BankCardDto;
 import ua.training.entity.user.User;
 
 import ua.training.service.serviceImpl.OrderServiceImpl;
@@ -29,15 +28,15 @@ public class BankController {
     }
 
     @GetMapping({"/","/add_card","/replenish/{id}", "/delete_card{id}"})
-    public String getBankPage(@PathVariable("id") Long id, @ModelAttribute("bankDTO") BankCardDTO bankCardDTO, Model model){
+    public String getBankPage(@PathVariable("id") Long id, @ModelAttribute("bankDTO") BankCardDto bankCardDTO, Model model){
 
-        model.addAttribute("bankDTO", bankCardDTO == null ? new BankCardDTO() : bankCardDTO);
+        model.addAttribute("bankDTO", bankCardDTO == null ? new BankCardDto() : bankCardDTO);
 
         return "bank_card";
     }
 
     @PostMapping("/add_card")
-    public String addBankCard(@ModelAttribute BankCardDTO bankCardDTO, @AuthenticationPrincipal User user, Model model)
+    public String addBankCard(@ModelAttribute BankCardDto bankCardDTO, @AuthenticationPrincipal User user, Model model)
             throws BankException {
 
       //  BankCard bankCard = bankCardService.addBankCard(bankCardDTO.getId(), user);
@@ -49,7 +48,7 @@ public class BankController {
 
 
     @PostMapping("/replenish/{id}")
-    public String replenishCard(@PathVariable("id") Long id, @ModelAttribute BankCardDTO bankCardDTO) throws BankException {
+    public String replenishCard(@PathVariable("id") Long id, @ModelAttribute BankCardDto bankCardDTO) throws BankException {
 
        // bankCardService.replenishBankCard(id, bankCardDTO.getMoneyToAdd());
         log.error("replenish card with id = " + id);
@@ -67,7 +66,7 @@ public class BankController {
     }
 
     @PostMapping(value = "/pay/{id}")
-    public String payShipment(@PathVariable("id") Long shipmentId, @ModelAttribute BankCardDTO bankCardDTO)
+    public String payShipment(@PathVariable("id") Long shipmentId, @ModelAttribute BankCardDto bankCardDTO)
             throws OrderNotFoundException, BankTransactionException {
 
         orderService.payForOrder(shipmentId);

@@ -10,14 +10,11 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class CalculatorDTO {
+public class CalculatorDto {
 
     private BigDecimal calcWeight;
 
-    @NotNull
     private String calcDestination;
 
-    @NotNull
     private String calcType;
-
 }

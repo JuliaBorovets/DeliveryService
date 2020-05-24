@@ -10,13 +10,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ua.training.controller.exception.RegException;
 import ua.training.controller.utility.ProjectPasswordEncoder;
-import ua.training.dto.UserDTO;
+import ua.training.dto.UserDto;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.repository.UserRepository;
 import ua.training.service.UserService;
 import javax.annotation.PostConstruct;
-import java.math.BigDecimal;
 import java.util.Locale;
 //
 @Slf4j
@@ -40,7 +39,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return userRepository.findByLogin(login).orElseThrow(() -> new UsernameNotFoundException(login));
     }
 
-    public void saveNewUser(UserDTO user) throws RegException {
+    public void saveNewUser(UserDto user) throws RegException {
         try {
             userRepository.save(createUser(user));
         } catch (DataIntegrityViolationException e) {
@@ -48,7 +47,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
     }
 
-    private User createUser(UserDTO userDTO) {
+    private User createUser(UserDto userDTO) {
         return User.builder()
                 .firstName(userDTO.getFirstName())
                 .firstNameCyr(userDTO.getFirstNameCyr())

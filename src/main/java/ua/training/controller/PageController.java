@@ -28,15 +28,15 @@ public class PageController implements WebMvcConfigurer {
     }
 
     @GetMapping("/reg")
-    public String registerUser(@ModelAttribute("newUser") UserDTO user, Model model) {
+    public String registerUser(@ModelAttribute("newUser") UserDto user, Model model) {
 
-        model.addAttribute("newOrder", user == null ? new UserDTO() : user);
+        model.addAttribute("newOrder", user == null ? new UserDto() : user);
 
         return "registration";
     }
 
     @PostMapping("/reg")
-    public String newUser(@ModelAttribute("newUser") @Valid UserDTO modelUser) throws RegException {
+    public String newUser(@ModelAttribute("newUser") @Valid UserDto modelUser) throws RegException {
 
         userService.saveNewUser(modelUser);
         log.info("new user registration");
@@ -60,7 +60,7 @@ public class PageController implements WebMvcConfigurer {
     }
 
     @GetMapping("/calculator")
-    public String calculatePage(@ModelAttribute OrderDTO modelOrder) {
+    public String calculatePage(@ModelAttribute OrderDto modelOrder) {
         return "calculator";
     }
 

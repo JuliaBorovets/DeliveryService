@@ -1,14 +1,12 @@
 package ua.training.service;
 
 import ua.training.controller.exception.RegException;
-import ua.training.dto.UserDTO;
+import ua.training.dto.UserDto;
 import ua.training.entity.user.User;
-
-import java.math.BigDecimal;
 
 public interface UserService {
 
-    void saveNewUser(UserDTO user) throws RegException;
+    void saveNewUser(UserDto user) throws RegException;
 
     void createAdmin() throws RegException;
 

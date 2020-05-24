@@ -5,13 +5,13 @@ import ua.training.entity.order.OrderCheck;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @ToString
 
 @Entity
@@ -25,10 +25,10 @@ public class BankCard {
     private BigDecimal balance;
 
     @ManyToMany(mappedBy = "cards", cascade = CascadeType.REFRESH)
-    private Set<User> users;
+    private List<User> users;
 
     @OneToMany(mappedBy = "bankCard")
-    private Set<OrderCheck> orderChecks;
+    private List<OrderCheck> orderChecks;
 
     public BigDecimal replenish(BigDecimal balance){
         return this.getBalance().add(balance);

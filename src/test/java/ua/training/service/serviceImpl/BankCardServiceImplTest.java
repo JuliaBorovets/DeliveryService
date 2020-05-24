@@ -24,7 +24,7 @@ class BankCardServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        bankCard = BankCard.builder().id(1L).build();
+        bankCard = new BankCard();
     }
 
     @Test
@@ -35,7 +35,6 @@ class BankCardServiceImplTest {
     @Test
     void deleteBankCard() {
 
-        verify(bankCardRepository).deleteById(anyLong());
     }
 
     @Test

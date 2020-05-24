@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import ua.training.controller.exception.BankTransactionException;
 import ua.training.controller.exception.OrderCreateException;
 import ua.training.controller.exception.OrderNotFoundException;
-import ua.training.dto.OrderDTO;
+import ua.training.dto.OrderDto;
 import ua.training.entity.order.*;
 import ua.training.entity.user.User;
 import ua.training.repository.OrderRepository;
@@ -52,27 +52,28 @@ public class OrderServiceImpl implements OrderService {
     @Value("${constants.COEFFICIENT}")
     Double COEFFICIENT;
 
-    public List<OrderDTO> findAllUserOrder(Long userId) {
-        return orderRepository.findOrderByOwnerId(userId)
-                .stream()
-                .map(order -> OrderDTO.builder()
-                        .dtoId(order.getId())
-                        .dtoOrderType(order.getOrderType())
-                        .dtoDestination(order.getDestination())
-                       // .dtoOrderStatus(order.getOrderStatus())
-                        .dtoOwner(order.getOwner())
-                        .dtoWeight(order.getWeight())
-                        .shippingDate(order.getShippingDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
-                                .withLocale(LocaleContextHolder.getLocale())))
-//                        .deliveryDate(isShipped(order) ? order.getDeliveryDate().
-//                                format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
-//                                        .withLocale(LocaleContextHolder.getLocale())) : " ")
-                        //.dtoShippingPrice(isLocaleUa() ? order.getShippingPriceUkr() : order.getShippingPriceEn())
-                        .build())
-                .collect(Collectors.toList());
+    public List<OrderDto> findAllUserOrder(Long userId) {
+//        return orderRepository.findOrderByOwnerId(userId)
+//                .stream()
+//                .map(order -> OrderDto.builder()
+//                        //.dtoId(order.getId())
+//                        .dtoOrderType(order.getOrderType())
+//                        .dtoDestination(order.getDestination())
+//                       // .dtoOrderStatus(order.getOrderStatus())
+//                        .dtoOwner(order.getOwner())
+//                        .dtoWeight(order.getWeight())
+//                        .shippingDate(order.getShippingDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
+//                                .withLocale(LocaleContextHolder.getLocale())))
+////                        .deliveryDate(isShipped(order) ? order.getDeliveryDate().
+////                                format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
+////                                        .withLocale(LocaleContextHolder.getLocale())) : " ")
+//                        //.dtoShippingPrice(isLocaleUa() ? order.getShippingPriceUkr() : order.getShippingPriceEn())
+//                        .build())
+//                .collect(Collectors.toList());
+        return null;
     }
 
-    public List<OrderDTO> findAllPaidOrdersDTO() {
+    public List<OrderDto> findAllPaidOrdersDTO() {
 //
 //        return orderRepository
 //               // .findOrderByOrderStatus(OrderStatus.PAID)
@@ -99,14 +100,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    public void createOrder(OrderDTO orderDTO, User user) throws OrderCreateException {
+    public void createOrder(OrderDto orderDTO, User user) throws OrderCreateException {
 
         Order order = Order.builder()
-                .destination(orderDTO.getDtoDestination())
-                .orderType(orderDTO.getDtoOrderType())
-               // .orderStatus(OrderStatus.NOT_PAID)
-                .shippingDate(LocalDate.now())
-                .weight(orderDTO.getDtoWeight())
+//                .destination(orderDTO.getDtoDestination())
+//                .orderType(orderDTO.getDtoOrderType())
+//               // .orderStatus(OrderStatus.NOT_PAID)
+//                .shippingDate(LocalDate.now())
+//                .weight(orderDTO.getDtoWeight())
                 .owner(user)
                // .shippingPriceUkr(calculatePrice(orderDTO))
                // .shippingPriceEn(converterService.convertPriceToLocale(calculatePrice(orderDTO), "en"))
@@ -119,7 +120,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    public BigDecimal calculatePrice(OrderDTO orderDTO) {
+    public BigDecimal calculatePrice(OrderDto orderDTO) {
 //        return BigDecimal.valueOf(BASE_PRICE + (orderDTO.getDtoDestination().getPriceForDestination()
 //                + orderDTO.getDtoOrderType().getPriceForType()) * COEFFICIENT);
         return BigDecimal.ZERO;
@@ -161,18 +162,18 @@ public class OrderServiceImpl implements OrderService {
 //
     }
 
-    public Page<OrderDTO> findPaginated(Pageable pageable, List<OrderDTO> orders) {
+    public Page<OrderDto> findPaginated(Pageable pageable, List<OrderDto> orders) {
 
-        List<OrderDTO> sortedOrders = orders
+        List<OrderDto> sortedOrders = orders
                 .stream()
-                .sorted(Comparator.comparing(OrderDTO::getDtoId)
-                        .reversed())
+//                .sorted(Comparator.comparing(OrderDto::getDtoId)
+//                        .reversed())
                 .collect(Collectors.toList());
 
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
-        List<OrderDTO> list;
+        List<OrderDto> list;
 
         if (sortedOrders.size() < startItem) {
             list = Collections.emptyList();

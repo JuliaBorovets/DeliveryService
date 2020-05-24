@@ -25,7 +25,7 @@ public class PaymentController {
 
 
     @RequestMapping("/calculator")
-    public String calculatePrice(@ModelAttribute("order") @Valid CalculatorDTO order,
+    public String calculatePrice(@ModelAttribute("order") @Valid CalculatorDto order,
                                  @ModelAttribute User modelUser, Model model) {
 
        // model.addAttribute("price", calculatorService.calculatePrice(order));
