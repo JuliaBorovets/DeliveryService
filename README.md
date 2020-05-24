@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/JuliaBorovets/FinalProject.svg?style=svg)](https://circleci.com/gh/JuliaBorovets/FinalProject)
+
 # Spring Final Project
 
 ## Вариант 14. Доставка Груза.
