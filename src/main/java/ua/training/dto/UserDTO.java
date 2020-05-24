@@ -1,13 +1,19 @@
 package ua.training.dto;
 
 import lombok.*;
+import ua.training.entity.order.Order;
+import ua.training.entity.order.OrderCheck;
+import ua.training.entity.user.BankCard;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
 
 import static ua.training.dto.RegexConstants.*;
 
@@ -15,46 +21,41 @@ import static ua.training.dto.RegexConstants.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @ToString
 public class UserDTO {
 
-    Long id;
+    private Long id;
 
-    @Pattern(regexp = firstNameRegexp)
-    String firstName;
+    private String firstName;
 
-    @Pattern(regexp = firstNameCyrRegexp)
-    String firstNameCyr;
+    private String lastName;
 
-    @Pattern(regexp = lastNameRegexp)
-    String lastName;
+    private String firstNameCyr;
 
-    @Pattern(regexp = lastNameCyrRegexp)
-    String lastNameCyr;
+    private String lastNameCyr;
 
-    @Pattern(regexp = loginRegexp)
-    String login;
+    private String login;
 
-    @Email
-    String email;
+    private String email;
 
-    @NotNull
-    String password;
+    private String password;
 
-    RoleType roleType;
-
-    BigDecimal balance;
+    private RoleType role;
 
 
-    public UserDTO(User user) {
-        this.id = user.getId();
-        this.firstName = user.getFirstName();
-        this.firstNameCyr = user.getFirstNameCyr();
-        this.lastName = user.getLastName();
-        this.lastNameCyr = user.getLastNameCyr();
-        this.login = user.getLogin();
-        this.email = user.getEmail();
-        this.roleType = user.getRole();
-        this.balance = user.getBalance();
-    }
+    private boolean accountNonExpired;
+
+    private boolean accountNonLocked;
+
+    private boolean credentialsNonExpired;
+
+    private boolean enabled;
+
+    private List<OrderDTO> orders;
+
+    private List<OrderCheckDTO> checks;
+
+    private List<BankCardDTO> cards;
+
 }

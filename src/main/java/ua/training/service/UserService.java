@@ -12,11 +12,11 @@ public interface UserService {
 
     void createAdmin() throws RegException;
 
-    UserDTO findUserDTOById(Long id);
+   // UserDTO findUserDTOById(Long id);
 
     User findUserById(Long id);
 
-    BigDecimal listBankAccountInfo(Long id);
+   // BigDecimal listBankAccountInfo(Long id);
 
     Long getAdminAccount();
 }

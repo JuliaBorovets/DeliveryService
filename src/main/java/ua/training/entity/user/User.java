@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -17,7 +18,6 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString
 
 @Entity
 @Table(name = "users",
@@ -42,22 +42,20 @@ public class User implements UserDetails {
 
     private String password;
 
-    private BigDecimal balance;
-
     @Enumerated(value = EnumType.STRING)
     private RoleType role;
 
     @OneToMany(mappedBy = "owner")
-    private Set<Order> orders;
+    private List<Order> orders;
 
     @OneToMany(mappedBy = "user")
-    private Set<OrderCheck> checks;
+    private List<OrderCheck> checks;
 
     @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(name = "user_card",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "card_id"))
-    private Set<BankCard> cards;
+    private List<BankCard> cards;
 
     private boolean accountNonExpired;
 
@@ -80,9 +78,12 @@ public class User implements UserDetails {
         return getLogin();
     }
 
-    public void addBankCard(BankCard bankCard){
+    public BankCard addBankCard(BankCard bankCard){
         cards.add(bankCard);
         bankCard.getUsers().add(this);
+        return bankCard;
     }
+
+
 
 }

@@ -6,8 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ua.training.controller.exception.RegException;
 import ua.training.dto.*;
-import ua.training.service.serviceImpl.UserServiceImpl;
+
 import lombok.extern.slf4j.Slf4j;
+import ua.training.service.serviceImpl.UserServiceImpl;
 
 import javax.validation.Valid;
 

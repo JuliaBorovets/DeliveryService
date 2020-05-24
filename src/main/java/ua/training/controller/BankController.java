@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import ua.training.controller.exception.BankException;
 import ua.training.controller.exception.BankTransactionException;
 import ua.training.controller.exception.OrderNotFoundException;
-import ua.training.dto.BankDTO;
+import ua.training.dto.BankCardDTO;
 import ua.training.entity.user.BankCard;
 import ua.training.entity.user.User;
-import ua.training.service.serviceImpl.BankCardServiceImpl;
+
 import ua.training.service.serviceImpl.OrderServiceImpl;
 
 @Slf4j
@@ -20,29 +20,28 @@ import ua.training.service.serviceImpl.OrderServiceImpl;
 public class BankController {
 
 
-    private final BankCardServiceImpl bankCardService;
+    //private final BankCardServiceImpl bankCardService;
     private final OrderServiceImpl orderService;
 
 
-    public BankController(BankCardServiceImpl bankCardService, OrderServiceImpl orderService) {
-        this.bankCardService = bankCardService;
+    public BankController(OrderServiceImpl orderService) {
         this.orderService = orderService;
     }
 
     @GetMapping({"/","/add_card","/replenish/{id}", "/delete_card{id}"})
-    public String getBankPage(@PathVariable("id") Long id, @ModelAttribute("bankDTO") BankDTO bankDTO, Model model){
+    public String getBankPage(@PathVariable("id") Long id, @ModelAttribute("bankDTO") BankCardDTO bankCardDTO, Model model){
 
-        model.addAttribute("bankDTO", bankDTO == null ? new BankDTO() : bankDTO);
+        model.addAttribute("bankDTO", bankCardDTO == null ? new BankCardDTO() : bankCardDTO);
 
         return "bank_card";
     }
 
     @PostMapping("/add_card")
-    public String addBankCard(@ModelAttribute BankDTO bankDTO, @AuthenticationPrincipal User user,  Model model)
+    public String addBankCard(@ModelAttribute BankCardDTO bankCardDTO, @AuthenticationPrincipal User user, Model model)
             throws BankException {
 
-        BankCard bankCard = bankCardService.addBankCard(bankDTO.getId(), user);
-        model.addAttribute("bankCard", bankCard);
+      //  BankCard bankCard = bankCardService.addBankCard(bankCardDTO.getId(), user);
+       // model.addAttribute("bankCard", bankCard);
         log.error("adding card");
 
         return "redirect:/bank/";
@@ -50,9 +49,9 @@ public class BankController {
 
 
     @PostMapping("/replenish/{id}")
-    public String replenishCard(@PathVariable("id") Long id, @ModelAttribute BankDTO bankDTO) throws BankException {
+    public String replenishCard(@PathVariable("id") Long id, @ModelAttribute BankCardDTO bankCardDTO) throws BankException {
 
-        bankCardService.replenishBankCard(id, bankDTO.getMoneyToAdd());
+       // bankCardService.replenishBankCard(id, bankCardDTO.getMoneyToAdd());
         log.error("replenish card with id = " + id);
 
         return "redirect:/bank/";
@@ -62,13 +61,13 @@ public class BankController {
     public String deleteBankCard(@PathVariable("id") Long id) throws BankException {
 
         log.error("deleting card");
-        bankCardService.deleteBankCard(id);
+      //  bankCardService.deleteBankCard(id);
 
         return "redirect:/bank/";
     }
 
     @PostMapping(value = "/pay/{id}")
-    public String payShipment(@PathVariable("id") Long shipmentId, @ModelAttribute BankDTO bankDTO)
+    public String payShipment(@PathVariable("id") Long shipmentId, @ModelAttribute BankCardDTO bankCardDTO)
             throws OrderNotFoundException, BankTransactionException {
 
         orderService.payForOrder(shipmentId);

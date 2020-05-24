@@ -22,9 +22,9 @@ public class AdminController {
     public String calculatePage(@AuthenticationPrincipal User user, Model model,
                                 @PathVariable("page") int page) {
 
-        if (!user.getRole().name().equals("ROLE_ADMIN")) {
-            return "redirect:/account_page";
-        }
+//        if (!user.getRole().name().equals("ROLE_ADMIN")) {
+//            return "redirect:/account_page";
+//        }
 
         // List<OrderDTO> orders = orderService.findAllPaidOrdersDTO();
 
@@ -38,7 +38,7 @@ public class AdminController {
                             @PageableDefault Pageable pageable) throws OrderNotFoundException {
         //   orderService.orderToShip();
 
-        log.info("shipping orders");
+//        log.info("shipping orders");
         return "redirect:/admin/admin_page/page/1";
 
     }
