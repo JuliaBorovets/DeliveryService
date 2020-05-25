@@ -13,7 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-
+@Builder
 @Entity
 @Table(name = "card",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})

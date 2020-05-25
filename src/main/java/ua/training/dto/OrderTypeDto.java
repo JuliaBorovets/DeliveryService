@@ -20,6 +20,4 @@ public class OrderTypeDto {
 
     private BigDecimal priceInCents;
 
-    private List<OrderDto> orderSet;
-
 }

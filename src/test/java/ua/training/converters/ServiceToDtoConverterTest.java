@@ -25,7 +25,7 @@ class ServiceToDtoConverterTest {
 
     @Test
     void convert() {
-        
+
         Service service = Service.builder().id(ID).name(NAME).priceInCents(PRICE).build();
 
         ServiceDto serviceDto = converter.convert(service);
