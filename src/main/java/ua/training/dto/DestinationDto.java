@@ -24,6 +24,4 @@ public class DestinationDto {
     private BigDecimal kilometers;
 
     private BigDecimal priceOnCentsForKilometer;
-
-    private List<OrderDto> orders;
 }
