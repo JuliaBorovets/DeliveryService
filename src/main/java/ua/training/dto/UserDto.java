@@ -30,6 +30,8 @@ public class UserDto {
 
     private RoleType role;
 
+    private String password;
+
     private List<OrderDto> orders = new ArrayList<>();
 
     private List<OrderCheckDto> checks = new ArrayList<>();

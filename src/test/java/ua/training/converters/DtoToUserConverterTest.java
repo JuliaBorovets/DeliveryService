@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ua.training.controller.utility.ProjectPasswordEncoder;
 import ua.training.dto.BankCardDto;
 import ua.training.dto.OrderCheckDto;
 import ua.training.dto.OrderDto;
@@ -31,6 +32,9 @@ class DtoToUserConverterTest {
     @Mock
     DtoToBankCardConverter dtoToBankCardConverter;
 
+    @Mock
+    ProjectPasswordEncoder passwordEncoder;
+
     @InjectMocks
     DtoToUserConverter converter;
 
@@ -54,6 +58,8 @@ class DtoToUserConverterTest {
 
     final String EMAIL = "email";
 
+    final String PASSWORD = "password";
+
     @Test
     void convert() {
         Order order = Order.builder().id(ORDER_ID).build();
@@ -61,13 +67,13 @@ class DtoToUserConverterTest {
         BankCard bankCard = BankCard.builder().id(BANK_CARD_ID).build();
 
         UserDto userDto = new UserDto();
-        userDto.setId(USER_ID);
         userDto.setFirstName(FIRST_NAME);
         userDto.setLastName(LAST_NAME);
         userDto.setFirstNameCyr(FIRST_NAME_CYR);
         userDto.setLastNameCyr(LAST_NAME_CYR);
         userDto.setLogin(LOGIN);
         userDto.setEmail(EMAIL);
+        userDto.setPassword(PASSWORD);
         userDto.setRole(RoleType.ROLE_USER);
 
         userDto.getOrders().add(OrderDto.builder().id(ORDER_ID).build());
@@ -77,11 +83,12 @@ class DtoToUserConverterTest {
         when(dtoToOrderConverter.convert(any(OrderDto.class))).thenReturn(order);
         when(dtoToCheckConverter.convert(any(OrderCheckDto.class))).thenReturn(orderCheck);
         when(dtoToBankCardConverter.convert(any(BankCardDto.class))).thenReturn(bankCard);
+        when(passwordEncoder.encode(any())).thenReturn(PASSWORD);
+
 
         User user = converter.convert(userDto);
 
         assert user != null;
-        assertEquals(user.getId(), userDto.getId());
         assertEquals(user.getFirstName(), userDto.getFirstName());
         assertEquals(user.getLastName(), userDto.getLastName());
         assertEquals(user.getFirstNameCyr(), userDto.getFirstNameCyr());
@@ -93,5 +100,6 @@ class DtoToUserConverterTest {
         verify(dtoToOrderConverter, times(1)).convert(any(OrderDto.class));
         verify(dtoToCheckConverter, times(1)).convert(any(OrderCheckDto.class));
         verify(dtoToBankCardConverter, times(1)).convert(any(BankCardDto.class));
+        verify(passwordEncoder, times(1)).encode(anyString());
     }
 }
