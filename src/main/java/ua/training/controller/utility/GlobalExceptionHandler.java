@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.ModelAndView;
 import ua.training.controller.exception.BankTransactionException;
 import ua.training.controller.exception.OrderCreateException;
 import ua.training.controller.exception.OrderNotFoundException;
@@ -17,13 +16,13 @@ import ua.training.dto.UserDto;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public ModelAndView handleApplicationException() {
-        log.error("global exception");
-        ModelAndView modelAndView = new ModelAndView("index");
-        modelAndView.addObject("error", true);
-        return modelAndView;
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ModelAndView handleApplicationException() {
+//        log.error("global exception");
+//        ModelAndView modelAndView = new ModelAndView("index");
+//        modelAndView.addObject("error", true);
+//        return modelAndView;
+//    }
 
 
     @ExceptionHandler({org.springframework.validation.BindException.class, IllegalStateException.class})

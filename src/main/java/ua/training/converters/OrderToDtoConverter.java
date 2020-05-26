@@ -11,20 +11,15 @@ import ua.training.entity.order.Order;
 public class OrderToDtoConverter implements Converter<Order, OrderDto> {
 
     private final OrderTypeToDtoConverter orderTypeToDtoConverter;
-    private final UserToUserDtoConverter userToUserDtoConverter;
     private final DestinationToDtoConverter destinationToDtoConverter;
     private final ServiceToDtoConverter serviceToDtoConverter;
-    private final CheckToDtoConverter checkToDtoConverter;
 
     public OrderToDtoConverter(OrderTypeToDtoConverter orderTypeToDtoConverter,
-                               UserToUserDtoConverter userToUserDtoConverter,
                                DestinationToDtoConverter destinationToDtoConverter,
-                               ServiceToDtoConverter serviceToDtoConverter, CheckToDtoConverter checkToDtoConverter) {
+                               ServiceToDtoConverter serviceToDtoConverter) {
         this.orderTypeToDtoConverter = orderTypeToDtoConverter;
-        this.userToUserDtoConverter = userToUserDtoConverter;
         this.destinationToDtoConverter = destinationToDtoConverter;
         this.serviceToDtoConverter = serviceToDtoConverter;
-        this.checkToDtoConverter = checkToDtoConverter;
     }
 
     @Synchronized
@@ -35,13 +30,11 @@ public class OrderToDtoConverter implements Converter<Order, OrderDto> {
         final OrderDto orderDto = new OrderDto();
         orderDto.setId(order.getId());
         orderDto.setOrderType(orderTypeToDtoConverter.convert(order.getOrderType()));
-        orderDto.setOwner(userToUserDtoConverter.convert(order.getOwner()));
         orderDto.setWeight(order.getWeight());
         orderDto.setDestination(destinationToDtoConverter.convert(order.getDestination()));
         orderDto.setStatus(order.getStatus());
         orderDto.setShippingDate(order.getShippingDate());
         orderDto.setDeliveryDate(order.getDeliveryDate());
-        orderDto.setCheck(checkToDtoConverter.convert(order.getCheck()));
 
         if (order.getServices() != null && order.getServices().size() > 0){
             order.getServices()

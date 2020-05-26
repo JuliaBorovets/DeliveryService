@@ -12,16 +12,9 @@ import ua.training.entity.user.User;
 @Component
 public class DtoToUserConverter implements Converter<UserDto, User> {
 
-    private final DtoToOrderConverter dtoToOrderConverter;
-    private final DtoToCheckConverter dtoToCheckConverter;
-    private final DtoToBankCardConverter dtoToBankCardConverter;
     private final ProjectPasswordEncoder passwordEncoder;
 
-    public DtoToUserConverter(DtoToOrderConverter dtoToOrderConverter, DtoToCheckConverter dtoToCheckConverter,
-                              DtoToBankCardConverter dtoToBankCardConverter, ProjectPasswordEncoder passwordEncoder) {
-        this.dtoToOrderConverter = dtoToOrderConverter;
-        this.dtoToCheckConverter = dtoToCheckConverter;
-        this.dtoToBankCardConverter = dtoToBankCardConverter;
+    public DtoToUserConverter(ProjectPasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -43,22 +36,6 @@ public class DtoToUserConverter implements Converter<UserDto, User> {
         user.setAccountNonLocked(true);
         user.setCredentialsNonExpired(true);
         user.setEnabled(true);
-
-        if (userDto.getOrders() != null && userDto.getOrders().size() > 0){
-            userDto.getOrders()
-                    .forEach( order -> user.getOrders().add(dtoToOrderConverter.convert(order)));
-        }
-
-        if (userDto.getChecks() != null && userDto.getChecks().size() > 0){
-            userDto.getChecks()
-                    .forEach( check -> user.getChecks().add(dtoToCheckConverter.convert(check)));
-        }
-
-        if (userDto.getCards() != null && userDto.getCards().size() > 0){
-            userDto.getCards()
-                    .forEach( card -> user.getCards().add(dtoToBankCardConverter.convert(card)));
-        }
-
 
         return user;
     }

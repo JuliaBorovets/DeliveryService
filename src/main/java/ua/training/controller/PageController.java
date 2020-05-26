@@ -47,6 +47,7 @@ public class PageController implements WebMvcConfigurer {
 
     @GetMapping("/login")
     public String loginPage() {
+
         return "login";
     }
 
@@ -55,8 +56,10 @@ public class PageController implements WebMvcConfigurer {
         return "account_page";
     }
 
-    @GetMapping("/success")
+
+    @PostMapping("/success")
     public String localRedirect() {
+
         return "redirect:/account_page";
     }
 
