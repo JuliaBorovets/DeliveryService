@@ -29,15 +29,12 @@ public class ShipmentsController {
     public String shipmentsPage(Model model, @AuthenticationPrincipal User user,
                                 @PathVariable("page") Integer page) {
 
-
-//        List<OrderDTO> orders = orderService.findAllUserOrder(user.getId());
-//
-//        insertPaginatedOrders(page, USER_SHIPMENTS_SIZE, model, orders);
+        model.addAttribute("orders", orderService.findAllUserOrder(user.getId()));
 
         return "my_shipments";
     }
 
-    @GetMapping("/create_order")
+    @GetMapping("/create_shipment")
     public String createOrderView( Model model) {
 
         model.addAttribute("newOrder", new OrderDto());
@@ -45,8 +42,9 @@ public class ShipmentsController {
         return "new_order";
     }
 
-    @PostMapping("/create_order")
-    public String createOrder(@ModelAttribute OrderDto modelOrder, @AuthenticationPrincipal UserDto userDto) throws OrderCreateException {
+    @PostMapping("/create_shipment")
+    public String createOrder(@ModelAttribute("newOrder") OrderDto modelOrder, @AuthenticationPrincipal UserDto userDto)
+            throws OrderCreateException {
 
         //orderService.createOrder(modelOrder, user);
 

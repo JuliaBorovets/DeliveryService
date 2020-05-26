@@ -37,5 +37,17 @@ public class OrderCheck {
     @ManyToOne
     private BankCard bankCard;
 
+    public OrderCheck create(Order order, BankCard bankCard, User user){
+        this.order = order;
+        order.setCheck(this);
+
+        this.bankCard = bankCard;
+        bankCard.getOrderChecks().add(this);
+
+        this.user = user;
+        user.getChecks().add(this);
+
+        return this;
+    }
 
 }

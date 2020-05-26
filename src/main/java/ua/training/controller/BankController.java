@@ -18,7 +18,7 @@ import ua.training.service.serviceImpl.OrderServiceImpl;
 public class BankController {
 
 
-    //private final BankCardServiceImpl bankCardService;
+
     private final OrderServiceImpl orderService;
 
 

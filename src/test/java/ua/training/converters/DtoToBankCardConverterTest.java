@@ -7,14 +7,13 @@ import ua.training.entity.user.BankCard;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DtoToBankCardConverterTest {
 
     DtoToBankCardConverter cardConverter;
 
     final Long ID = 1L;
-    final BigDecimal BALANCE = BigDecimal.valueOf(22);
 
     @BeforeEach
     void setUp() {
@@ -23,12 +22,12 @@ class DtoToBankCardConverterTest {
 
     @Test
     void convert() {
-        BankCardDto bankCardDto = BankCardDto.builder().id(ID).balance(BALANCE).build();
+        BankCardDto bankCardDto = BankCardDto.builder().id(ID).build();
 
         BankCard bankCard = cardConverter.convert(bankCardDto);
 
         assert bankCard != null;
         assertEquals(bankCard.getId(), bankCardDto.getId());
-        assertEquals(bankCard.getBalance(), bankCardDto.getBalance());
+        assertEquals(bankCard.getBalance(), BigDecimal.ZERO);
     }
 }

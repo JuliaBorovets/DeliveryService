@@ -4,5 +4,8 @@ import ua.training.controller.exception.OrderNotFoundException;
 
 public interface AdminService {
 
-    void orderToShip() throws OrderNotFoundException;
+    void shipAllOrders() throws OrderNotFoundException;
+
+    void shipOrder(Long orderId) throws OrderNotFoundException;
+
 }

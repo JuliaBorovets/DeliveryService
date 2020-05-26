@@ -74,12 +74,10 @@ public class User implements UserDetails {
         return getLogin();
     }
 
-    public BankCard addBankCard(BankCard bankCard){
+    public void addBankCard(BankCard bankCard){
         cards.add(bankCard);
         bankCard.getUsers().add(this);
-        return bankCard;
     }
-
 
 
 }

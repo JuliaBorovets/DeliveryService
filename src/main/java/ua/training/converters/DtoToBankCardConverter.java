@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import ua.training.dto.BankCardDto;
 import ua.training.entity.user.BankCard;
 
+import java.math.BigDecimal;
+
 @Component
 public class DtoToBankCardConverter implements Converter<BankCardDto, BankCard> {
 
@@ -15,9 +17,10 @@ public class DtoToBankCardConverter implements Converter<BankCardDto, BankCard> 
     @Nullable
     @Override
     public BankCard convert(BankCardDto bankCardDto) {
+
         final BankCard bankCard = new BankCard();
         bankCard.setId(bankCardDto.getId());
-        bankCard.setBalance(bankCardDto.getBalance());
+        bankCard.setBalance(BigDecimal.ZERO);
 
         return bankCard;
     }
