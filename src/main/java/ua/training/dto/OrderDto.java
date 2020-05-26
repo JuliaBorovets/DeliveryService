@@ -5,6 +5,7 @@ import ua.training.entity.order.Status;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Setter
@@ -31,7 +32,7 @@ public class OrderDto {
 
     private LocalDate deliveryDate;
 
-    private List<ServiceDto> services;
+    private List<ServiceDto> services = new ArrayList<>();
 
     private OrderCheckDto check;
 

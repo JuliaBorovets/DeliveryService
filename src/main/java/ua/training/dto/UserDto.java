@@ -3,6 +3,7 @@ package ua.training.dto;
 import lombok.*;
 import ua.training.entity.user.RoleType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Setter
@@ -27,22 +28,12 @@ public class UserDto {
 
     private String email;
 
-    private String password;
-
     private RoleType role;
 
-    private boolean accountNonExpired;
+    private List<OrderDto> orders = new ArrayList<>();
 
-    private boolean accountNonLocked;
+    private List<OrderCheckDto> checks = new ArrayList<>();
 
-    private boolean credentialsNonExpired;
-
-    private boolean enabled;
-
-    private List<OrderDto> orders;
-
-    private List<OrderCheckDto> checks;
-
-    private List<BankCardDto> cards;
+    private List<BankCardDto> cards = new ArrayList<>();
 
 }
