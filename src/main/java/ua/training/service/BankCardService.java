@@ -1,6 +1,7 @@
 package ua.training.service;
 
 import ua.training.controller.exception.BankException;
+import ua.training.controller.exception.BankTransactionException;
 import ua.training.dto.BankCardDto;
 import ua.training.dto.UserDto;
 import ua.training.entity.user.User;
@@ -10,6 +11,7 @@ import java.util.List;
 
 public interface BankCardService {
 
+    void payForOrder(Long orderId) throws BankTransactionException;
 
     BankCardDto saveBankCardDTO(BankCardDto bankCardDTO, User user) throws BankException;
 

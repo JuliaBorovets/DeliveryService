@@ -4,7 +4,6 @@ import lombok.*;
 import ua.training.entity.order.Status;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +27,11 @@ public class OrderDto {
 
     private Status status;
 
-    private LocalDate shippingDate;
+    private String shippingDate;
 
-    private LocalDate deliveryDate;
+    private String deliveryDate;
+
+    private BigDecimal shippingPriceInCents;
 
     private List<ServiceDto> services = new ArrayList<>();
 

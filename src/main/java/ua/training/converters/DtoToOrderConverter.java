@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import ua.training.dto.OrderDto;
 import ua.training.entity.order.Order;
 
+import java.time.LocalDate;
+
 @Component
 public class DtoToOrderConverter implements Converter<OrderDto, Order> {
 
@@ -32,8 +34,7 @@ public class DtoToOrderConverter implements Converter<OrderDto, Order> {
         order.setWeight(orderDto.getWeight());
         order.setDestination(dtoToDestinationConverter.convert(orderDto.getDestination()));
         order.setStatus(orderDto.getStatus());
-        order.setShippingDate(orderDto.getShippingDate());
-        order.setDeliveryDate(orderDto.getDeliveryDate());
+        order.setShippingDate(LocalDate.now());
 
         if (orderDto.getServices() != null && orderDto.getServices().size() > 0){
             orderDto.getServices()

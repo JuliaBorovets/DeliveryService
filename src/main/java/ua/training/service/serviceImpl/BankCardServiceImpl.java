@@ -67,6 +67,14 @@
 //        return null;
 //    }
 //
+//public void payForOrder(Long orderId) throws BankTransactionException {
+        //  if (!isShipped(order) && !isPaid(order)) {
+//            BigDecimal amount = isLocaleUa() ? order.getShippingPriceUkr() : order.getShippingPriceEn();
+//            sendMoney(order.getOwner().getId(), getAdminAccount(), amount);
+//            order.setOrderStatus(OrderStatus.PAID);
+//            orderRepository.save(order);
+//        } else throw new BankTransactionException("order is already paid");
+       // }
 //
 //    @Override
 //    public List<BankCardDTO> getAllUserBankCards(UserDTO user) {

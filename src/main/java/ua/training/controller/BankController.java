@@ -10,7 +10,6 @@ import ua.training.controller.exception.BankTransactionException;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.BankCardDto;
 import ua.training.entity.user.User;
-
 import ua.training.service.serviceImpl.OrderServiceImpl;
 
 @Slf4j
@@ -69,7 +68,7 @@ public class BankController {
     public String payShipment(@PathVariable("id") Long shipmentId, @ModelAttribute BankCardDto bankCardDTO)
             throws OrderNotFoundException, BankTransactionException {
 
-        orderService.payForOrder(shipmentId);
+      //  orderService.payForOrder(shipmentId);
 
         log.info("order paying");
 

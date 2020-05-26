@@ -42,6 +42,8 @@ public class Order {
 
     private LocalDate deliveryDate;
 
+    private BigDecimal shippingPriceInCents;
+
     @ManyToMany
     @JoinTable(name = "order_service",
             joinColumns = @JoinColumn(name = "order_id"),

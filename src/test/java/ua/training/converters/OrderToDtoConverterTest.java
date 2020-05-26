@@ -5,11 +5,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.annotation.Transactional;
 import ua.training.dto.DestinationDto;
 import ua.training.dto.OrderDto;
 import ua.training.dto.OrderTypeDto;
 import ua.training.dto.ServiceDto;
 import ua.training.entity.order.*;
+
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,6 +40,7 @@ class OrderToDtoConverterTest {
     final Long DESTINATION_ID = 4L;
     final Long ORDER_TYPE_ID = 5L;
 
+    @Transactional
     @Test
     void convert() {
 
@@ -50,6 +54,8 @@ class OrderToDtoConverterTest {
         order.setCheck(OrderCheck.builder().id(CHECK_ID).build());
         order.setDestination(Destination.builder().id(DESTINATION_ID).build());
         order.setOrderType(OrderType.builder().id(ORDER_TYPE_ID).build());
+        order.setShippingDate(LocalDate.now());
+        order.setDeliveryDate(LocalDate.now());
 
         when(serviceToDtoConverter.convert(any(Service.class))).thenReturn(serviceDto);
         when(destinationToDtoConverter.convert(any(Destination.class))).thenReturn(destinationDto);
