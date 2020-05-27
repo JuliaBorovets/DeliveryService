@@ -8,6 +8,7 @@ import ua.training.entity.order.OrderCheck;
 import ua.training.repository.OrderCheckRepository;
 import ua.training.service.OrderCheckService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,5 +47,22 @@ public class OrderCheckServiceImpl implements OrderCheckService {
                 .findAllByUser_Id(userId).stream()
                 .map(checkToDtoConverter::convert)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderCheckDto> showChecksForMonthOfYear(LocalDate localDateDto) {
+
+        return orderCheckRepository.findAllByCreationDateAfter(localDateDto).stream()
+                .map(checkToDtoConverter::convert).collect(Collectors.toList());
+
+    }
+
+    @Override
+    public List<OrderCheckDto> showChecksForYear(LocalDate localDateDto) {
+        int year = localDateDto.getYear();
+        return orderCheckRepository.findAllByCreationYear(year).stream()
+                .map(checkToDtoConverter::convert)
+                .collect(Collectors.toList());
+
     }
 }
