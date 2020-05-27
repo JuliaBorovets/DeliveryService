@@ -9,6 +9,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 @Getter
 public class BankCardDto {
 
@@ -16,8 +17,5 @@ public class BankCardDto {
 
     private BigDecimal balance;
 
-    private List<UserDto> users;
-
-    private List<OrderCheckDto> orderChecks;
 
 }

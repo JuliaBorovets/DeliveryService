@@ -38,17 +38,17 @@
             <div class="card-deck mb-3 text-center" th:each="order : ${orders}">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-header">
-                        <h4 class="my-0 font-weight-normal" th:text="${order.dtoId}"></h4>
+                        <h4 class="my-0 font-weight-normal" th:text="${order.id}"></h4>
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled mt-3 mb-4">
-                            <li th:text="#{order.status} + '  :   ' + #{status + '.'+${order.dtoOrderStatus}}">{Order
+                            <li th:text="#{order.status} + '  :   ' + #{status + '.'+${order.status}}">{Order
                                 status}
                             </li>
-                            <li th:text="#{order.type} + '  :  ' + #{type +'.' + ${order.dtoOrderType}}">{Order type}
+                            <li th:text="#{order.type} + '  :  ' + #{type +'.' + ${order.orderType}}">{Order type}
                             </li>
-                            <li th:text="#{order.weight} + '  :   ' + ${order.dtoWeight}">{Order weight}</li>
-                            <li th:text="#{order.destination} + '  :   ' + #{destination + '.' +${order.dtoDestination}}">
+                            <li th:text="#{order.weight} + '  :   ' + ${order.weight}">{Order weight}</li>
+                            <li th:text="#{order.destination} + '  :   ' + #{destination + '.' +${order.destination}}">
                                 {Order destination}
                             </li>
                             <li th:text="#{order.shipping.date} + '  :   ' + ${order.shippingDate}">{Order
@@ -57,7 +57,7 @@
                             <li th:text="#{order.delivery.date} + '  :  ' + ${order.deliveryDate}">{Order
                                 deliveryDate}
                             </li>
-                            <li th:text="#{order.shipment.price} + '  :  ' + ${order.dtoShippingPrice} +  #{enter}">
+                            <li th:text="#{order.shipment.price} + '  :  ' + ${order.shippingPriceInCents} +  #{enter}">
                                 {Order shippingPrice}
                             </li>
                         </ul>
@@ -65,7 +65,7 @@
                     </div>
                 </div>
 
-                <form th:action="@{pay/{id}(id=${order.dtoId})}">
+                <form th:action="@{pay/{id}(id=${order.id})}">
                     <form>
                         <div class="col s12 sign">
                             <button class="button_pay btn-lg btn-block btn-outline-primary"
@@ -81,19 +81,19 @@
 
     </section>
 
-    <div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-md-8">
-            <nav aria-label="Pagination">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item" th:each="pageNumber : ${pageNumbers}">
-                        <a class="page-link" th:href="@{|/my_shipments/page/${pageNumber}|}" th:text=${pageNumber}>1</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <div class="col-md-2"></div>
-    </div>
+<!--    <div class="row">-->
+<!--        <div class="col-md-2"></div>-->
+<!--        <div class="col-md-8">-->
+<!--            <nav aria-label="Pagination">-->
+<!--                <ul class="pagination justify-content-center">-->
+<!--                    <li class="page-item" th:each="pageNumber : ${pageNumbers}">-->
+<!--                        <a class="page-link" th:href="@{|/my_shipments/page/${pageNumber}|}" th:text=${pageNumber}>1</a>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </nav>-->
+<!--        </div>-->
+<!--        <div class="col-md-2"></div>-->
+<!--    </div>-->
 
 
 </div>

@@ -6,11 +6,13 @@ import ua.training.entity.user.User;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @ToString
 
 @Entity
@@ -36,5 +38,19 @@ public class OrderCheck {
     @ManyToOne
     private BankCard bankCard;
 
+    private LocalDate creationDate;
+
+    public OrderCheck create(Order order, BankCard bankCard, User user){
+        this.order = order;
+        order.setCheck(this);
+
+        this.bankCard = bankCard;
+        bankCard.getOrderChecks().add(this);
+
+        this.user = user;
+        user.getChecks().add(this);
+
+        return this;
+    }
 
 }

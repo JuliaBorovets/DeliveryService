@@ -6,8 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.training.controller.exception.BankTransactionException;
 import ua.training.controller.exception.OrderNotFoundException;
-import ua.training.dto.*;
-import ua.training.entity.order.Order;
+import ua.training.dto.CalculatorDto;
+import ua.training.dto.OrderDto;
 import ua.training.entity.user.User;
 import ua.training.service.serviceImpl.OrderServiceImpl;
 
@@ -23,8 +23,12 @@ public class PaymentController {
         this.orderService = orderService;
     }
 
+    @GetMapping("/calculator")
+    public String calculatePage(@ModelAttribute OrderDto modelOrder) {
+        return "calculator";
+    }
 
-    @RequestMapping("/calculator")
+    @PostMapping ("/calculator")
     public String calculatePrice(@ModelAttribute("order") @Valid CalculatorDto order,
                                  @ModelAttribute User modelUser, Model model) {
 
@@ -36,7 +40,7 @@ public class PaymentController {
     @RequestMapping(value = "pay/{id}")
     public String payShipment(@PathVariable("id") long shipmentId) throws BankTransactionException, OrderNotFoundException {
 
-        Order order = orderService.getOrderById(shipmentId);
+       // Order order = orderService.getOrderById(shipmentId);
 
 //        if (!order.getOrderStatus().equals(OrderStatus.PAID) && !order.getOrderStatus().equals(OrderStatus.SHIPPED))
 //            orderService.payForOrder(order);
