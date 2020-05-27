@@ -28,17 +28,15 @@ public class AdminController {
 
         // List<OrderDTO> orders = orderService.findAllPaidOrdersDTO();
 
-        // insertPaginatedOrders(page, ADMIN_SHIPMENTS_SIZE, model, orders);
-
         return "admin_page";
     }
 
     @PostMapping(value = "/to_ship")
     public String adminPage(@AuthenticationPrincipal User user, Model model,
                             @PageableDefault Pageable pageable) throws OrderNotFoundException {
+
         //   orderService.orderToShip();
 
-//        log.info("shipping orders");
         return "redirect:/admin/admin_page/page/1";
 
     }

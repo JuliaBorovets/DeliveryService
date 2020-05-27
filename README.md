@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/JuliaBorovets/FinalProject.svg?style=svg)](https://circleci.com/gh/JuliaBorovets/FinalProject)
+[![CircleCI](https://circleci.com/gh/JuliaBorovets/DeliveryService/tree/newVersion.svg?style=svg&circle-token=fbd9b58681c01eea31d54fc8e917c271c8e20441)](https://circleci.com/gh/JuliaBorovets/DeliveryService/tree/newVersion)
 
 # Spring Final Project
 

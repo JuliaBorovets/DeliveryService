@@ -2,8 +2,6 @@ package ua.training.dto;
 
 import lombok.*;
 import ua.training.entity.order.Status;
-import ua.training.entity.user.BankCard;
-import ua.training.entity.user.User;
 
 import java.math.BigDecimal;
 
@@ -11,6 +9,7 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @ToString
 public class OrderCheckDto {
 
@@ -25,5 +24,4 @@ public class OrderCheckDto {
     private UserDto user;
 
     private BankCardDto bankCard;
-
 }

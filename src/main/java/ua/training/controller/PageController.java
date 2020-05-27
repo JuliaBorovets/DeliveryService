@@ -1,14 +1,15 @@
 package ua.training.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ua.training.controller.exception.RegException;
-import ua.training.dto.*;
-
-import lombok.extern.slf4j.Slf4j;
-import ua.training.service.serviceImpl.UserServiceImpl;
+import ua.training.dto.UserDto;
+import ua.training.service.UserService;
 
 import javax.validation.Valid;
 
@@ -16,9 +17,9 @@ import javax.validation.Valid;
 @Controller
 public class PageController implements WebMvcConfigurer {
 
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
-    public PageController(UserServiceImpl userService) {
+    public PageController(UserService userService) {
         this.userService = userService;
     }
 
@@ -28,17 +29,17 @@ public class PageController implements WebMvcConfigurer {
     }
 
     @GetMapping("/reg")
-    public String registerUser(@ModelAttribute("newUser") UserDto user, Model model) {
+    public String registerUser(Model model) {
 
-        model.addAttribute("newOrder", user == null ? new UserDto() : user);
+        model.addAttribute("newUser", new UserDto());
 
         return "registration";
     }
 
     @PostMapping("/reg")
-    public String newUser(@ModelAttribute("newUser") @Valid UserDto modelUser) throws RegException {
+    public String newUser(@Valid @ModelAttribute("newUser") UserDto modelUser) throws RegException {
 
-        userService.saveNewUser(modelUser);
+        userService.saveNewUserDto(modelUser);
         log.info("new user registration");
 
         return "redirect:/login";
@@ -46,6 +47,7 @@ public class PageController implements WebMvcConfigurer {
 
     @GetMapping("/login")
     public String loginPage() {
+
         return "login";
     }
 
@@ -54,15 +56,13 @@ public class PageController implements WebMvcConfigurer {
         return "account_page";
     }
 
-    @RequestMapping("/success")
+
+    @PostMapping("/success")
     public String localRedirect() {
+
         return "redirect:/account_page";
     }
 
-    @GetMapping("/calculator")
-    public String calculatePage(@ModelAttribute OrderDto modelOrder) {
-        return "calculator";
-    }
 
 }
 

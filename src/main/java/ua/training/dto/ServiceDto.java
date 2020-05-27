@@ -19,5 +19,4 @@ public class ServiceDto {
 
     private BigDecimal priceInCents;
 
-    private Set<OrderDto> orders;
 }

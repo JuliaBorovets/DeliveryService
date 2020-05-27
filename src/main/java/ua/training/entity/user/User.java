@@ -7,11 +7,7 @@ import ua.training.entity.order.Order;
 import ua.training.entity.order.OrderCheck;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -46,16 +42,16 @@ public class User implements UserDetails {
     private RoleType role;
 
     @OneToMany(mappedBy = "owner")
-    private List<Order> orders;
+    private List<Order> orders = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
-    private List<OrderCheck> checks;
+    private List<OrderCheck> checks = new ArrayList<>();
 
     @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(name = "user_card",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "card_id"))
-    private List<BankCard> cards;
+    private List<BankCard> cards = new ArrayList<>();
 
     private boolean accountNonExpired;
 
@@ -78,12 +74,10 @@ public class User implements UserDetails {
         return getLogin();
     }
 
-    public BankCard addBankCard(BankCard bankCard){
+    public void addBankCard(BankCard bankCard){
         cards.add(bankCard);
         bankCard.getUsers().add(this);
-        return bankCard;
     }
-
 
 
 }

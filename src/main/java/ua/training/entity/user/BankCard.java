@@ -6,14 +6,13 @@ import ua.training.entity.order.OrderCheck;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-
+@Builder
 @Entity
 @Table(name = "card",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
@@ -29,10 +28,6 @@ public class BankCard {
 
     @OneToMany(mappedBy = "bankCard")
     private List<OrderCheck> orderChecks;
-
-    public BigDecimal replenish(BigDecimal balance){
-        return this.getBalance().add(balance);
-    }
 
     @PreRemove
     public void deleteBankCard(){

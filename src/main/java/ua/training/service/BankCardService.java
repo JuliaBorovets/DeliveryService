@@ -1,6 +1,7 @@
 package ua.training.service;
 
 import ua.training.controller.exception.BankException;
+import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.BankCardDto;
 import ua.training.dto.UserDto;
 import ua.training.entity.user.User;
@@ -10,15 +11,14 @@ import java.util.List;
 
 public interface BankCardService {
 
+    Long payForOrder(Long orderId, Long bankCardId, UserDto userDto) throws BankException, OrderNotFoundException;
 
-    BankCardDto saveBankCardDTO(BankCardDto bankCardDTO, User user) throws BankException;
+    BankCardDto saveBankCardDTO(BankCardDto bankCardDTO, Long userId) throws BankException;
 
     void deleteBankCard(Long bankId) throws BankException;
 
     void replenishBankCard(Long bankId, BigDecimal balance) throws BankException;
 
-    void sendMoney(Long fromAccountId, Long toAccountId, BigDecimal amount) throws BankException;
-
-    List<BankCardDto> getAllUserBankCards(UserDto user);
+    List<BankCardDto> getAllUserBankCards(User user);
 }
 
