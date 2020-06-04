@@ -3,7 +3,6 @@ package ua.training.dto;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Setter
 @Getter
@@ -21,7 +20,5 @@ public class DestinationDto {
 
     private Long daysToDeliver;
 
-    private BigDecimal kilometers;
-
-    private BigDecimal priceOnCentsForKilometer;
+    private BigDecimal priceInCents;
 }

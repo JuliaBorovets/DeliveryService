@@ -4,7 +4,9 @@ import lombok.*;
 import ua.training.entity.user.RoleType;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -36,6 +38,6 @@ public class UserDto {
 
     private List<OrderCheckDto> checks = new ArrayList<>();
 
-    private List<BankCardDto> cards = new ArrayList<>();
+    private Set<BankCardDto> cards = new HashSet<>();
 
 }

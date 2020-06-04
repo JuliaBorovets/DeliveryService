@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -27,10 +28,8 @@ public class Destination {
 
     private Long daysToDeliver;
 
-    private BigDecimal kilometers;
-
-    private BigDecimal priceOnCentsForKilometer;
+    private BigDecimal priceInCents;
 
     @OneToMany(mappedBy = "destination")
-    private List<Order> orders;
+    private List<Order> orders = new ArrayList<>();
 }

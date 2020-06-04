@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<!--suppress HtmlUnknownAttribute -->
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <base href="/">
+    <title>Bank cards</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+    <script src="/webjars/jquery/3.3.1-1/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous" th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"></script>
+
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="bank.css">
+
+    <link rel="stylesheet" src="/webjars/font-awesome/5.13.0/font-awesome.min.css">
+
+
+</head>
+
+<body>
+<div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
+
+<div class="container_nav" >
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active " th:href="@{/bank}">My cards</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/bank/add_card}" >New card</a>
+        </li>
+    </ul>
+</div>
+
+
+<div class="container-fluid text-center">
+
+    <br>
+
+    <h3 th:text="${user.firstName} + ' ' + ${user.lastName}"></h3>
+    <br>
+    <div class="card shadow">
+
+        <div class="card-body text-center" >
+            <div class="table-responsive table mt-2 text-center" id="dataTable" aria-describedby="dataTable_info">
+                <table class="table dataTable my-2 text-center" id="dataTable">
+                    <thead>
+                    <tr>
+                        <th >ID</th>
+                        <th >balance</th>
+                        <th><em class="fa fa-cog"></em></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="b : ${bankCards}">
+                        <th scope="row" th:text="${b.id}" ></th>
+                        <th scope="row" th:text="${b.balance}" ></th>
+                        <td>
+                            <a class="btn btn-default" th:href="@{/bank/update_card/{id}(id=${b.id})}"><i class="fa fa-wrench" aria-hidden="true"></i></a>
+                            <a class="btn btn-default" th:href="@{/bank/delete_card/{id}(id=${b.id})}" ><i class="fa fa-trash" aria-hidden="true"></i></a>
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div th:include="fragments/footer :: footer" th:remove="tag"></div>
+
+</body>
+</html>

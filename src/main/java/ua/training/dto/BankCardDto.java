@@ -1,21 +1,21 @@
 package ua.training.dto;
 
 import lombok.*;
+
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
 
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
 public class BankCardDto {
 
+    @EqualsAndHashCode.Include
     private Long id;
 
     private BigDecimal balance;
-
 
 }

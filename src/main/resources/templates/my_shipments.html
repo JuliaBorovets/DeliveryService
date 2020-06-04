@@ -42,40 +42,40 @@
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled mt-3 mb-4">
-                            <li th:text="#{order.status} + '  :   ' + #{status + '.'+${order.status}}">{Order
+                            <li th:text="#{order.status} + '  :   ' + ${order.status}">{Order
                                 status}
                             </li>
-                            <li th:text="#{order.type} + '  :  ' + #{type +'.' + ${order.orderType}}">{Order type}
+                            <li th:text="#{order.type} + '  :  ' + ${order.orderType.name}">{Order type}
                             </li>
                             <li th:text="#{order.weight} + '  :   ' + ${order.weight}">{Order weight}</li>
-                            <li th:text="#{order.destination} + '  :   ' + #{destination + '.' +${order.destination}}">
+
+                            <li th:text="#{order.destination} + '  :   ' + ${order.destination.cityFrom} + ' - ' + ${order.destination.cityTo}">
                                 {Order destination}
                             </li>
                             <li th:text="#{order.shipping.date} + '  :   ' + ${order.shippingDate}">{Order
                                 shippingDate}
                             </li>
-                            <li th:text="#{order.delivery.date} + '  :  ' + ${order.deliveryDate}">{Order
+
+                            <li th:unless="${order.deliveryDate} == null" th:text="#{order.delivery.date} + '  :  ' + ${order.deliveryDate}">{Order
                                 deliveryDate}
                             </li>
                             <li th:text="#{order.shipment.price} + '  :  ' + ${order.shippingPriceInCents} +  #{enter}">
                                 {Order shippingPrice}
+                            </li>
+                            <li>
+                                <br>
+                                <div class="col s12 sign">
+                                    <a class="button"
+                                       th:href="@{/bank/pay/{id}(id=${order.id})}" th:text="#{to.pay}" th:size="14px">
+                                    </a>
+
+                                </div>
                             </li>
                         </ul>
 
                     </div>
                 </div>
 
-                <form th:action="@{pay/{id}(id=${order.id})}">
-                    <form>
-                        <div class="col s12 sign">
-                            <button class="button_pay btn-lg btn-block btn-outline-primary"
-                                    type="submit" href="#" th:text="#{to.pay}">
-                            </button>
-                            <br>
-
-                        </div>
-                    </form>
-                </form>
             </div>
         </div>
 

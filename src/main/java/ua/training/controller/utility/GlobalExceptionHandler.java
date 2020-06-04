@@ -25,13 +25,13 @@ public class GlobalExceptionHandler {
 //    }
 
 
-    @ExceptionHandler({org.springframework.validation.BindException.class, IllegalStateException.class})
-    public String handleApplicationException(Model model) {
-        log.error("registration exception. Binding result.");
-        model.addAttribute("newUser", new UserDto());
-        model.addAttribute("error", true);
-        return "registration";
-    }
+//    @ExceptionHandler({org.springframework.validation.BindException.class, IllegalStateException.class})
+//    public String handleApplicationException(Model model) {
+//        log.error("registration exception. Binding result.");
+//        model.addAttribute("newUser", new UserDto());
+//        model.addAttribute("error", true);
+//        return "registration";
+//    }
 
 
     @ExceptionHandler(RegException.class)

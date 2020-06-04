@@ -20,5 +20,8 @@ public interface BankCardService {
     void replenishBankCard(Long bankId, BigDecimal balance) throws BankException;
 
     List<BankCardDto> getAllUserBankCards(User user);
+
+    BankCardDto findBankCardDtoById(Long id);
+
 }
 

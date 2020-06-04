@@ -9,7 +9,11 @@ import ua.training.controller.exception.BankException;
 import ua.training.controller.exception.BankTransactionException;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.BankCardDto;
+import ua.training.dto.OrderCheckDto;
+import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
+import ua.training.service.BankCardService;
+import ua.training.service.OrderCheckService;
 import ua.training.service.serviceImpl.OrderServiceImpl;
 
 @Slf4j
@@ -17,55 +21,98 @@ import ua.training.service.serviceImpl.OrderServiceImpl;
 @Controller
 public class BankController {
 
-
-
     private final OrderServiceImpl orderService;
+    private final BankCardService bankCardService;
+    private final OrderCheckService orderCheckService;
 
-
-    public BankController(OrderServiceImpl orderService) {
+    public BankController(OrderServiceImpl orderService, BankCardService bankCardService, OrderCheckService orderCheckService) {
         this.orderService = orderService;
+        this.bankCardService = bankCardService;
+        this.orderCheckService = orderCheckService;
     }
 
-    @GetMapping({"/","/add_card","/replenish/{id}", "/delete_card{id}"})
-    public String getBankPage(@PathVariable("id") Long id, @ModelAttribute("bankDTO") BankCardDto bankCardDTO, Model model){
+    @ModelAttribute
+    public User loadModelAttribute(@AuthenticationPrincipal User user,  Model model){
+
+        model.addAttribute("user", user);
+        model.addAttribute("isAdmin", user.getRole().equals(RoleType.ROLE_ADMIN));
+
+        return user;
+    }
+
+    @GetMapping
+    public String getBankInfo(@AuthenticationPrincipal User user,  Model model){
+
+        model.addAttribute("bankCards", bankCardService.getAllUserBankCards(user));
+
+        return "bank/info";
+    }
+
+
+    @GetMapping("/add_card")
+    public String getBankPage(@ModelAttribute("bankDTO") BankCardDto bankCardDTO, Model model) {
 
         model.addAttribute("bankDTO", bankCardDTO == null ? new BankCardDto() : bankCardDTO);
 
-        return "bank_card";
+        return "bank/bank_card_add";
     }
+
 
     @PostMapping("/add_card")
     public String addBankCard(@ModelAttribute BankCardDto bankCardDTO, @AuthenticationPrincipal User user, Model model)
             throws BankException {
 
-      //  BankCard bankCard = bankCardService.addBankCard(bankCardDTO.getId(), user);
-       // model.addAttribute("bankCard", bankCard);
+        bankCardService.saveBankCardDTO(bankCardDTO, user.getId());
+
         log.error("adding card");
 
-        return "redirect:/bank/";
+        return "redirect:/bank";
+    }
+
+    @GetMapping("/update_card/{cardId}")
+    public String getUpdateBankPage(@PathVariable Long cardId, Model model) {
+
+        model.addAttribute("bankDTO", bankCardService.findBankCardDtoById(cardId));
+
+        return "bank/bank_card_update";
+    }
+
+    @PostMapping("/update_card/{cardId}")
+    public String updateBankCard(@PathVariable Long cardId, @ModelAttribute BankCardDto bankCardDTO, @AuthenticationPrincipal User user, Model model)
+            throws BankException {
+
+        bankCardService.saveBankCardDTO(bankCardDTO, user.getId());
+
+        log.error("updating card");
+
+        return "redirect:/bank";
     }
 
 
-    @PostMapping("/replenish/{id}")
-    public String replenishCard(@PathVariable("id") Long id, @ModelAttribute BankCardDto bankCardDTO) throws BankException {
-
-       // bankCardService.replenishBankCard(id, bankCardDTO.getMoneyToAdd());
-        log.error("replenish card with id = " + id);
-
-        return "redirect:/bank/";
-    }
-
-    @DeleteMapping("/delete_card{id}")
-    public String deleteBankCard(@PathVariable("id") Long id) throws BankException {
+    @GetMapping("/delete_card/{cardId}")
+    public String deleteBankCard(@PathVariable Long cardId) throws BankException {
 
         log.error("deleting card");
-      //  bankCardService.deleteBankCard(id);
+        bankCardService.deleteBankCard(cardId);
 
-        return "redirect:/bank/";
+        return "redirect:/bank";
     }
 
-    @PostMapping(value = "/pay/{id}")
-    public String payShipment(@PathVariable("id") Long shipmentId, @ModelAttribute BankCardDto bankCardDTO)
+    @GetMapping(value = "/pay/{orderId}")
+    public String payParticularShipmentView(@PathVariable Long orderId, Model model, @AuthenticationPrincipal User user,
+                                            @ModelAttribute("checkDto") OrderCheckDto orderCheckDto, @ModelAttribute("bankCard") BankCardDto bankCardDto)
+            throws OrderNotFoundException {
+
+        model.addAttribute("order", orderService.getOrderDtoById(orderId));
+        model.addAttribute("orderCheck", orderCheckService.createCheckDto(orderId, bankCardDto, user.getId()));
+        model.addAttribute("bankCards", bankCardService.getAllUserBankCards(user));
+
+        return "bank/pay_for_order";
+    }
+
+
+    @PostMapping(value = "/pay/{orderId}")
+    public String payShipment(@PathVariable Long orderId, @ModelAttribute("checkDto") OrderCheckDto orderCheckDto)
             throws OrderNotFoundException, BankTransactionException {
 
       //  orderService.payForOrder(shipmentId);

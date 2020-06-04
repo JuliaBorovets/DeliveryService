@@ -4,8 +4,6 @@ import lombok.*;
 import ua.training.entity.order.Status;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Setter
 @Getter
@@ -17,13 +15,13 @@ public class OrderDto {
 
     private Long id;
 
+    private String description;
+
     private OrderTypeDto orderType;
 
-    private UserDto owner;
+    private DestinationDto destination;
 
     private BigDecimal weight;
-
-    private DestinationDto destination;
 
     private Status status;
 
@@ -33,9 +31,13 @@ public class OrderDto {
 
     private BigDecimal shippingPriceInCents;
 
-    private List<ServiceDto> services = new ArrayList<>();
-
     private OrderCheckDto check;
+
+    private String destinationCityFrom;
+
+    private String destinationCityTo;
+
+    private String type;
 
 }
 

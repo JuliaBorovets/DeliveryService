@@ -2,9 +2,9 @@ package ua.training.service.serviceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ua.training.converters.DestinationToDtoConverter;
 import ua.training.dto.DestinationDto;
 import ua.training.entity.order.Destination;
+import ua.training.mappers.DestinationMapper;
 import ua.training.repository.DestinationRepository;
 import ua.training.service.DestinationService;
 
@@ -17,12 +17,9 @@ import java.util.stream.Collectors;
 public class DestinationServiceImpl implements DestinationService {
 
     private final DestinationRepository destinationRepository;
-    private final DestinationToDtoConverter destinationToDtoConverter;
 
-    public DestinationServiceImpl(DestinationRepository destinationRepository,
-                                  DestinationToDtoConverter destinationToDtoConverter) {
+    public DestinationServiceImpl(DestinationRepository destinationRepository) {
         this.destinationRepository = destinationRepository;
-        this.destinationToDtoConverter = destinationToDtoConverter;
     }
 
     @Override
@@ -32,19 +29,17 @@ public class DestinationServiceImpl implements DestinationService {
         destinationRepository.findAll().forEach(destinations::add);
 
         return destinations.stream()
-                .map(destinationToDtoConverter::convert)
+                .map(DestinationMapper.INSTANCE::destinationToDestinationDto)
                 .collect(Collectors.toList());
     }
 
 
     @Override
-    public DestinationDto getDtoDestination(String cityFrom, String cityTo) {
+    public Destination getDestination(String cityFrom, String cityTo) {
 
-        Destination destination = destinationRepository
+        return destinationRepository
                 .findByCityFromAndCityTo(cityFrom, cityTo)
                 .orElseThrow(() -> new RuntimeException("can not find destination"));
-
-        return destinationToDtoConverter.convert(destination);
     }
 
 }

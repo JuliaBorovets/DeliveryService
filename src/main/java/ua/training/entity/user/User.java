@@ -39,7 +39,7 @@ public class User implements UserDetails {
     private String password;
 
     @Enumerated(value = EnumType.STRING)
-    private RoleType role;
+    private RoleType role = RoleType.ROLE_USER;
 
     @OneToMany(mappedBy = "owner")
     private List<Order> orders = new ArrayList<>();
@@ -51,15 +51,8 @@ public class User implements UserDetails {
     @JoinTable(name = "user_card",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "card_id"))
-    private List<BankCard> cards = new ArrayList<>();
+    private Set<BankCard> cards = new HashSet<>();
 
-    private boolean accountNonExpired;
-
-    private boolean accountNonLocked;
-
-    private boolean credentialsNonExpired;
-
-    private boolean enabled;
 
 
     @Override
@@ -79,5 +72,24 @@ public class User implements UserDetails {
         bankCard.getUsers().add(this);
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
 }

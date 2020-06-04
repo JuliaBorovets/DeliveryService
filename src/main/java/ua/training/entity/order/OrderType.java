@@ -5,8 +5,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -14,10 +14,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @ToString
-
 @Entity
-@Table(name = "type",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
+@Table(name = "order_types")
 public class OrderType {
 
     @Id
@@ -29,6 +27,6 @@ public class OrderType {
     private BigDecimal priceInCents;
 
     @OneToMany(mappedBy = "orderType")
-    private List<Order> orderSet;
+    private List<Order> orderSet = new ArrayList<>();
 
 }

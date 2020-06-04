@@ -7,8 +7,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ua.training.controller.exception.BankException;
 import ua.training.controller.exception.OrderNotFoundException;
-import ua.training.converters.BankCardToDtoConverter;
-import ua.training.converters.DtoToBankCardConverter;
 import ua.training.dto.BankCardDto;
 import ua.training.dto.UserDto;
 import ua.training.entity.order.Order;
@@ -16,6 +14,7 @@ import ua.training.entity.order.OrderCheck;
 import ua.training.entity.order.Status;
 import ua.training.entity.user.BankCard;
 import ua.training.entity.user.User;
+import ua.training.mappers.BankCardMapper;
 import ua.training.repository.BankCardRepository;
 import ua.training.repository.OrderRepository;
 import ua.training.repository.UserRepository;
@@ -29,20 +28,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class BankCardServiceImpl implements BankCardService {
+
     private final BankCardRepository bankCardRepository;
-
-    private final BankCardToDtoConverter bankCardToDtoConverter;
-    private final DtoToBankCardConverter dtoToBankCardConverter;
-
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
 
-    public BankCardServiceImpl(BankCardRepository bankCardRepository, BankCardToDtoConverter bankCardToDtoConverter,
-                               DtoToBankCardConverter dtoToBankCardConverter, UserRepository userRepository,
-                               OrderRepository orderRepository) {
+
+    public BankCardServiceImpl(BankCardRepository bankCardRepository, UserRepository userRepository, OrderRepository orderRepository) {
         this.bankCardRepository = bankCardRepository;
-        this.bankCardToDtoConverter = bankCardToDtoConverter;
-        this.dtoToBankCardConverter = dtoToBankCardConverter;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
     }
@@ -69,7 +62,7 @@ public class BankCardServiceImpl implements BankCardService {
 
         return bankCardRepository
                 .findBankCardByUsers(user).stream()
-                .map(bankCardToDtoConverter::convert).collect(Collectors.toList());
+                .map(BankCardMapper.INSTANCE::bankCardToDto).collect(Collectors.toList());
 
     }
 
@@ -79,11 +72,10 @@ public class BankCardServiceImpl implements BankCardService {
     public BankCardDto saveBankCardDTO(BankCardDto bankCardDTO, Long userId) throws BankException {
         User user = userRepository.findUserById(userId).orElseThrow(() ->new RuntimeException("can not save bank Card") );
 
-        BankCard bankCard = dtoToBankCardConverter.convert(bankCardDTO);
-        user.addBankCard(bankCard);
+        BankCard bankCard = BankCardMapper.INSTANCE.bankCardDtoToBankCard(bankCardDTO);
+        user.getCards().add(bankCard);
 
         try {
-            assert bankCard != null;
             bankCardRepository.save(bankCard);
         } catch (DataIntegrityViolationException e) {
             throw new BankException("Can not save bank card");
@@ -137,4 +129,10 @@ public class BankCardServiceImpl implements BankCardService {
 
     }
 
+    @Override
+    public BankCardDto findBankCardDtoById(Long id) {
+        return bankCardRepository
+                .findById(id)
+                .map(BankCardMapper.INSTANCE::bankCardToDto).orElseThrow(()->new RuntimeException("no card"));
+    }
 }

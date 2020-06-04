@@ -6,8 +6,6 @@ import ua.training.entity.user.User;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -23,6 +21,8 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String description;
 
     @ManyToOne
     private OrderType orderType;
@@ -44,15 +44,15 @@ public class Order {
 
     private BigDecimal shippingPriceInCents;
 
-    @ManyToMany
-    @JoinTable(name = "order_service",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "service_id"))
-    private List<Service> services = new ArrayList<>();
-
-    @OneToOne(optional = false, fetch = FetchType.EAGER)
+    @OneToOne(optional = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "check_id", referencedColumnName = "id", unique = true)
     private OrderCheck check;
+
+    public Order saveOrder(User user){
+        this.setOwner(user);
+        user.getOrders().add(this);
+        return this;
+    }
 
 }
 

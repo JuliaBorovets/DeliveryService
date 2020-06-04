@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<!--suppress HtmlUnknownAttribute -->
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <base href="/">
+    <title>Bank cards</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+    <script src="/webjars/jquery/3.3.1-1/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous" th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"></script>
+
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="bank.css">
+
+    <link rel="stylesheet" src="/webjars/font-awesome/5.13.0/font-awesome.min.css">
+
+
+</head>
+
+<body>
+<div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
+
+<div id="container" >
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link  " th:href="@{/bank}">My cards</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/bank/add_card}" >New card</a>
+        </li>
+    </ul>
+</div>
+
+<div class="container py-5">
+
+    <div class="row">
+        <div class="col-lg-7 mx-auto">
+            <div class="bg-white rounded-lg shadow-sm p-5">
+                <!-- Credit card form tabs -->
+                <ul  class="nav bg-light nav-pills rounded-pill nav-fill mb-3">
+                    <li class="nav-item">
+                        <a data-toggle="pill" href="#nav-tab-card" class="nav-link active rounded-pill ">
+                            <i class="fa fa-credit-card"></i>
+                            Credit Card
+                        </a>
+                    </li>
+
+                </ul>
+                <!-- End -->
+
+
+                <!-- Credit card form content -->
+                <div class="tab-content">
+
+                    <!-- credit card info-->
+                    <div id="nav-tab-card" class="tab-pane fade show active">
+
+                        <form th:action="@{/bank/update_card/{id}(id=${bankDTO.id})}" th:object="${bankDTO}" method="post">
+
+                            <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                                <p>Please Correct Errors Below</p>
+                            </div>
+
+
+                            <div class="form-group" th:class="${#fields.hasErrors('id')}
+                                ? 'form-group has-error' : 'form-group'">
+                                <label>Card number</label>
+                                <div class="input-group">
+                                    <input type="number" placeholder="Your card number" class="form-control"  th:field="*{id}" th:errorclass="has-error" required/>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-4"  th:class="${#fields.hasErrors('balance')}
+                                ? 'form-group mb-4 has-error' : 'form-group mb-4'">
+                                        <label> Balance </label>
+                                        <input type="number" placeholder="Your balance" class="form-control"  th:field="*{balance}" th:errorclass="has-error" />
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <button  type="submit" class="subscribe btn btn-primary btn-block rounded-pill shadow-sm "> Confirm  </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:include="fragments/footer :: footer" th:remove="tag"></div>
+
+</body>
+</html>

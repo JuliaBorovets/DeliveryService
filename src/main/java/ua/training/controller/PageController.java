@@ -1,14 +1,18 @@
 package ua.training.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ua.training.controller.exception.RegException;
 import ua.training.dto.UserDto;
+import ua.training.entity.user.RoleType;
+import ua.training.entity.user.User;
 import ua.training.service.UserService;
 
 import javax.validation.Valid;
@@ -23,6 +27,13 @@ public class PageController implements WebMvcConfigurer {
         this.userService = userService;
     }
 
+    @ModelAttribute
+    public User loadModelAttribute(@AuthenticationPrincipal User user,  Model model){
+
+        model.addAttribute("user", user);
+
+        return user;
+    }
     @GetMapping("/")
     public String mainPage() {
         return "index";
@@ -52,12 +63,15 @@ public class PageController implements WebMvcConfigurer {
     }
 
     @GetMapping("/account_page")
-    public String accountPage() {
+    public String accountPage(@AuthenticationPrincipal User user, Model model) {
+
+        model.addAttribute("isAdmin", user.getRole().equals(RoleType.ROLE_ADMIN));
+
         return "account_page";
     }
 
 
-    @PostMapping("/success")
+    @RequestMapping("/success")
     public String localRedirect() {
 
         return "redirect:/account_page";

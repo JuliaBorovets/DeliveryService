@@ -15,7 +15,7 @@ public class OrderCheckDto {
 
     private Long id;
 
-    private OrderDto order;
+    private Long orderId;
 
     private BigDecimal priceInCents;
 

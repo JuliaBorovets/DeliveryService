@@ -1,6 +1,7 @@
 package ua.training.service;
 
 import ua.training.dto.DestinationDto;
+import ua.training.entity.order.Destination;
 
 import java.util.List;
 
@@ -8,6 +9,6 @@ public interface DestinationService {
 
     List<DestinationDto> getAllDestinationDto();
 
-    DestinationDto getDtoDestination(String cityFrom, String cityTo);
+    Destination getDestination(String cityFrom, String cityTo);
 
 }

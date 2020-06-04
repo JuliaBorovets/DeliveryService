@@ -11,11 +11,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
 import ua.training.service.serviceImpl.OrderServiceImpl;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 @ExtendWith(MockitoExtension.class)
 class BankCardControllerTest {
@@ -39,14 +34,14 @@ class BankCardControllerTest {
                 .build();
     }
 
-    @Test
-    void getBankPage() throws Exception {
-
-        mockMvc.perform(get("/bank/replenish/1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("bank_card"));
-
-    }
+//    @Test
+//    void getBankPage() throws Exception {
+//
+//        mockMvc.perform(get("/bank/replenish/1"))
+//                .andExpect(status().isOk())
+//                .andExpect(view().name("bank_card"));
+//
+//    }
 
     @Test
     void addBankCard() {

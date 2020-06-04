@@ -28,14 +28,13 @@
                 <a class="nav-link" href="/shipments/show/1" th:text="#{my.shipments}">{My shipments}</a>
             </li>
 
-
-            <li class="nav-item">
-                <a class="nav-link" href="/adding_money"  th:text="#{add.money}">{Add money}</a>
-            </li>
-
-            <li class="nav-item">
+            <li th:if="${isAdmin}"  class="nav-item">
                 <a class="nav-link" href="/admin_page/page/1" th:text="#{admin.page}" >{Admin page}</a>
             </li>
+
+             <li class="nav-item">
+                 <a class="nav-link" href="/bank"  >User info</a>
+             </li>
 
         </ul>
     </div>

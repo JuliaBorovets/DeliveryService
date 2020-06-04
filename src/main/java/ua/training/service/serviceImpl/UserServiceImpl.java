@@ -9,10 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ua.training.controller.exception.RegException;
-import ua.training.converters.DtoToUserConverter;
-import ua.training.converters.UserToUserDtoConverter;
+import ua.training.controller.utility.ProjectPasswordEncoder;
 import ua.training.dto.UserDto;
+import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
+import ua.training.mappers.UserMapper;
 import ua.training.repository.UserRepository;
 import ua.training.service.UserService;
 
@@ -23,14 +24,13 @@ import java.util.Objects;
 public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final UserRepository userRepository;
-    private final DtoToUserConverter dtoToUserConverter;
-    private final UserToUserDtoConverter userToUserDtoConverter;
 
-    public UserServiceImpl(UserRepository userRepository,DtoToUserConverter dtoToUserConverter,
-                           UserToUserDtoConverter userToUserDtoConverter) {
+    private final ProjectPasswordEncoder encoder;
+
+
+    public UserServiceImpl(UserRepository userRepository, ProjectPasswordEncoder encoder) {
         this.userRepository = userRepository;
-        this.dtoToUserConverter = dtoToUserConverter;
-        this.userToUserDtoConverter = userToUserDtoConverter;
+        this.encoder = encoder;
     }
 
     @Override
@@ -51,20 +51,24 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public UserDto saveNewUserDto(UserDto userDto) throws RegException {
 
-        User user = dtoToUserConverter.convert(userDto);
+        User user = UserMapper.INSTANCE.userDtoToUser(userDto);
+        ProjectPasswordEncoder encoder = new ProjectPasswordEncoder();
+
+        user.setPassword(encoder.encode(userDto.getPassword()));
+        user.setRole(RoleType.ROLE_USER);
 
         try {
             userRepository.save(Objects.requireNonNull(user));
         } catch (DataIntegrityViolationException e) {
             throw new RegException("saveNewUser exception");
         }
-        return userToUserDtoConverter.convert(user);
+        return UserMapper.INSTANCE.userToUserDto(user);
     }
 
 
     @Override
     public UserDto findUserDTOById(Long id) {
 
-        return userToUserDtoConverter.convert(findUserById(id));
+        return UserMapper.INSTANCE.userToUserDto(findUserById(id));
     }
 }
