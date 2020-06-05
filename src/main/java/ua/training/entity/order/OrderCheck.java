@@ -13,7 +13,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString
 
 @Entity
 @Table(name = "order_check")
@@ -38,6 +37,6 @@ public class OrderCheck {
     @ManyToOne
     private BankCard bankCard;
 
-    private LocalDate creationDate = LocalDate.now();
+    private LocalDate creationDate ;
 
 }

@@ -23,6 +23,7 @@ import ua.training.service.OrderService;
 import ua.training.service.UserService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -100,6 +101,7 @@ public class BankCardServiceImpl implements BankCardService {
     }
 
 
+    @Transactional
     @Override
     public void payForOrder(OrderCheckDto orderCheckDto) throws OrderNotFoundException, BankException {
 
@@ -114,11 +116,11 @@ public class BankCardServiceImpl implements BankCardService {
         BankCard bankCard =  bankCardRepository.findById(orderCheckDto.getBankCard())
                 .orElseThrow(()->new RuntimeException("dd"));
 
-        OrderCheck orderCheck = dtoToCheckConverter.convert(orderCheckDto);
-        assert orderCheck != null;
-        orderCheck.setUser(user);
-        orderCheck.setOrder(order);
-        orderCheck.setBankCard(bankCard);
+        OrderCheck orderCheck = OrderCheck.builder()
+                .user(user)
+                .bankCard(bankCard)
+                .order(order)
+                .build();
 
         processPaying(orderCheck, order);
 
@@ -127,10 +129,12 @@ public class BankCardServiceImpl implements BankCardService {
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             rollbackFor = {BankException.class})
     public void processPaying(OrderCheck orderCheck, Order order) throws BankException {
-        BigDecimal moneyToPay = orderCheck.getPriceInCents();
+        BigDecimal moneyToPay = order.getShippingPriceInCents();
         sendMoney(orderCheck.getBankCard().getId(), 1111L, moneyToPay);
-        orderCheck.getOrder().setStatus(Status.PAID);
+        orderCheck.setPriceInCents(moneyToPay);
+        orderCheck.setCreationDate(LocalDate.now());
         order.setCheck(orderCheck);
+        orderCheck.getOrder().setStatus(Status.PAID);
         orderCheckRepository.save(orderCheck);
     }
 
