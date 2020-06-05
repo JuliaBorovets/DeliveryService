@@ -16,6 +16,12 @@ public class BankCardDto {
     @EqualsAndHashCode.Include
     private Long id;
 
+    private Long expMonth;
+
+    private Long expYear;
+
+    private Long ccv;
+
     private BigDecimal balance;
 
 }

@@ -56,11 +56,6 @@
     width: 100px;
 }
 
-.table {
-    table-layout: fixed;
-    word-wrap: break-word;
-}
-
 
 .validate, .calcAnnPrice {
     box-sizing: border-box;

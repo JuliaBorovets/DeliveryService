@@ -8,20 +8,23 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.training.controller.exception.BankException;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.BankCardDto;
-import ua.training.dto.UserDto;
+import ua.training.dto.OrderCheckDto;
 import ua.training.entity.order.Order;
 import ua.training.entity.order.OrderCheck;
 import ua.training.entity.order.Status;
 import ua.training.entity.user.BankCard;
 import ua.training.entity.user.User;
 import ua.training.mappers.BankCardMapper;
+import ua.training.mappers.DtoToCheckConverter;
 import ua.training.repository.BankCardRepository;
-import ua.training.repository.OrderRepository;
-import ua.training.repository.UserRepository;
+import ua.training.repository.OrderCheckRepository;
 import ua.training.service.BankCardService;
+import ua.training.service.OrderService;
+import ua.training.service.UserService;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -30,14 +33,19 @@ import java.util.stream.Collectors;
 public class BankCardServiceImpl implements BankCardService {
 
     private final BankCardRepository bankCardRepository;
-    private final UserRepository userRepository;
-    private final OrderRepository orderRepository;
+    private final UserService userService;
+    private final OrderService orderService;
+    private final OrderCheckRepository orderCheckRepository;
+    private final DtoToCheckConverter dtoToCheckConverter;
 
 
-    public BankCardServiceImpl(BankCardRepository bankCardRepository, UserRepository userRepository, OrderRepository orderRepository) {
+    public BankCardServiceImpl(BankCardRepository bankCardRepository, UserService userService,
+                               OrderService orderService, OrderCheckRepository orderCheckRepository, DtoToCheckConverter dtoToCheckConverter) {
         this.bankCardRepository = bankCardRepository;
-        this.userRepository = userRepository;
-        this.orderRepository = orderRepository;
+        this.userService = userService;
+        this.orderService = orderService;
+        this.orderCheckRepository = orderCheckRepository;
+        this.dtoToCheckConverter = dtoToCheckConverter;
     }
 
     private BankCard findById(Long id) throws BankException {
@@ -46,15 +54,10 @@ public class BankCardServiceImpl implements BankCardService {
                 .orElseThrow(() -> new BankException("can not find bank card with id = " + id));
     }
 
+    @Transactional
     public void deleteBankCard(Long bankId) {
+
         bankCardRepository.deleteById(bankId);
-    }
-
-
-    public void replenishBankCard(Long bankId, BigDecimal moneyToAdd) throws BankException {
-        BankCard bankCard = findById(bankId);
-        bankCard.setBalance(bankCard.getBalance().add(moneyToAdd));
-        bankCardRepository.save(bankCard);
     }
 
     @Override
@@ -69,57 +72,68 @@ public class BankCardServiceImpl implements BankCardService {
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             rollbackFor = BankException.class)
     @Override
-    public BankCardDto saveBankCardDTO(BankCardDto bankCardDTO, Long userId) throws BankException {
-        User user = userRepository.findUserById(userId).orElseThrow(() ->new RuntimeException("can not save bank Card") );
+    public void saveBankCardDTO(BankCardDto bankCardDTO, Long userId) throws BankException {
+        User user = userService.findUserById(userId);
 
-        BankCard bankCard = BankCardMapper.INSTANCE.bankCardDtoToBankCard(bankCardDTO);
-        user.getCards().add(bankCard);
+        Optional<BankCard> optionalBankCard = bankCardRepository.findBankCardByIdAndExpMonthAndExpYearAndCcv(
+                        bankCardDTO.getId(), bankCardDTO.getExpMonth(), bankCardDTO.getExpYear(), bankCardDTO.getCcv()
+                );
+
+        BankCard bankCardToSave = optionalBankCard
+                .orElseGet(() -> BankCardMapper.INSTANCE.bankCardDtoToBankCard(bankCardDTO));
+
+        user.getCards().add(bankCardToSave);
 
         try {
-            bankCardRepository.save(bankCard);
+            bankCardRepository.save(bankCardToSave);
         } catch (DataIntegrityViolationException e) {
             throw new BankException("Can not save bank card");
         }
 
-        return bankCardDTO;
     }
 
 
-    private Long getAdminAccount(){
-        return 1L;
+    @Transactional
+    @Override
+    public void updateBankCardDTO(BankCardDto bankCardDTO) {
+        bankCardRepository.save(BankCardMapper.INSTANCE.bankCardDtoToBankCard(bankCardDTO));
     }
+
 
     @Override
-    public Long payForOrder(Long orderId, Long bankCardId, UserDto userDto) throws BankException, OrderNotFoundException {
-        Order order = orderRepository.findById(orderId).orElseThrow(()-> new OrderNotFoundException("can not find order"));
+    public void payForOrder(OrderCheckDto orderCheckDto) throws OrderNotFoundException, BankException {
+
+        Order order = orderService.findOrderById(orderCheckDto.getOrderId());
 
         if (order.getStatus().equals(Status.SHIPPED) || order.getStatus().equals(Status.PAID)){
             throw new BankException("order is already paid");
         }
 
-        BankCard bankCard = bankCardRepository
-                .findById(bankCardId)
-                .orElseThrow(()-> new BankException("can not find bank card"));
+        User user = userService.findUserById(orderCheckDto.getUser().getId());
 
-        User user = userRepository.findUserById(userDto.getId()).orElseThrow(()->new RuntimeException("can not find user"));
+        BankCard bankCard =  bankCardRepository.findById(orderCheckDto.getBankCard())
+                .orElseThrow(()->new RuntimeException("dd"));
 
-        OrderCheck orderCheck = createCheck(order, bankCard, user);
+        OrderCheck orderCheck = dtoToCheckConverter.convert(orderCheckDto);
+        assert orderCheck != null;
+        orderCheck.setUser(user);
+        orderCheck.setOrder(order);
+        orderCheck.setBankCard(bankCard);
 
-        return orderCheck.getId();
+        processPaying(orderCheck, order);
+
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW,
-            rollbackFor = BankException.class)
-    public OrderCheck createCheck(Order order, BankCard bankCard, User user) throws BankException {
-        OrderCheck orderCheck = new OrderCheck();
-
-        BigDecimal moneyToPay = order.getShippingPriceInCents();
-        sendMoney(user.getId(), getAdminAccount(), moneyToPay);
-
-        orderCheck.create(order, bankCard, user);
-
-        return orderCheck;
+            rollbackFor = {BankException.class})
+    public void processPaying(OrderCheck orderCheck, Order order) throws BankException {
+        BigDecimal moneyToPay = orderCheck.getPriceInCents();
+        sendMoney(orderCheck.getBankCard().getId(), 1111L, moneyToPay);
+        orderCheck.getOrder().setStatus(Status.PAID);
+        order.setCheck(orderCheck);
+        orderCheckRepository.save(orderCheck);
     }
+
 
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             rollbackFor = BankException.class)
@@ -129,10 +143,24 @@ public class BankCardServiceImpl implements BankCardService {
 
     }
 
+    public void replenishBankCard(Long bankId, BigDecimal moneyToAdd) throws BankException {
+        BankCard bankCard = findById(bankId);
+        bankCard.setBalance(bankCard.getBalance().add(moneyToAdd));
+        bankCardRepository.save(bankCard);
+    }
+
     @Override
     public BankCardDto findBankCardDtoById(Long id) {
         return bankCardRepository
                 .findById(id)
-                .map(BankCardMapper.INSTANCE::bankCardToDto).orElseThrow(()->new RuntimeException("no card"));
+                .map(BankCardMapper.INSTANCE::bankCardToDto)
+                .orElseThrow(()->new RuntimeException("no card"));
+    }
+
+    @Override
+    public BankCard findBankCardById(Long id) {
+        return bankCardRepository
+                .findById(id)
+                .orElseThrow(()->new RuntimeException("no card"));
     }
 }

@@ -1,5 +1,7 @@
 package ua.training.mappers;
 
+import com.sun.istack.Nullable;
+import lombok.Synchronized;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import ua.training.dto.OrderDto;
@@ -12,19 +14,19 @@ import ua.training.service.OrderTypeService;
 import java.time.LocalDate;
 
 @Component
-public class OrderDtoToOrderConverter implements Converter<OrderDto, Order> {
+public class DtoToOrderConverter implements Converter<OrderDto, Order> {
 
-    private final OrderCheckMapper orderCheckMapper;
     private final OrderTypeService orderTypeService;
     private final DestinationService destinationService;
 
-    public OrderDtoToOrderConverter(OrderCheckMapper orderCheckMapper, OrderTypeService orderTypeService, DestinationService destinationService) {
-        this.orderCheckMapper = orderCheckMapper;
+    public DtoToOrderConverter(OrderTypeService orderTypeService, DestinationService destinationService) {
         this.orderTypeService = orderTypeService;
         this.destinationService = destinationService;
     }
 
 
+    @Nullable
+    @Synchronized
     @Override
     public Order convert(OrderDto orderDto) {
 
@@ -35,7 +37,6 @@ public class OrderDtoToOrderConverter implements Converter<OrderDto, Order> {
                 .weight(orderDto.getWeight())
                 .status(orderDto.getStatus())
                 .shippingPriceInCents(orderDto.getShippingPriceInCents())
-                .check(orderCheckMapper.orderCheckDtoToOrderCheck(orderDto.getCheck()))
                 .destination(getDestination(orderDto.getDestinationCityFrom(), orderDto.getDestinationCityTo())).build();;
 
 

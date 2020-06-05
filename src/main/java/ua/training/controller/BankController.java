@@ -14,6 +14,7 @@ import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.service.BankCardService;
 import ua.training.service.OrderCheckService;
+import ua.training.service.UserService;
 import ua.training.service.serviceImpl.OrderServiceImpl;
 
 @Slf4j
@@ -24,11 +25,13 @@ public class BankController {
     private final OrderServiceImpl orderService;
     private final BankCardService bankCardService;
     private final OrderCheckService orderCheckService;
+    private final UserService userService;
 
-    public BankController(OrderServiceImpl orderService, BankCardService bankCardService, OrderCheckService orderCheckService) {
+    public BankController(OrderServiceImpl orderService, BankCardService bankCardService, OrderCheckService orderCheckService, UserService userService) {
         this.orderService = orderService;
         this.bankCardService = bankCardService;
         this.orderCheckService = orderCheckService;
+        this.userService = userService;
     }
 
     @ModelAttribute
@@ -78,10 +81,9 @@ public class BankController {
     }
 
     @PostMapping("/update_card/{cardId}")
-    public String updateBankCard(@PathVariable Long cardId, @ModelAttribute BankCardDto bankCardDTO, @AuthenticationPrincipal User user, Model model)
-            throws BankException {
+    public String updateBankCard(@PathVariable Long cardId, @ModelAttribute BankCardDto bankCardDTO){
 
-        bankCardService.saveBankCardDTO(bankCardDTO, user.getId());
+        bankCardService.updateBankCardDTO(bankCardDTO);
 
         log.error("updating card");
 
@@ -112,14 +114,17 @@ public class BankController {
 
 
     @PostMapping(value = "/pay/{orderId}")
-    public String payShipment(@PathVariable Long orderId, @ModelAttribute("checkDto") OrderCheckDto orderCheckDto)
-            throws OrderNotFoundException, BankTransactionException {
+    public String payShipment(@PathVariable Long orderId, @ModelAttribute("checkDto") OrderCheckDto orderCheckDto,
+                              @AuthenticationPrincipal User user)
+            throws OrderNotFoundException, BankTransactionException, BankException {
 
-      //  orderService.payForOrder(shipmentId);
+        orderCheckDto.setUser(userService.findUserDTOById(user.getId()));
+
+        bankCardService.payForOrder(orderCheckDto);
 
         log.info("order paying");
 
-        return "redirect:/my_shipments/page/1";
+        return "redirect:/shipments/show/1";
     }
 
 }

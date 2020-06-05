@@ -24,7 +24,13 @@ public class BankCard {
     @EqualsAndHashCode.Include
     private Long id;
 
-    private BigDecimal balance;
+    private Long expMonth;
+
+    private Long expYear;
+
+    private Long ccv;
+
+    private BigDecimal balance = BigDecimal.ZERO;
 
     @ManyToMany(mappedBy = "cards", cascade = CascadeType.REFRESH)
     private List<User> users = new ArrayList<>();
@@ -36,6 +42,7 @@ public class BankCard {
     @PreRemove
     public void deleteBankCard(){
         users.forEach(b -> b.getCards().remove(this));
+        orderChecks.forEach(b -> b.setBankCard(null));
     }
 
 

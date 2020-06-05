@@ -9,9 +9,9 @@ import ua.training.dto.OrderDto;
 import ua.training.dto.UserDto;
 import ua.training.entity.order.OrderCheck;
 import ua.training.entity.order.Status;
-import ua.training.mappers.OrderCheckMapper;
+import ua.training.mappers.CheckToDtoConverter;
+import ua.training.mappers.DtoToCheckConverter;
 import ua.training.repository.OrderCheckRepository;
-import ua.training.service.BankCardService;
 import ua.training.service.OrderCheckService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
@@ -27,14 +27,18 @@ public class OrderCheckServiceImpl implements OrderCheckService {
 
     private final OrderCheckRepository orderCheckRepository;
     private final OrderService orderService;
-    private final BankCardService bankCardService;
     private final UserService userService;
+    private final CheckToDtoConverter checkToDtoConverter;
+    private final DtoToCheckConverter dtoToCheckConverter;
 
-    public OrderCheckServiceImpl(OrderCheckRepository orderCheckRepository, OrderService orderService, BankCardService bankCardService, UserService userService) {
+    public OrderCheckServiceImpl(OrderCheckRepository orderCheckRepository, OrderService orderService,
+                                 UserService userService, CheckToDtoConverter checkToDtoConverter,
+                                 DtoToCheckConverter dtoToCheckConverter) {
         this.orderCheckRepository = orderCheckRepository;
         this.orderService = orderService;
-        this.bankCardService = bankCardService;
         this.userService = userService;
+        this.checkToDtoConverter = checkToDtoConverter;
+        this.dtoToCheckConverter = dtoToCheckConverter;
     }
 
     @Override
@@ -47,7 +51,7 @@ public class OrderCheckServiceImpl implements OrderCheckService {
                 .forEachRemaining(orderChecks::add);
 
         return orderChecks.stream()
-                .map(OrderCheckMapper.INSTANCE::orderCheckToOrderCheckDto)
+                .map(checkToDtoConverter::convert)
                 .collect(Collectors.toList());
     }
 
@@ -57,7 +61,7 @@ public class OrderCheckServiceImpl implements OrderCheckService {
 
         return orderCheckRepository
                 .findAllByUser_Id(userId).stream()
-                .map(OrderCheckMapper.INSTANCE::orderCheckToOrderCheckDto)
+                .map(checkToDtoConverter::convert)
                 .collect(Collectors.toList());
     }
 
@@ -65,7 +69,7 @@ public class OrderCheckServiceImpl implements OrderCheckService {
     public List<OrderCheckDto> showChecksForMonthOfYear(LocalDate localDateDto) {
 
         return orderCheckRepository.findAllByCreationDateAfter(localDateDto).stream()
-                .map(OrderCheckMapper.INSTANCE::orderCheckToOrderCheckDto)
+                .map(checkToDtoConverter::convert)
                 .collect(Collectors.toList());
 
     }
@@ -74,7 +78,7 @@ public class OrderCheckServiceImpl implements OrderCheckService {
     public List<OrderCheckDto> showChecksForYear(LocalDate localDateDto) {
         int year = localDateDto.getYear();
         return orderCheckRepository.findAllByCreationYear(year).stream()
-                .map(OrderCheckMapper.INSTANCE::orderCheckToOrderCheckDto)
+                .map(checkToDtoConverter::convert)
                 .collect(Collectors.toList());
     }
 
@@ -86,7 +90,7 @@ public class OrderCheckServiceImpl implements OrderCheckService {
 
         return OrderCheckDto.builder()
                 .orderId(orderDtoId)
-                .bankCard(bankCardDto)
+                .bankCard(bankCardDto.getId())
                 .priceInCents(orderDto.getShippingPriceInCents())
                 .user(userDto)
                 .status(Status.NOT_PAID).build();

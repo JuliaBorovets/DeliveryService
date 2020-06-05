@@ -2,9 +2,11 @@
 <!--suppress HtmlUnknownAttribute -->
 <html xmlns:th="https://www.thymeleaf.org">
 <head>
+
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+
     <base href="/">
     <title>Bank cards</title>
-
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
@@ -47,23 +49,23 @@
 
     <h3 th:text="${user.firstName} + ' ' + ${user.lastName}"></h3>
     <br>
-    <div class="card shadow">
+    <div class="table_info shadow">
 
         <div class="card-body text-center" >
-            <div class="table-responsive table mt-2 text-center" id="dataTable" aria-describedby="dataTable_info">
-                <table class="table dataTable my-2 text-center" id="dataTable">
+            <div class="table-responsive table mt-2 text-center" id="dataTable" >
+                <table class="table_info dataTable my-0 text-center" id="dataTable">
                     <thead>
                     <tr>
-                        <th >ID</th>
-                        <th >balance</th>
-                        <th><em class="fa fa-cog"></em></th>
+                        <th style="width: 60%">ID</th>
+                        <th style="width: 30%">balance</th>
+                        <th style="width: 10%"><em class="fa fa-cog"></em></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="b : ${bankCards}">
-                        <th scope="row" th:text="${b.id}" ></th>
-                        <th scope="row" th:text="${b.balance}" ></th>
-                        <td>
+                    <tr th:each="b : ${bankCards}" >
+                        <th scope="row" th:text="${b.id}" style="width: 60%"></th>
+                        <th scope="row" th:text="${b.balance}" style="width: 30%"></th>
+                        <td style="width: 10%">
                             <a class="btn btn-default" th:href="@{/bank/update_card/{id}(id=${b.id})}"><i class="fa fa-wrench" aria-hidden="true"></i></a>
                             <a class="btn btn-default" th:href="@{/bank/delete_card/{id}(id=${b.id})}" ><i class="fa fa-trash" aria-hidden="true"></i></a>
                         </td>

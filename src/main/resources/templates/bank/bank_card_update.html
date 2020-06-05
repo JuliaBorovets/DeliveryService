@@ -4,6 +4,7 @@
 <head>
     <base href="/">
     <title>Bank cards</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
@@ -75,7 +76,8 @@
                                 ? 'form-group has-error' : 'form-group'">
                                 <label>Card number</label>
                                 <div class="input-group">
-                                    <input type="number" placeholder="Your card number" class="form-control"  th:field="*{id}" th:errorclass="has-error" required/>
+                                    <input type="text" pattern="\d*" placeholder="Your card number" class="form-control"
+                                           maxlength="16" th:field="*{id}" th:errorclass="has-error" required/>
                                 </div>
                             </div>
 
@@ -86,11 +88,18 @@
                                     <div class="form-group mb-4"  th:class="${#fields.hasErrors('balance')}
                                 ? 'form-group mb-4 has-error' : 'form-group mb-4'">
                                         <label> Balance </label>
-                                        <input type="number" placeholder="Your balance" class="form-control"  th:field="*{balance}" th:errorclass="has-error" />
+                                        <input type="text" pattern="\d*" placeholder="Your balance" class="form-control"
+                                               th:field="*{balance}" maxlength="16" th:errorclass="has-error" />
                                     </div>
                                 </div>
 
                             </div>
+
+                            <input type="hidden" th:field="*{expMonth}" />
+                            <input type="hidden" th:field="*{expYear}" />
+                            <input type="hidden" th:field="*{ccv}" />
+
+
 
                             <button  type="submit" class="subscribe btn btn-primary btn-block rounded-pill shadow-sm "> Confirm  </button>
                         </form>

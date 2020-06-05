@@ -4,6 +4,7 @@ import lombok.*;
 import ua.training.entity.order.Status;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -23,5 +24,7 @@ public class OrderCheckDto {
 
     private UserDto user;
 
-    private BankCardDto bankCard;
+    private Long bankCard;
+
+    private LocalDate creationDate;
 }

@@ -4,6 +4,7 @@
 <head>
     <base href="/">
     <title>Bank cards</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
@@ -75,7 +76,7 @@
                                     <label>Card:</label>
                                     <select class="form-control" th:field="*{bankCard}"  th:errorclass="has-error">
                                         <option th:each="card : ${bankCards}"
-                                                th:value="${card}"
+                                                th:value="${card.id}"
                                                 th:text="${card.id}">val </option>
                                     </select>
 

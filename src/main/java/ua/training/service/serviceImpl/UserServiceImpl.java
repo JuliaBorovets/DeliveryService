@@ -13,7 +13,8 @@ import ua.training.controller.utility.ProjectPasswordEncoder;
 import ua.training.dto.UserDto;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
-import ua.training.mappers.UserMapper;
+import ua.training.mappers.DtoToUserConverter;
+import ua.training.mappers.UserToUserDtoConverter;
 import ua.training.repository.UserRepository;
 import ua.training.service.UserService;
 
@@ -27,10 +28,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final ProjectPasswordEncoder encoder;
 
+    private final UserToUserDtoConverter userToUserDtoConverter;
+    private final DtoToUserConverter dtoToUserConverter;
 
-    public UserServiceImpl(UserRepository userRepository, ProjectPasswordEncoder encoder) {
+
+    public UserServiceImpl(UserRepository userRepository, ProjectPasswordEncoder encoder,
+                           UserToUserDtoConverter userToUserDtoConverter, DtoToUserConverter dtoToUserConverter) {
         this.userRepository = userRepository;
         this.encoder = encoder;
+        this.userToUserDtoConverter = userToUserDtoConverter;
+        this.dtoToUserConverter = dtoToUserConverter;
     }
 
     @Override
@@ -39,6 +46,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
 
+    @Override
     public User findUserById(Long id) {
         return userRepository
                 .findUserById(id)
@@ -51,7 +59,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public UserDto saveNewUserDto(UserDto userDto) throws RegException {
 
-        User user = UserMapper.INSTANCE.userDtoToUser(userDto);
+        User user = dtoToUserConverter.convert(userDto);
         ProjectPasswordEncoder encoder = new ProjectPasswordEncoder();
 
         user.setPassword(encoder.encode(userDto.getPassword()));
@@ -62,13 +70,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         } catch (DataIntegrityViolationException e) {
             throw new RegException("saveNewUser exception");
         }
-        return UserMapper.INSTANCE.userToUserDto(user);
+        return userToUserDtoConverter.convert(user);
     }
 
 
     @Override
     public UserDto findUserDTOById(Long id) {
 
-        return UserMapper.INSTANCE.userToUserDto(findUserById(id));
+        return userToUserDtoConverter.convert(findUserById(id));
     }
 }

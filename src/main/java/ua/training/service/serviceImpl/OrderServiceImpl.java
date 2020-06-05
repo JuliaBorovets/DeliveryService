@@ -11,8 +11,8 @@ import ua.training.dto.OrderDto;
 import ua.training.entity.order.Order;
 import ua.training.entity.order.Status;
 import ua.training.entity.user.User;
-import ua.training.mappers.OrderDtoToOrderConverter;
-import ua.training.mappers.OrderMapper;
+import ua.training.mappers.DtoToOrderConverter;
+import ua.training.mappers.OrderToDtoConverter;
 import ua.training.repository.OrderRepository;
 import ua.training.repository.UserRepository;
 import ua.training.service.DestinationService;
@@ -28,30 +28,34 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderMapper orderMapper;
     private final DestinationService destinationService;
-    private final OrderDtoToOrderConverter orderConverter;
+    private final DtoToOrderConverter orderConverter;
     private final UserRepository userRepository;
+    private final OrderToDtoConverter orderToDtoConverter;
+    private final DtoToOrderConverter dtoToOrderConverter;
 
-    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, DestinationService destinationService, OrderDtoToOrderConverter orderConverter, UserRepository userRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, DestinationService destinationService,
+                            DtoToOrderConverter orderConverter, UserRepository userRepository,
+                            OrderToDtoConverter orderToDtoConverter, DtoToOrderConverter dtoToOrderConverter) {
         this.orderRepository = orderRepository;
-        this.orderMapper = orderMapper;
         this.destinationService = destinationService;
         this.orderConverter = orderConverter;
         this.userRepository = userRepository;
+        this.orderToDtoConverter = orderToDtoConverter;
+        this.dtoToOrderConverter = dtoToOrderConverter;
     }
 
     public List<OrderDto> findAllUserOrder(Long userId) {
 
         return orderRepository.findOrderByOwnerId(userId).stream()
-                .map(orderMapper::orderToOrderDto)
+                .map(orderToDtoConverter::convert)
                 .collect(Collectors.toList());
     }
 
     public List<OrderDto> findAllPaidOrdersDTO() {
 
         return orderRepository.findOrderByStatus(Status.PAID).stream()
-                .map(orderMapper::orderToOrderDto)
+                .map(orderToDtoConverter::convert)
                 .collect(Collectors.toList());
 
     }
@@ -74,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException("order " + id + " not found"));
 
-        return orderMapper.orderToOrderDto(order);
+        return orderToDtoConverter.convert(order);
     }
 
     @Override
