@@ -123,7 +123,9 @@
 }
 
 .orders {
-    margin-left: 200px;
+    position: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .empty {

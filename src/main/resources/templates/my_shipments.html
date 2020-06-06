@@ -26,78 +26,74 @@
 <div>
     <br/>
 
-    <section class="jumbotron2 text-center">
-        <div class="container">
-            <h3 th:text="#{my.shipments} + ':'">{Here goes shipments table}</h3>
-        </div>
+    <div class="container py-5" th:each="order : ${orders}">
+
+        <div class="row" >
+            <div class="col-lg-7 mx-auto">
+                <div class="bg-white rounded-lg shadow-sm p-5" >
+
+                    <ul  class="nav bg-light nav-pills rounded-pill nav-fill mb-3">
+                        <li class="nav-item">
+                            <b>
+                                <h4 data-toggle="pill" th:text="${order.id}">Credit Card</h4>
+                            </b>
+                        </li>
+
+                    </ul>
+
+                    <div class="tab-content">
+
+                        <div id="nav-tab-card" class="tab-pane fade show active">
 
 
-        <br>
+                            <div class="form-group" >
+                                <div th:text="#{order.status} + '  :   ' + ${order.status}">{Order status}</div>
+                            </div>
 
-        <br/>
+                            <div class="form-group" >
+                                <div th:text="#{order.type} + '  :  ' + ${order.orderType.name}">{Order name}</div>
+                            </div>
 
-        <div class="orders">
-            <div class="card-deck mb-3 text-center" th:each="order : ${orders}">
-                <div class="card mb-4 shadow-sm">
-                    <div class="card-header">
-                        <h4 class="my-0 font-weight-normal" th:text="${order.id}"></h4>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-unstyled mt-3 mb-4">
-                            <li th:text="#{order.status} + '  :   ' + ${order.status}">{Order
-                                status}
-                            </li>
-                            <li th:text="#{order.type} + '  :  ' + ${order.orderType.name}">{Order type}
-                            </li>
-                            <li th:text="#{order.weight} + '  :   ' + ${order.weight}">{Order weight}</li>
+                            <div class="form-group" >
+                                <div th:text="#{order.weight} + '  :   ' + ${order.weight}">{Order weight}</div>
+                            </div>
 
-                            <li th:text="#{order.destination} + '  :   ' + ${order.destination.cityFrom} + ' - ' + ${order.destination.cityTo}">
-                                {Order destination}
-                            </li>
-                            <li th:text="#{order.shipping.date} + '  :   ' + ${order.shippingDate}">{Order
-                                shippingDate}
-                            </li>
+                            <div class="form-group" >
+                                <div th:text="#{order.destination} + '  :   ' + ${order.destination.cityFrom} + ' - ' + ${order.destination.cityTo}">
+                                    {Order destination}</div>
+                            </div>
 
-                            <li th:unless="${order.deliveryDate} == null" th:text="#{order.delivery.date} + '  :  ' + ${order.deliveryDate}">{Order
-                                deliveryDate}
-                            </li>
-                            <li th:text="#{order.shipment.price} + '  :  ' + ${order.shippingPriceInCents} +  #{enter}">
-                                {Order shippingPrice}
-                            </li>
-                            <li>
-                                <br>
-                                <div class="col s12 sign">
-                                    <a class="button"
-                                       th:href="@{/bank/pay/{id}(id=${order.id})}" th:text="#{to.pay}" th:size="14px">
-                                    </a>
+                            <div class="form-group" >
+                                <div th:text="#{order.shipping.date} + '  :   ' + ${order.shippingDate}">{Order
+                                    shippingDate}</div>
+                            </div>
 
-                                </div>
-                            </li>
-                        </ul>
+
+                            <div class="form-group" >
+                                <div th:unless="${order.deliveryDate} == null" th:text="#{order.delivery.date} + '  :  ' + ${order.deliveryDate}">{Order
+                                    deliveryDate}</div>
+                            </div>
+
+                            <div class="form-group" >
+                                <div th:text="#{order.shipment.price} + '  :  ' + ${order.shippingPriceInCents} +  #{enter}">
+                                {Order shippingPrice}</div>
+                            </div>
+
+                            <div class="form-group text-center" >
+                                <a class="button"
+                                   th:href="@{/bank/pay/{id}(id=${order.id})}" th:text="#{to.pay}" th:size="14px">
+                                </a>
+                            </div>
+
+                        </div>
 
                     </div>
                 </div>
-
             </div>
         </div>
 
-    </section>
-
-<!--    <div class="row">-->
-<!--        <div class="col-md-2"></div>-->
-<!--        <div class="col-md-8">-->
-<!--            <nav aria-label="Pagination">-->
-<!--                <ul class="pagination justify-content-center">-->
-<!--                    <li class="page-item" th:each="pageNumber : ${pageNumbers}">-->
-<!--                        <a class="page-link" th:href="@{|/my_shipments/page/${pageNumber}|}" th:text=${pageNumber}>1</a>-->
-<!--                    </li>-->
-<!--                </ul>-->
-<!--            </nav>-->
-<!--        </div>-->
-<!--        <div class="col-md-2"></div>-->
-<!--    </div>-->
-
-
+        <br>
+    </div>
 </div>
 
 <div th:include="fragments/footer :: footer" th:remove="tag"></div>
