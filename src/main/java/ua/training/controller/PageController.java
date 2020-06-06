@@ -77,7 +77,6 @@ public class PageController implements WebMvcConfigurer {
         return "redirect:/account_page";
     }
 
-
 }
 
 

@@ -25,6 +25,17 @@ public class GlobalExceptionHandler {
 //    }
 
 
+//    @ExceptionHandler(Exception.class)
+//    public ModelAndView handleNotFound(Exception exception){
+//        log.error("not found exception");
+//        log.error(exception.getMessage());
+//        ModelAndView modelAndView = new ModelAndView();
+//        modelAndView.setViewName("404");
+//        modelAndView.addObject("exception", exception);
+//        return modelAndView;
+//    }
+
+
 //    @ExceptionHandler({org.springframework.validation.BindException.class, IllegalStateException.class})
 //    public String handleApplicationException(Model model) {
 //        log.error("registration exception. Binding result.");
