@@ -31,6 +31,7 @@ public class OrderToDtoConverter implements Converter<Order, OrderDto> {
         orderDto.setStatus(order.getStatus());
         orderDto.setShippingDate(order.getShippingDate().toString());
         orderDto.setShippingPriceInCents(order.getShippingPriceInCents());
+        orderDto.setDescription(order.getDescription());
         if (order.getDeliveryDate() != null) {
             orderDto.setDeliveryDate(order.getDeliveryDate().toString());
         }

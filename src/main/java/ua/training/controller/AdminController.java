@@ -8,13 +8,29 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.training.controller.exception.OrderNotFoundException;
+import ua.training.dto.OrderDto;
+import ua.training.dto.StatisticsDto;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
+import ua.training.service.AdminService;
+import ua.training.service.OrderService;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequestMapping("/admin")
 @Controller
 public class AdminController {
+
+    private final OrderService orderService;
+    private final AdminService adminService;
+
+    public AdminController(OrderService orderService, AdminService adminService) {
+        this.orderService = orderService;
+        this.adminService = adminService;
+    }
 
     @ModelAttribute
     public User loadModelAttribute(@AuthenticationPrincipal User user,  Model model){
@@ -23,27 +39,68 @@ public class AdminController {
         return user;
     }
 
-    @GetMapping({"/admin_page/page/{page}", "/to_ship", "/"})
+    @GetMapping({"/admin_page/page/{page}"})
     public String calculatePage(@AuthenticationPrincipal User user, Model model,
-                                @PathVariable("page") int page) {
+                                @PathVariable Long page) {
 
-//        if (!user.getRole().name().equals("ROLE_ADMIN")) {
-//            return "redirect:/account_page";
-//        }
+         List<OrderDto> orders = orderService.findAllPaidOrdersDTO();
+         model.addAttribute("order", orders);
 
-        // List<OrderDTO> orders = orderService.findAllPaidOrdersDTO();
-
-        return "admin_page";
+        return "admin/index";
     }
 
-    @PostMapping(value = "/to_ship")
-    public String adminPage(@AuthenticationPrincipal User user, Model model,
+    @GetMapping({"/to_ship"})
+    public String shipPage(@AuthenticationPrincipal User user, Model model) {
+
+        List<OrderDto> orders = orderService.findAllPaidOrdersDTO();
+        model.addAttribute("order", orders);
+
+        return "admin/index";
+    }
+
+
+    @GetMapping(value = "/to_ship/{id}")
+    public String shipOneOrder(@AuthenticationPrincipal User user, Model model, @PathVariable Long id,
                             @PageableDefault Pageable pageable) throws OrderNotFoundException {
 
-        //   orderService.orderToShip();
+        adminService.shipOrder(id);
 
         return "redirect:/admin/admin_page/page/1";
 
+    }
+
+    @PostMapping(value = "/to_ship")
+    public String shipAllOrders(@AuthenticationPrincipal User user, Model model,
+                               @PageableDefault Pageable pageable) throws OrderNotFoundException {
+
+        adminService.shipAllOrders();
+
+        return "redirect:/admin/admin_page/page/1";
+
+    }
+
+
+    @GetMapping("/statistics")
+    public String showStatistics(Model model){
+
+        StatisticsDto statisticsDto = adminService.createStatisticsDto();
+        model.addAttribute("statistics", statisticsDto);
+
+        Map<Integer, Long> orders = adminService.statisticsNumberOfOrdersByForYear(2020);
+        model.addAttribute("orders", orders);
+
+        Map<Integer, BigDecimal> earnings = adminService.statisticsEarningsOfOrdersByForYear(2020);
+
+        model.addAttribute("earnings", earnings);
+
+        return "admin/statistics";
+    }
+
+
+    @GetMapping("/files")
+    public String getFile() {
+
+        return "redirect:/admin/admin_page/page/1";
     }
 
 }
