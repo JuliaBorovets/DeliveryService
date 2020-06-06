@@ -124,7 +124,7 @@ public class BankController {
 
         log.info("order paying");
 
-        return "redirect:/shipments/show/1";
+        return "redirect:/shipments/show/1/all";
     }
 
 }

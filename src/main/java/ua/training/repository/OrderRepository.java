@@ -10,9 +10,9 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    List<Order> findOrderByOwnerId(long ownerId);
+    List<Order> findOrderByOwnerId(Long ownerId);
 
-    List<Order> findByStatus(Status status);
+    List<Order> findByStatusAndOwner_Id(Status status, Long ownerId);
 
     List<Order> findOrderByStatus(Status status);
 

@@ -39,11 +39,24 @@ public class ShipmentsController {
         return user;
     }
 
-    @GetMapping("/show/{page}")
+    @GetMapping("/show/{page}/{filter}")
     public String shipmentsPage(Model model, @AuthenticationPrincipal User user,
-                                @PathVariable("page") Integer page) {
+                                @PathVariable("page") Integer page, @PathVariable String filter) {
 
-        model.addAttribute("orders", orderService.findAllUserOrder(user.getId()));
+        switch (filter){
+            case "all":
+                model.addAttribute("orders", orderService.findAllUserOrder(user.getId()));
+                break;
+            case "paid" :
+                model.addAttribute("orders", orderService.findAllPaidUserOrder(user.getId()));
+                break;
+            case "not_paid":
+                model.addAttribute("orders", orderService.findAllNotPaidUserOrder(user.getId()));
+                break;
+            case "shipped":
+                model.addAttribute("orders", orderService.findAllShippedUserOrder(user.getId()));
+                break;
+        }
 
         return "my_shipments";
     }
@@ -68,7 +81,7 @@ public class ShipmentsController {
 
         log.error(modelOrder.getDestinationCityFrom() + " " + modelOrder.getDestinationCityTo());
 
-        return "redirect:/shipments/show/1";
+        return "redirect:/shipments/show/1/all";
 
     }
 

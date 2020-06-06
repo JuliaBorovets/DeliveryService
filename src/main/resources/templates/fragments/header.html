@@ -4,7 +4,6 @@
      <div id="container" >
         <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom shadow-sm">
             <h5 class="p_name mr-md-auto font-weight-bold " th:text="#{project.name}">{Project name}</h5>
-            <span class="info" th:text="${info} + #{enter} + '  '"></span>
             <a class="uk_lang" href="?language=uk">Українська</a>
             <a class="en_lang" href="?language=en">English</a>
             <a class="btn btn-outline-primary " th:text="#{general.logout}" href="/logout">{Logout}</a>
@@ -25,7 +24,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="/shipments/show/1" th:text="#{my.shipments}">{My shipments}</a>
+                <a class="nav-link" href="/shipments/show/1/all" th:text="#{my.shipments}">{My shipments}</a>
             </li>
 
             <li th:if="${isAdmin}"  class="nav-item">

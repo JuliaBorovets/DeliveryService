@@ -46,14 +46,33 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public List<OrderDto> findAllUserOrder(Long userId) {
-
         return orderRepository.findOrderByOwnerId(userId).stream()
                 .map(orderToDtoConverter::convert)
                 .collect(Collectors.toList());
     }
 
-    public List<OrderDto> findAllPaidOrdersDTO() {
+    @Override
+    public List<OrderDto> findAllPaidUserOrder(Long userId) {
+        return orderRepository.findByStatusAndOwner_Id(Status.PAID, userId).stream()
+                .map(orderToDtoConverter::convert)
+                .collect(Collectors.toList());
+    }
 
+    @Override
+    public List<OrderDto> findAllNotPaidUserOrder(Long userId) {
+        return orderRepository.findByStatusAndOwner_Id(Status.NOT_PAID, userId).stream()
+                .map(orderToDtoConverter::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderDto> findAllShippedUserOrder(Long userId) {
+        return orderRepository.findByStatusAndOwner_Id(Status.SHIPPED, userId).stream()
+                .map(orderToDtoConverter::convert)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderDto> findAllPaidOrdersDTO() {
         return orderRepository.findOrderByStatus(Status.PAID).stream()
                 .map(orderToDtoConverter::convert)
                 .collect(Collectors.toList());
@@ -106,6 +125,9 @@ public class OrderServiceImpl implements OrderService {
             throw new OrderCreateException("Can not create order");
         }
     }
+
+
+
 
 }
 

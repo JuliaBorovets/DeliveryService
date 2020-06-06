@@ -12,6 +12,12 @@ public interface OrderService {
 
     List<OrderDto> findAllUserOrder(Long userId);
 
+    List<OrderDto> findAllPaidUserOrder(Long userId);
+
+    List<OrderDto> findAllNotPaidUserOrder(Long userId);
+
+    List<OrderDto> findAllShippedUserOrder(Long userId);
+
     void createOrder(OrderDto orderDTO, User user) throws OrderCreateException;
 
     OrderDto getOrderDtoById(Long id) throws OrderNotFoundException;

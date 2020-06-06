@@ -19,9 +19,17 @@
 <div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
 <br>
 
-<div class="alert" th:if="${error}">
-    <h3 class="black" th:text="#{reg.error.generic}">{Reg error}</h3>
-</div>
+<section class="jumbotron2 text-center">
+    <div class="container">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <a class="btn btn-outline-primary"  th:href="@{/shipments/show/1/all}"> Show all </a>
+            <a class="btn btn-outline-primary " th:href="@{/shipments/show/1/paid}"> Show paid </a>
+            <a class="btn btn-outline-primary"  th:href="@{/shipments/show/1/not_paid}"> Show not paid </a>
+            <a class="btn btn-outline-primary"  th:href="@{/shipments/show/1/shipped}"> Show shipped </a>
+        </div>
+    </div>
+</section>
+
 
 <div>
     <br/>
