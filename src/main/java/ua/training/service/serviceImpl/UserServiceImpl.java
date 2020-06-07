@@ -18,7 +18,9 @@ import ua.training.mappers.UserToUserDtoConverter;
 import ua.training.repository.UserRepository;
 import ua.training.service.UserService;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -74,5 +76,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public UserDto findUserDTOById(Long id) {
 
         return userToUserDtoConverter.convert(findUserById(id));
+    }
+
+
+    @Override
+    public List<UserDto> findAllUserDto() {
+        return userRepository.findAll().stream()
+                .map(userToUserDtoConverter::convert)
+                .collect(Collectors.toList());
     }
 }

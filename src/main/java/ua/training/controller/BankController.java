@@ -136,4 +136,10 @@ public class BankController {
         return "bank/check_show";
     }
 
+    @GetMapping("/show_checks")
+    public String showAllUserCheck(@AuthenticationPrincipal User user, Model model) {
+
+        model.addAttribute("check", orderCheckService.showChecksByUser(user.getId()));
+        return "bank/check_show";
+    }
 }

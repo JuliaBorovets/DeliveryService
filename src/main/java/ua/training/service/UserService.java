@@ -4,6 +4,8 @@ import ua.training.controller.exception.RegException;
 import ua.training.dto.UserDto;
 import ua.training.entity.user.User;
 
+import java.util.List;
+
 public interface UserService {
 
     UserDto saveNewUserDto(UserDto userDto) throws RegException;
@@ -12,4 +14,5 @@ public interface UserService {
 
     User findUserById(Long id);
 
+    List<UserDto> findAllUserDto();
 }

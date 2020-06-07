@@ -14,6 +14,7 @@ import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.service.AdminService;
 import ua.training.service.OrderService;
+import ua.training.service.UserService;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,10 +27,12 @@ public class AdminController {
 
     private final OrderService orderService;
     private final AdminService adminService;
+    private final UserService userService;
 
-    public AdminController(OrderService orderService, AdminService adminService) {
+    public AdminController(OrderService orderService, AdminService adminService, UserService userService) {
         this.orderService = orderService;
         this.adminService = adminService;
+        this.userService = userService;
     }
 
     @ModelAttribute
@@ -97,10 +100,14 @@ public class AdminController {
     }
 
 
-    @GetMapping("/files")
-    public String getFile() {
+    @GetMapping("/change_roles")
+    public String changeRoles(Model model){
 
-        return "redirect:/admin/admin_page/page/1";
+        model.addAttribute("users", userService.findAllUserDto());
+        model.addAttribute("roles", RoleType.values());
+        
+        return "admin/change_roles";
+
     }
 
 }

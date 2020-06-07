@@ -25,9 +25,10 @@
 
 
 <section class="jumbotron2 text-center" >
-<div class="container-fluid" style="margin-top: 20px">
+    <div class="container">
+
     <div class="row">
-        <div class="col-md-6 col-md-offset-3 text-center" >
+        <div class="col-lg-7 mx-auto">
             <form th:action="@{/shipments/create_shipment}" th:object="${newOrder}" method="post">
 
                 <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
@@ -67,8 +68,8 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-4 offset-md-1 form-group text-center" th:class="${#fields.hasErrors('weight')}
-                                ? 'col-md-4 offset-md-1 form-group has-error' : 'col-md-4 offset-md-1 form-group'">
+                                <div class="col-md-5 offset-md-1 form-group text-center" th:class="${#fields.hasErrors('weight')}
+                                ? 'col-md-5 offset-md-1 form-group has-error' : 'col-md-5 offset-md-1 form-group'">
                                     <label>Weight:</label>
                                     <input type="number" class="form-control" th:field="*{weight}" th:errorclass="has-error" min="0"/>
                                     <span class="help-block" th:if="${#fields.hasErrors('weight')}">
@@ -77,7 +78,7 @@
                                         </ul>
                                     </span>
                                 </div>
-                                <div class="col-md-4 offset-md-1 form-group text-center">
+                                <div class="col-md-5 offset-md-0 form-group text-center">
                                     <label>Type:</label>
                                     <select class="form-control" th:field="*{type}">
                                         <option th:each="type : ${types}"
@@ -90,7 +91,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-4 offset-md-1 form-group text-center">
+                                <div class="col-md-5 offset-md-1 form-group text-center">
                                     <label>Destination from:</label>
                                     <select class="form-control" th:field="*{destinationCityFrom}">
                                         <option th:each="dest : ${destinations}"
@@ -101,7 +102,7 @@
                                     </select>
 
                                 </div>
-                                <div class="col-md-4  offset-md-1 form-group text-center">
+                                <div class="col-md-5  offset-md-0 form-group text-center">
                                     <label>Destination to:</label>
                                     <select class="form-control" th:field="*{destinationCityTo}">
                                         <option th:each="dest : ${destinations}"
@@ -114,13 +115,10 @@
 
                             </div>
 
-                            <div class="row">
+                                <div class="form-group text-center">
 
-                                <div class="col-md-4  form-group text-center">
-
-                                    <button type="submit" class="button_pay  btn-outline-primary">Submit</button>
+                                    <button type="submit" class="btn btn-outline-primary">Submit</button>
                                 </div>
-                            </div>
                         </div>
                     </div>
 
@@ -129,6 +127,7 @@
         </div>
     </div>
 </div>
+
 </section>
 
 <div th:include="fragments/footer :: footer" th:remove="tag"></div>
