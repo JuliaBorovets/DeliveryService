@@ -28,18 +28,15 @@
 <body>
 <div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
 
-<div id="container" >
-
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link " th:href="@{/bank}">My cards</a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link active" th:href="@{/bank/add_card}" >New card</a>
-        </li>
-    </ul>
-</div>
+<br>
+<section class="jumbotron2 text-center">
+    <div class="container">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <a class="btn btn-outline-primary"   th:href="@{/bank}"> My cards </a>
+            <a class="btn btn-outline-primary "  th:href="@{/bank/add_card}"> New card </a>
+        </div>
+    </div>
+</section>
 
 <div class="container py-5">
 

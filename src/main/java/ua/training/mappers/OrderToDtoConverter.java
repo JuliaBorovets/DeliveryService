@@ -12,10 +12,12 @@ public class OrderToDtoConverter implements Converter<Order, OrderDto> {
 
     private final OrderTypeMapper orderTypeMapper;
     private final DestinationMapper destinationMapper;
+    private final CheckToDtoConverter checkToDtoConverter;
 
-    public OrderToDtoConverter(OrderTypeMapper orderTypeMapper, DestinationMapper destinationMapper) {
+    public OrderToDtoConverter(OrderTypeMapper orderTypeMapper, DestinationMapper destinationMapper, CheckToDtoConverter checkToDtoConverter) {
         this.orderTypeMapper = orderTypeMapper;
         this.destinationMapper = destinationMapper;
+        this.checkToDtoConverter = checkToDtoConverter;
     }
 
     @Synchronized
@@ -34,6 +36,9 @@ public class OrderToDtoConverter implements Converter<Order, OrderDto> {
         orderDto.setDescription(order.getDescription());
         if (order.getDeliveryDate() != null) {
             orderDto.setDeliveryDate(order.getDeliveryDate().toString());
+        }
+        if (order.getCheck() != null){
+            orderDto.setCheck(checkToDtoConverter.convert(order.getCheck()));
         }
         return orderDto;
     }

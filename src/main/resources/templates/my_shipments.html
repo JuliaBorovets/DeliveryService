@@ -32,8 +32,6 @@
 
 
 <div>
-    <br/>
-
     <div class="container py-5" th:each="order : ${orders}">
 
         <div class="row" >
@@ -88,8 +86,14 @@
                             </div>
 
                             <div class="form-group text-center" >
-                                <a class="button"
+                                <a class="button" th:if="${order.check} == null"
                                    th:href="@{/bank/pay/{id}(id=${order.id})}" th:text="#{to.pay}" th:size="14px">
+                                </a>
+                            </div>
+
+                            <div class="form-group text-center" >
+                                <a class="button" th:if="${order.check} != null"
+                                   th:href="@{/bank/show_check/{orderId}(orderId=${order.check.id})}" th:size="14px"> Show check
                                 </a>
                             </div>
 

@@ -10,7 +10,6 @@ import ua.training.dto.UserDto;
 import ua.training.entity.order.OrderCheck;
 import ua.training.entity.order.Status;
 import ua.training.mappers.CheckToDtoConverter;
-import ua.training.mappers.DtoToCheckConverter;
 import ua.training.repository.OrderCheckRepository;
 import ua.training.service.OrderCheckService;
 import ua.training.service.OrderService;
@@ -29,16 +28,13 @@ public class OrderCheckServiceImpl implements OrderCheckService {
     private final OrderService orderService;
     private final UserService userService;
     private final CheckToDtoConverter checkToDtoConverter;
-    private final DtoToCheckConverter dtoToCheckConverter;
 
     public OrderCheckServiceImpl(OrderCheckRepository orderCheckRepository, OrderService orderService,
-                                 UserService userService, CheckToDtoConverter checkToDtoConverter,
-                                 DtoToCheckConverter dtoToCheckConverter) {
+                                 UserService userService, CheckToDtoConverter checkToDtoConverter) {
         this.orderCheckRepository = orderCheckRepository;
         this.orderService = orderService;
         this.userService = userService;
         this.checkToDtoConverter = checkToDtoConverter;
-        this.dtoToCheckConverter = dtoToCheckConverter;
     }
 
     @Override
@@ -55,6 +51,13 @@ public class OrderCheckServiceImpl implements OrderCheckService {
                 .collect(Collectors.toList());
     }
 
+
+    @Override
+    public OrderCheckDto showCheckById(Long checkId) {
+        return checkToDtoConverter.convert(orderCheckRepository
+                .findById(checkId)
+                .orElseThrow(()->new RuntimeException("no check")));
+    }
 
     @Override
     public List<OrderCheckDto> showChecksByUser(Long userId) {

@@ -12,6 +12,8 @@ public interface OrderCheckService {
 
     List<OrderCheckDto> showAllChecks();
 
+    OrderCheckDto showCheckById(Long checkId);
+
     List<OrderCheckDto> showChecksByUser(Long userId);
 
     List<OrderCheckDto> showChecksForMonthOfYear(LocalDate localDate);

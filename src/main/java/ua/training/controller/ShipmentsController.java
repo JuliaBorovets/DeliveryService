@@ -43,9 +43,11 @@ public class ShipmentsController {
     public String shipmentsPage(Model model, @AuthenticationPrincipal User user,
                                 @PathVariable("page") Integer page, @PathVariable String filter) {
 
+
         switch (filter){
             case "all":
                 model.addAttribute("orders", orderService.findAllUserOrder(user.getId()));
+                log.error(orderService.findAllUserOrder(user.getId()).toString());
                 break;
             case "paid" :
                 model.addAttribute("orders", orderService.findAllPaidUserOrder(user.getId()));

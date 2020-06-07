@@ -15,7 +15,6 @@ import ua.training.entity.order.Status;
 import ua.training.entity.user.BankCard;
 import ua.training.entity.user.User;
 import ua.training.mappers.BankCardMapper;
-import ua.training.mappers.DtoToCheckConverter;
 import ua.training.repository.BankCardRepository;
 import ua.training.repository.OrderCheckRepository;
 import ua.training.service.BankCardService;
@@ -37,16 +36,14 @@ public class BankCardServiceImpl implements BankCardService {
     private final UserService userService;
     private final OrderService orderService;
     private final OrderCheckRepository orderCheckRepository;
-    private final DtoToCheckConverter dtoToCheckConverter;
 
 
     public BankCardServiceImpl(BankCardRepository bankCardRepository, UserService userService,
-                               OrderService orderService, OrderCheckRepository orderCheckRepository, DtoToCheckConverter dtoToCheckConverter) {
+                               OrderService orderService, OrderCheckRepository orderCheckRepository) {
         this.bankCardRepository = bankCardRepository;
         this.userService = userService;
         this.orderService = orderService;
         this.orderCheckRepository = orderCheckRepository;
-        this.dtoToCheckConverter = dtoToCheckConverter;
     }
 
     private BankCard findById(Long id) throws BankException {

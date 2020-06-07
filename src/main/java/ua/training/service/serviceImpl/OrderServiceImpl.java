@@ -15,7 +15,6 @@ import ua.training.mappers.DtoToOrderConverter;
 import ua.training.mappers.OrderToDtoConverter;
 import ua.training.repository.OrderRepository;
 import ua.training.repository.UserRepository;
-import ua.training.service.DestinationService;
 import ua.training.service.OrderService;
 
 import java.math.BigDecimal;
@@ -28,21 +27,16 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final DestinationService destinationService;
     private final DtoToOrderConverter orderConverter;
     private final UserRepository userRepository;
     private final OrderToDtoConverter orderToDtoConverter;
-    private final DtoToOrderConverter dtoToOrderConverter;
 
-    public OrderServiceImpl(OrderRepository orderRepository, DestinationService destinationService,
-                            DtoToOrderConverter orderConverter, UserRepository userRepository,
-                            OrderToDtoConverter orderToDtoConverter, DtoToOrderConverter dtoToOrderConverter) {
+    public OrderServiceImpl(OrderRepository orderRepository, DtoToOrderConverter orderConverter,
+                            UserRepository userRepository, OrderToDtoConverter orderToDtoConverter) {
         this.orderRepository = orderRepository;
-        this.destinationService = destinationService;
         this.orderConverter = orderConverter;
         this.userRepository = userRepository;
         this.orderToDtoConverter = orderToDtoConverter;
-        this.dtoToOrderConverter = dtoToOrderConverter;
     }
 
     public List<OrderDto> findAllUserOrder(Long userId) {

@@ -25,17 +25,13 @@ import java.util.Objects;
 public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final UserRepository userRepository;
-
-    private final ProjectPasswordEncoder encoder;
-
     private final UserToUserDtoConverter userToUserDtoConverter;
     private final DtoToUserConverter dtoToUserConverter;
 
 
-    public UserServiceImpl(UserRepository userRepository, ProjectPasswordEncoder encoder,
-                           UserToUserDtoConverter userToUserDtoConverter, DtoToUserConverter dtoToUserConverter) {
+    public UserServiceImpl(UserRepository userRepository, UserToUserDtoConverter userToUserDtoConverter,
+                           DtoToUserConverter dtoToUserConverter) {
         this.userRepository = userRepository;
-        this.encoder = encoder;
         this.userToUserDtoConverter = userToUserDtoConverter;
         this.dtoToUserConverter = dtoToUserConverter;
     }

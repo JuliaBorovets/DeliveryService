@@ -10,6 +10,11 @@ import ua.training.entity.order.OrderCheck;
 @Component
 public class CheckToDtoConverter implements Converter<OrderCheck, OrderCheckDto> {
 
+    private final UserToUserDtoConverter userToUserDtoConverter;
+
+    public CheckToDtoConverter(UserToUserDtoConverter userToUserDtoConverter) {
+        this.userToUserDtoConverter = userToUserDtoConverter;
+    }
 
     @Synchronized
     @Nullable
@@ -22,9 +27,11 @@ public class CheckToDtoConverter implements Converter<OrderCheck, OrderCheckDto>
         orderCheckDto.setOrderId(check.getOrder().getId());
         orderCheckDto.setPriceInCents(check.getPriceInCents());
         orderCheckDto.setStatus(check.getStatus());
-        orderCheckDto.setBankCard(check.getBankCard().getId());
+        if (check.getBankCard() != null) {
+            orderCheckDto.setBankCard(check.getBankCard().getId());
+        }
         orderCheckDto.setCreationDate(check.getCreationDate());
-
+        orderCheckDto.setUser(userToUserDtoConverter.convert(check.getUser()));
         return orderCheckDto;
     }
 }

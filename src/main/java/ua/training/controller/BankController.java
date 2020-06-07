@@ -17,6 +17,8 @@ import ua.training.service.OrderCheckService;
 import ua.training.service.UserService;
 import ua.training.service.serviceImpl.OrderServiceImpl;
 
+import java.util.List;
+
 @Slf4j
 @RequestMapping("/bank")
 @Controller
@@ -125,6 +127,13 @@ public class BankController {
         log.info("order paying");
 
         return "redirect:/shipments/show/1/all";
+    }
+
+    @GetMapping("/show_check/{id}")
+    public String showCheck(@PathVariable Long id, Model model) {
+
+        model.addAttribute("check", List.of(orderCheckService.showCheckById(id)));
+        return "bank/check_show";
     }
 
 }
