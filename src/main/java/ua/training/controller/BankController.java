@@ -17,7 +17,7 @@ import ua.training.service.OrderCheckService;
 import ua.training.service.UserService;
 import ua.training.service.serviceImpl.OrderServiceImpl;
 
-import java.util.List;
+import java.util.Collections;
 
 @Slf4j
 @RequestMapping("/bank")
@@ -132,7 +132,7 @@ public class BankController {
     @GetMapping("/show_check/{id}")
     public String showCheck(@PathVariable Long id, Model model) {
 
-        model.addAttribute("check", List.of(orderCheckService.showCheckById(id)));
+        model.addAttribute("check", Collections.singletonList(orderCheckService.showCheckById(id)));
         return "bank/check_show";
     }
 
