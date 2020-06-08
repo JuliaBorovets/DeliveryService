@@ -44,6 +44,12 @@ public class GlobalExceptionHandler {
 //        return "registration";
 //    }
 
+    @ExceptionHandler(OrderNotFoundException.class)
+    public String handleOrderNotFoundException(Model model) {
+        log.error("OrderNotFound Exception");
+        model.addAttribute("error", true);
+        return "redirect:/shipments/show/1/all";
+    }
 
     @ExceptionHandler(RegException.class)
     public String handleRegException(Model model) {
@@ -57,12 +63,6 @@ public class GlobalExceptionHandler {
     public String handleRegException() {
         log.error("BankTransaction Exception");
         return "redirect:/adding_money";
-    }
-
-    @ExceptionHandler(OrderNotFoundException.class)
-    public String handleOrderNotFoundException() {
-        log.error("OrderNotFound Exception");
-        return "redirect:/my_shipments/page/1";
     }
 
 

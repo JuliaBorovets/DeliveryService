@@ -14,6 +14,9 @@ import ua.training.service.DestinationService;
 import ua.training.service.OrderService;
 import ua.training.service.OrderTypeService;
 
+import java.util.Collections;
+import java.util.List;
+
 
 @Slf4j
 @RequestMapping("/shipments")
@@ -40,8 +43,11 @@ public class ShipmentsController {
 
     @GetMapping("/show/{page}/{filter}")
     public String shipmentsPage(Model model, @AuthenticationPrincipal User user,
-                                @PathVariable("page") Integer page, @PathVariable String filter) {
+                                @PathVariable("page") Integer page, @PathVariable String filter,
+                                @RequestParam(required = false) String error) {
 
+        model.addAttribute("error", error != null);
+        model.addAttribute("orderDto", OrderDto.builder().build());
 
         switch (filter){
             case "all":
@@ -60,6 +66,17 @@ public class ShipmentsController {
                 model.addAttribute("orders", orderService.findAllArchivedUserOrders(user.getId()));
                 break;
         }
+
+        return "user/my_shipments";
+    }
+
+    @GetMapping("/find_order")
+    public String findOrderById(@ModelAttribute OrderDto orderDto,
+                                Model model) throws OrderNotFoundException {
+
+        List<OrderDto> order = Collections.singletonList(orderService.getOrderDtoById(orderDto.getId()));
+
+        model.addAttribute("orders", order);
 
         return "user/my_shipments";
     }
