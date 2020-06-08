@@ -35,10 +35,10 @@ public class AdminController {
     }
 
     @ModelAttribute
-    public User loadModelAttribute(@AuthenticationPrincipal User user,  Model model){
+    public void setModel(@AuthenticationPrincipal User user,  Model model){
         model.addAttribute("user", user);
         model.addAttribute("isAdmin", user.getRole().equals(RoleType.ROLE_ADMIN));
-        return user;
+
     }
 
     @GetMapping({"/admin_page/page/{page}"})

@@ -64,10 +64,6 @@ public class User implements UserDetails {
         return getLogin();
     }
 
-    public void addBankCard(BankCard bankCard){
-        cards.add(bankCard);
-        bankCard.getUsers().add(this);
-    }
 
     @Override
     public boolean isAccountNonExpired() {

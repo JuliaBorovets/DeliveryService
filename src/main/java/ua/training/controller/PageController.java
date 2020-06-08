@@ -67,7 +67,7 @@ public class PageController implements WebMvcConfigurer {
 
         model.addAttribute("isAdmin", user.getRole().equals(RoleType.ROLE_ADMIN));
 
-        return "account_page";
+        return "user/account_page";
     }
 
 

@@ -29,15 +29,13 @@ public class ShipmentsController {
         this.orderService = orderService;
         this.orderTypeService = orderTypeService;
         this.destinationService = destinationService;
-
     }
 
     @ModelAttribute
-    public User loadPetWithVisit(@AuthenticationPrincipal User user,  Model model){
+    public void setModel(@AuthenticationPrincipal User user,  Model model){
 
         model.addAttribute("isAdmin", user.getRole().equals(RoleType.ROLE_ADMIN));
 
-        return user;
     }
 
     @GetMapping("/show/{page}/{filter}")
@@ -63,7 +61,7 @@ public class ShipmentsController {
                 break;
         }
 
-        return "my_shipments";
+        return "user/my_shipments";
     }
 
     @GetMapping("/create_shipment")
@@ -75,7 +73,7 @@ public class ShipmentsController {
         model.addAttribute("types", orderTypeService.getAllOrderTypeDto());
         model.addAttribute("destinations", destinationService.getAllDestinationDto());
 
-        return "new_order";
+        return "user/new_order";
     }
 
     @PostMapping("/create_shipment")
