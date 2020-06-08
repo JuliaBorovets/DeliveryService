@@ -10,13 +10,15 @@ import java.util.List;
 
 public interface OrderService {
 
-    List<OrderDto> findAllUserOrder(Long userId);
+    List<OrderDto> findAllUserOrders(Long userId);
 
-    List<OrderDto> findAllPaidUserOrder(Long userId);
+    List<OrderDto> findAllPaidUserOrders(Long userId);
 
-    List<OrderDto> findAllNotPaidUserOrder(Long userId);
+    List<OrderDto> findAllNotPaidUserOrders(Long userId);
 
-    List<OrderDto> findAllShippedUserOrder(Long userId);
+    List<OrderDto> findAllShippedUserOrders(Long userId);
+
+    List<OrderDto> findAllArchivedUserOrders(Long userId);
 
     void createOrder(OrderDto orderDTO, User user) throws OrderCreateException;
 
@@ -26,5 +28,5 @@ public interface OrderService {
 
     Order findOrderById(Long orderId) throws OrderNotFoundException;
 
-
+    void moveOrderToArchive(Long orderId) throws OrderNotFoundException;
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.training.controller.exception.OrderCreateException;
+import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.OrderDto;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
@@ -46,17 +47,20 @@ public class ShipmentsController {
 
         switch (filter){
             case "all":
-                model.addAttribute("orders", orderService.findAllUserOrder(user.getId()));
-                log.error(orderService.findAllUserOrder(user.getId()).toString());
+                model.addAttribute("orders", orderService.findAllUserOrders(user.getId()));
+                log.error(orderService.findAllUserOrders(user.getId()).toString());
                 break;
             case "paid" :
-                model.addAttribute("orders", orderService.findAllPaidUserOrder(user.getId()));
+                model.addAttribute("orders", orderService.findAllPaidUserOrders(user.getId()));
                 break;
             case "not_paid":
-                model.addAttribute("orders", orderService.findAllNotPaidUserOrder(user.getId()));
+                model.addAttribute("orders", orderService.findAllNotPaidUserOrders(user.getId()));
                 break;
             case "shipped":
-                model.addAttribute("orders", orderService.findAllShippedUserOrder(user.getId()));
+                model.addAttribute("orders", orderService.findAllShippedUserOrders(user.getId()));
+                break;
+            case "archived":
+                model.addAttribute("orders", orderService.findAllArchivedUserOrders(user.getId()));
                 break;
         }
 
@@ -76,7 +80,7 @@ public class ShipmentsController {
     }
 
     @PostMapping("/create_shipment")
-    public String createOrder(@ModelAttribute("newOrder") OrderDto modelOrder, @AuthenticationPrincipal User user)
+    public String createOrder(@ModelAttribute OrderDto modelOrder, @AuthenticationPrincipal User user)
             throws OrderCreateException {
 
         orderService.createOrder(modelOrder, user);
@@ -84,7 +88,17 @@ public class ShipmentsController {
         log.error(modelOrder.getDestinationCityFrom() + " " + modelOrder.getDestinationCityTo());
 
         return "redirect:/shipments/show/1/all";
+    }
 
+
+    @GetMapping("/archive_order/{orderId}")
+    public String getMoveToArchive(@PathVariable Long orderId) throws OrderNotFoundException {
+
+        orderService.moveOrderToArchive(orderId);
+
+        log.info("moving to archive");
+
+        return "redirect:/shipments/show/1/all";
     }
 
 }

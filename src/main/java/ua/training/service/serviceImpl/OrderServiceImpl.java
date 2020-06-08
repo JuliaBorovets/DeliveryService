@@ -39,29 +39,36 @@ public class OrderServiceImpl implements OrderService {
         this.orderToDtoConverter = orderToDtoConverter;
     }
 
-    public List<OrderDto> findAllUserOrder(Long userId) {
+    public List<OrderDto> findAllUserOrders(Long userId) {
         return orderRepository.findOrderByOwnerId(userId).stream()
                 .map(orderToDtoConverter::convert)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<OrderDto> findAllPaidUserOrder(Long userId) {
+    public List<OrderDto> findAllPaidUserOrders(Long userId) {
         return orderRepository.findByStatusAndOwner_Id(Status.PAID, userId).stream()
                 .map(orderToDtoConverter::convert)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<OrderDto> findAllNotPaidUserOrder(Long userId) {
+    public List<OrderDto> findAllNotPaidUserOrders(Long userId) {
         return orderRepository.findByStatusAndOwner_Id(Status.NOT_PAID, userId).stream()
                 .map(orderToDtoConverter::convert)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<OrderDto> findAllShippedUserOrder(Long userId) {
+    public List<OrderDto> findAllShippedUserOrders(Long userId) {
         return orderRepository.findByStatusAndOwner_Id(Status.SHIPPED, userId).stream()
+                .map(orderToDtoConverter::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderDto> findAllArchivedUserOrders(Long userId) {
+        return orderRepository.findByStatusAndOwner_Id(Status.ARCHIVED, userId).stream()
                 .map(orderToDtoConverter::convert)
                 .collect(Collectors.toList());
     }
@@ -121,7 +128,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
+    @Override
+    public void moveOrderToArchive(Long orderId) throws OrderNotFoundException {
+        Order order = findOrderById(orderId);
 
-
+        if (order.getStatus().equals(Status.SHIPPED)) {
+            order.setStatus(Status.ARCHIVED);
+            orderRepository.save(order);
+        }
+    }
 }
 

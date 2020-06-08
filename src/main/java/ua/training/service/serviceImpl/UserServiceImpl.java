@@ -89,9 +89,10 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public void changeRole(Long userId) {
         User user = findUserById(userId);
+
         if (user.getRole().equals(RoleType.ROLE_ADMIN)){
             user.setRole(RoleType.ROLE_USER);
-        }else {
+        } else {
             user.setRole(RoleType.ROLE_ADMIN);
         }
         userRepository.save(user);

@@ -26,6 +26,7 @@
             <a class="btn btn-outline-primary " th:href="@{/shipments/show/1/paid}"> Show paid </a>
             <a class="btn btn-outline-primary"  th:href="@{/shipments/show/1/not_paid}"> Show not paid </a>
             <a class="btn btn-outline-primary"  th:href="@{/shipments/show/1/shipped}"> Show shipped </a>
+            <a class="btn btn-outline-primary"  th:href="@{/shipments/show/1/archived}"> Show archived </a>
         </div>
     </div>
 </section>
@@ -94,6 +95,12 @@
                             <div class="form-group text-center" >
                                 <a class="button" th:if="${order.check} != null"
                                    th:href="@{/bank/show_check/{orderId}(orderId=${order.check.id})}" th:size="14px"> Show check
+                                </a>
+                            </div>
+
+                            <div class="form-group text-center" >
+                                <a class="button" th:if="${order.status.name() == 'SHIPPED'}"
+                                   th:href="@{/shipments/archive_order/{orderId}(orderId=${order.id})}" th:size="14px"> Archive
                                 </a>
                             </div>
 
