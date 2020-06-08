@@ -33,6 +33,7 @@ public class OrderTypeServiceImpl implements OrderTypeService {
 
     @Override
     public OrderType getOrderTypeById(Long id) {
-        return orderTypeRepository.findById(id).orElseThrow(()->new RuntimeException("no type"));
+        return orderTypeRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("no type"));
     }
 }

@@ -1,4 +1,10 @@
 @import "https://use.fontawesome.com/releases/v5.5.0/css/all.css";
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
 .py-1 {
     color: rgba(169, 163, 221, 0.58);
 }
@@ -130,5 +136,12 @@
 
 .empty {
     display: none;
+}
+
+footer.sticky-footer {
+    position: absolute;
+    bottom: 0;
+    overflow: hidden;
+    width: 100%;
 }
 

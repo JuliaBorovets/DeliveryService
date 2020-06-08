@@ -68,7 +68,8 @@ public class BankCardServiceImpl implements BankCardService {
 
         return bankCardRepository
                 .findBankCardByUsers(user).stream()
-                .map(BankCardMapper.INSTANCE::bankCardToDto).collect(Collectors.toList());
+                .map(BankCardMapper.INSTANCE::bankCardToDto)
+                .collect(Collectors.toList());
 
     }
 
