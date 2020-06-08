@@ -98,10 +98,25 @@ public class AdminController {
     @GetMapping("/users_list")
     public String changeRoles(Model model){
 
+        model.addAttribute("userDto", UserDto.builder().build());
         model.addAttribute("users", userService.findAllUserDto());
 
         return "admin/users_list";
+    }
 
+
+    @GetMapping("/find_user")
+    public String findUserByLogin(@ModelAttribute UserDto userDto, Model model){
+
+        if (userDto.getLogin()==null){
+            userDto.setLogin("");
+        }
+
+        List<UserDto> users = userService.findAllByLoginLike("%" + userDto.getLogin() + "%");
+
+        model.addAttribute("users", users);
+
+        return "admin/users_list";
     }
 
     @GetMapping("/change_roles/{userId}")
@@ -122,5 +137,6 @@ public class AdminController {
 
         return "redirect:/admin/change_roles/" + userId;
     }
+
 
 }

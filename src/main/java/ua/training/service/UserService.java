@@ -17,4 +17,6 @@ public interface UserService {
     List<UserDto> findAllUserDto();
 
     void changeRole(Long userId);
+
+    List<UserDto> findAllByLoginLike(String login);
 }

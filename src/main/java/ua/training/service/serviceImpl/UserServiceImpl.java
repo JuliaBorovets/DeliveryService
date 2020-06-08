@@ -78,6 +78,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return userToUserDtoConverter.convert(findUserById(id));
     }
 
+    @Override
+    public List<UserDto> findAllByLoginLike(String login) {
+        return userRepository.findAllByLoginLike(login).stream()
+                .map(userToUserDtoConverter::convert)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public List<UserDto> findAllUserDto() {

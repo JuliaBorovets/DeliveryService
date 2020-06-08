@@ -42,6 +42,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> findAllUserOrders(Long userId) {
         return orderRepository.findOrderByOwnerId(userId).stream()
                 .map(orderToDtoConverter::convert)
+                .filter(o -> !o.getStatus().equals(Status.ARCHIVED))
                 .collect(Collectors.toList());
     }
 

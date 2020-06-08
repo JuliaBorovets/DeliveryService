@@ -45,7 +45,19 @@
     <div class="table_users shadow">
 
         <div class="card-body text-center" >
+
             <div class="table-responsive table mt-2 text-center" id="dataTable" >
+                <form th:object="${userDto}" th:action="@{/admin/find_user}" method="get">
+                    <div class="form-group  mb-4">
+                        <div class="text-md-right dataTables_filter" id="dataTable_filter">
+                            <label>
+                                <input type="search" class="form-control form-control-sm" th:field="*{login}"
+                                       aria-controls="dataTable" placeholder="Search by login">
+                            </label>
+                            <button type="submit" class="btn btn-default"  style="display: none;">Search</button>
+                        </div>
+                    </div>
+                </form>
                     <table class="table_users dataTable my-0 text-center" id="dataTable">
                         <thead>
                         <tr>
