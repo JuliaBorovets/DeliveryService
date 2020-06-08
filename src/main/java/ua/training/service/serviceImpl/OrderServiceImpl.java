@@ -137,5 +137,18 @@ public class OrderServiceImpl implements OrderService {
             orderRepository.save(order);
         }
     }
+
+
+    @Transactional
+    @Override
+    public void deleteOrderById(Long orderId) throws OrderNotFoundException {
+        Order order = findOrderById(orderId);
+
+        if (order.getStatus().equals(Status.NOT_PAID)){
+            orderRepository.delete(order);
+        }
+
+        log.info("deleting order");
+    }
 }
 

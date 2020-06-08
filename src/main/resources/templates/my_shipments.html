@@ -104,6 +104,13 @@
                                 </a>
                             </div>
 
+
+                            <div class="form-group text-center" >
+                                <a class="button" th:if="${order.status.name() == 'NOT_PAID'}"
+                                   th:href="@{/shipments/delete/{orderId}(orderId=${order.id})}" th:size="14px"> Delete
+                                </a>
+                            </div>
+
                         </div>
 
                     </div>

@@ -29,4 +29,6 @@ public interface OrderService {
     Order findOrderById(Long orderId) throws OrderNotFoundException;
 
     void moveOrderToArchive(Long orderId) throws OrderNotFoundException;
+
+    void deleteOrderById(Long orderId) throws OrderNotFoundException;
 }

@@ -48,7 +48,6 @@ public class ShipmentsController {
         switch (filter){
             case "all":
                 model.addAttribute("orders", orderService.findAllUserOrders(user.getId()));
-                log.error(orderService.findAllUserOrders(user.getId()).toString());
                 break;
             case "paid" :
                 model.addAttribute("orders", orderService.findAllPaidUserOrders(user.getId()));
@@ -85,8 +84,6 @@ public class ShipmentsController {
 
         orderService.createOrder(modelOrder, user);
 
-        log.error(modelOrder.getDestinationCityFrom() + " " + modelOrder.getDestinationCityTo());
-
         return "redirect:/shipments/show/1/all";
     }
 
@@ -101,4 +98,12 @@ public class ShipmentsController {
         return "redirect:/shipments/show/1/all";
     }
 
+    @GetMapping("/delete/{orderId}")
+    public String deleteOrder(@PathVariable Long orderId) throws OrderNotFoundException {
+
+        orderService.deleteOrderById(orderId);
+        log.info("deleting order with id = " + orderId);
+        return "redirect:/shipments/show/1/all";
+
+    }
 }
