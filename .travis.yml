@@ -11,9 +11,9 @@ cache:
   directories:
     - $HOME/.m2
 
-# Codecov https://github.com/codecov/example-java
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+## Codecov https://github.com/codecov/example-java
+#after_success:
+#  - bash <(curl -s https://codecov.io/bash)
 
 # Notifications https://docs.travis-ci.com/user/notifications/
 notifications:

@@ -22,15 +22,11 @@ public class UserDto {
 
     private String lastName;
 
-    private String firstNameCyr;
-
-    private String lastNameCyr;
-
     private String login;
 
     private String email;
 
-    private RoleType role;
+    private RoleType role = RoleType.ROLE_USER;
 
     private String password;
 

@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<!--suppress HtmlUnknownAttribute -->
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+
+    <base href="/">
+    <title>Change roles</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+    <script src="/webjars/jquery/3.3.1-1/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous" th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"></script>
+
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="admin.css">
+
+    <link rel="stylesheet" src="/webjars/font-awesome/5.13.0/font-awesome.min.css">
+
+
+</head>
+
+<body>
+<div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
+
+<br>
+
+<section class="jumbotron2 text-center">
+    <div class="container">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <a class="btn btn-outline-primary"   th:href="@{/admin/admin_page/page/1}"> Ship orders </a>
+            <a class="btn btn-outline-primary"   th:href="@{/admin/users_list}"> Change roles </a>
+        </div>
+    </div>
+</section>
+
+
+<div class="container-fluid text-center">
+
+    <br>
+    <div class="table_users shadow">
+
+        <div class="card-body text-center" >
+            <div class="table-responsive table mt-2 text-center" id="dataTable" >
+                    <table class="table_users dataTable my-0 text-center" id="dataTable">
+                        <thead>
+                        <tr>
+                            <th> ID </th>
+                            <th> first name </th>
+                            <th> last name </th>
+                            <th> login </th>
+                            <th> email </th>
+                            <th> role </th>
+                            <th><em class="fa fa-cog"></em></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="u : ${users}" >
+                            <th scope="row" th:text="${u.id}" ></th>
+                            <th scope="row" th:text="${u.firstName}"></th>
+                            <th scope="row" th:text="${u.lastName}"></th>
+                            <th scope="row" th:text="${u.login}" ></th>
+                            <th scope="row" th:text="${u.email}" ></th>
+                            <th scope="row" th:text="${u.role}" ></th>
+                            <th>
+                                <a th:href="@{/admin/change_roles/{id}(id=${u.id})}" > change </a>
+                            </th>
+                        </tr>
+                    </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:include="fragments/footer :: footer" th:remove="tag"></div>
+
+</body>
+</html>

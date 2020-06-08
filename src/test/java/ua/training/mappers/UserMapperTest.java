@@ -30,8 +30,6 @@ class UserMapperTest {
         UserDto userDto = new UserDto();
         userDto.setFirstName(FIRST_NAME);
         userDto.setLastName(LAST_NAME);
-        userDto.setFirstNameCyr(FIRST_NAME_CYR);
-        userDto.setLastNameCyr(LAST_NAME_CYR);
         userDto.setLogin(LOGIN);
         userDto.setEmail(EMAIL);
         userDto.setRole(RoleType.ROLE_USER);
@@ -56,8 +54,7 @@ class UserMapperTest {
         user.setId(USER_ID);
         user.setFirstName(FIRST_NAME);
         user.setLastName(LAST_NAME);
-        user.setFirstNameCyr(FIRST_NAME_CYR);
-        user.setLastNameCyr(LAST_NAME_CYR);
+
         user.setLogin(LOGIN);
         user.setEmail(EMAIL);
         user.setRole(RoleType.ROLE_USER);

@@ -26,8 +26,6 @@ public class DtoToUserConverter implements Converter<UserDto, User> {
         user.setId(userDto.getId());
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
-        user.setFirstNameCyr(userDto.getFirstNameCyr());
-        user.setLastNameCyr(userDto.getLastNameCyr());
         user.setLogin(userDto.getLogin());
         user.setEmail(userDto.getEmail());
         user.setRole(userDto.getRole());

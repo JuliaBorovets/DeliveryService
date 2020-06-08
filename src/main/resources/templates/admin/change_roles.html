@@ -35,53 +35,90 @@
     <div class="container">
         <div class="btn-group mr-2" role="group" aria-label="First group">
             <a class="btn btn-outline-primary"   th:href="@{/admin/admin_page/page/1}"> Ship orders </a>
-            <a class="btn btn-outline-primary"   th:href="@{/admin/change_roles}"> Change roles </a>
+            <a class="btn btn-outline-primary"   th:href="@{/admin/users_list}"> Change roles </a>
         </div>
     </div>
 </section>
 
 
-<div class="container-fluid text-center">
+<div class="container py-5">
 
-    <br>
-    <div class="table_info shadow">
+    <div class="row">
+        <div class="col-lg-7 mx-auto">
+            <div class="bg-white rounded-lg shadow-sm p-5">
+                <div class="tab-content">
 
-        <div class="card-body text-center" >
-            <div class="table-responsive table mt-2 text-center" id="dataTable" >
-                <table class="table_info dataTable my-0 text-center" id="dataTable">
-                    <thead>
-                    <tr>
-                        <th >ID</th>
-                        <th >first name</th>
-                        <th >last name</th>
-                        <th >login</th>
-                        <th >email</th>
-                        <th ><em class="fa fa-cog"></em></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="u : ${users}" >
-                        <th scope="row" th:text="${u.id}" ></th>
-                        <th scope="row" th:text="${u.firstName}"></th>
-                        <th scope="row" th:text="${u.lastName}"></th>
-                        <th scope="row" th:text="${u.login}" ></th>
-                        <th scope="row" th:text="${u.email}" ></th>
-                        <th >
-                            <select class="form-control" name="u.role">
-                                <option th:each="r : ${roles}"
-                                        th:value="${r}"
-                                        th:selected="${r.equals(u.role)}"
-                                        th:text="${r}">Roles</option>
-                            </select>
-                        </th>
-                    </tr>
+                    <div id="nav-tab-card" class="tab-pane fade show active">
 
-                </table>
+                        <form th:action="'/admin/change_roles/' + ${userDto.id}" th:object="${userDto}" method="post" >
+
+                            <div class="form-group  mb-4" >
+                                <label> Id </label>
+                                <div class="input-group">
+                                    <input type="text" placeholder="Id" class="form-control" th:field="*{id}" disabled/>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group mb-4">
+                                        <label> firstName </label>
+                                        <div class="input-group">
+                                            <input type="text"  placeholder="firstName" class="form-control"
+                                                   th:field="*{firstName}" disabled/>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-sm-6">
+                                    <div class="form-group mb-4">
+                                        <label> lastName </label>
+                                        <div class="input-group">
+                                            <input type="text" placeholder="lastName" class="form-control"
+                                                   th:field="*{lastName}" disabled/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group mb-4">
+                                        <label> login </label>
+                                        <div class="input-group">
+                                            <input type="text" placeholder="login" class="form-control"
+                                                  th:field="*{login}" disabled/>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-sm-6">
+                                    <div class="form-group mb-4">
+                                        <label> role </label>
+                                        <div class="input-group">
+                                            <input type="text" placeholder="role" class="form-control" th:field="*{role}" disabled/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="form-group text-center" >
+                            <button  type="submit" class="btn btn-outline-primary "
+                                     th:with="text=${isAdmin} ? ' зробити роль USER' : ' зробити роль ADMIN'" th:text="${text}"> Confirm  </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
 </div>
-</div>
+
 
 <div th:include="fragments/footer :: footer" th:remove="tag"></div>
 

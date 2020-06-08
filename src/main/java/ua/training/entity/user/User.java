@@ -14,6 +14,7 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 
 @Entity
 @Table(name = "users",
@@ -27,10 +28,6 @@ public class User implements UserDetails {
     private String firstName;
 
     private String lastName;
-
-    private String firstNameCyr;
-
-    private String lastNameCyr;
 
     private String login;
 

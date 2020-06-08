@@ -9,16 +9,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.OrderDto;
-import ua.training.dto.StatisticsDto;
+import ua.training.dto.UserDto;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.service.AdminService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RequestMapping("/admin")
@@ -86,28 +85,42 @@ public class AdminController {
     @GetMapping("/statistics")
     public String showStatistics(Model model){
 
-        StatisticsDto statisticsDto = adminService.createStatisticsDto();
-        model.addAttribute("statistics", statisticsDto);
+        model.addAttribute("statistics", adminService.createStatisticsDto());
 
-        Map<Integer, Long> orders = adminService.statisticsNumberOfOrdersByForYear(2020);
-        model.addAttribute("orders", orders);
+        model.addAttribute("orders", adminService.statisticsNumberOfOrdersByForYear(LocalDate.now().getYear()));
 
-        Map<Integer, BigDecimal> earnings = adminService.statisticsEarningsOfOrdersByForYear(2020);
-
-        model.addAttribute("earnings", earnings);
+        model.addAttribute("earnings", adminService.statisticsEarningsOfOrdersByForYear(LocalDate.now().getYear()));
 
         return "admin/statistics";
     }
 
 
-    @GetMapping("/change_roles")
+    @GetMapping("/users_list")
     public String changeRoles(Model model){
 
         model.addAttribute("users", userService.findAllUserDto());
-        model.addAttribute("roles", RoleType.values());
-        
+
+        return "admin/users_list";
+
+    }
+
+    @GetMapping("/change_roles/{userId}")
+    public String getChangeUserRoles(@PathVariable Long userId,  Model model){
+
+        UserDto userDto = userService.findUserDTOById(userId);
+        model.addAttribute("userDto", userDto);
+        model.addAttribute("isAdmin", userDto.getRole().equals(RoleType.ROLE_ADMIN));
+
         return "admin/change_roles";
 
+    }
+
+    @PostMapping("/change_roles/{userId}")
+    public String changeUserRoles(@PathVariable Long userId) {
+
+        userService.changeRole(userId);
+
+        return "redirect:/admin/change_roles/" + userId;
     }
 
 }

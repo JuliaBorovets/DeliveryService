@@ -15,4 +15,6 @@ public interface UserService {
     User findUserById(Long id);
 
     List<UserDto> findAllUserDto();
+
+    void changeRole(Long userId);
 }

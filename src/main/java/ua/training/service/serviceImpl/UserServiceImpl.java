@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         ProjectPasswordEncoder encoder = new ProjectPasswordEncoder();
 
         user.setPassword(encoder.encode(userDto.getPassword()));
-        user.setRole(RoleType.ROLE_USER);
+        user.setRole(userDto.getRole());
 
         try {
             userRepository.save(Objects.requireNonNull(user));
@@ -84,5 +84,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return userRepository.findAll().stream()
                 .map(userToUserDtoConverter::convert)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void changeRole(Long userId) {
+        User user = findUserById(userId);
+        if (user.getRole().equals(RoleType.ROLE_ADMIN)){
+            user.setRole(RoleType.ROLE_USER);
+        }else {
+            user.setRole(RoleType.ROLE_ADMIN);
+        }
+        userRepository.save(user);
     }
 }
