@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public List<UserDto> findAllByLoginLike(String login) {
-        return userRepository.findAllByLoginLike(login).stream()
+        return userRepository.findAllByLoginLike("%" + login + "%").stream()
                 .map(userToUserDtoConverter::convert)
                 .collect(Collectors.toList());
     }

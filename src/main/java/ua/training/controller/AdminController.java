@@ -112,7 +112,7 @@ public class AdminController {
             userDto.setLogin("");
         }
 
-        List<UserDto> users = userService.findAllByLoginLike("%" + userDto.getLogin() + "%");
+        List<UserDto> users = userService.findAllByLoginLike(userDto.getLogin());
 
         model.addAttribute("users", users);
 
