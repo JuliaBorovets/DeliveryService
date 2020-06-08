@@ -45,5 +45,9 @@ public class BankCard {
         orderChecks.forEach(b -> b.setBankCard(null));
     }
 
+    public void deleteUser(User user){
+        users.remove(user);
+        user.getCards().remove(this);
+    }
 
 }

@@ -83,7 +83,8 @@ public class BankController {
     }
 
     @PostMapping("/update_card/{cardId}")
-    public String updateBankCard(@PathVariable Long cardId, @ModelAttribute BankCardDto bankCardDTO){
+    public String updateBankCard(@PathVariable Long cardId, @ModelAttribute BankCardDto bankCardDTO,
+                                 @AuthenticationPrincipal User user){
 
         bankCardService.updateBankCardDTO(bankCardDTO);
 
@@ -94,10 +95,10 @@ public class BankController {
 
 
     @GetMapping("/delete_card/{cardId}")
-    public String deleteBankCard(@PathVariable Long cardId) throws BankException {
+    public String deleteBankCard(@PathVariable Long cardId, @AuthenticationPrincipal User user) throws BankException {
 
         log.error("deleting card");
-        bankCardService.deleteBankCard(cardId);
+        bankCardService.deleteBankCardConnectionWithUser(cardId, user.getId());
 
         return "redirect:/bank";
     }

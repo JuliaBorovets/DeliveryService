@@ -18,7 +18,7 @@ public interface BankCardService {
 
     void updateBankCardDTO(BankCardDto bankCardDTO);
 
-    void deleteBankCard(Long bankId) throws BankException;
+    void deleteBankCardConnectionWithUser(Long bankId, Long userId) throws BankException;
 
     void replenishBankCard(Long bankId, BigDecimal balance) throws BankException;
 

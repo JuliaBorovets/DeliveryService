@@ -53,9 +53,14 @@ public class BankCardServiceImpl implements BankCardService {
     }
 
     @Transactional
-    public void deleteBankCard(Long bankId) {
+    public void deleteBankCardConnectionWithUser(Long bankId, Long userId) {
 
-        bankCardRepository.deleteById(bankId);
+        BankCard  bankCard = findBankCardById(bankId);
+
+        User user = userService.findUserById(userId);
+
+        bankCard.deleteUser(user);
+
     }
 
     @Override
