@@ -94,9 +94,9 @@
                                 <div class="col-md-5 offset-md-1 form-group text-center">
                                     <label>Destination from:</label>
                                     <select class="form-control" th:field="*{destinationCityFrom}">
-                                        <option th:each="dest : ${destinations}"
-                                                th:value="${dest.cityFrom}"
-                                                th:text="${dest.cityFrom}"
+                                        <option th:each="dest : ${destinationsFrom}"
+                                                th:value="${dest}"
+                                                th:text="${dest}"
                                         >val
                                         </option>
                                     </select>
@@ -105,9 +105,9 @@
                                 <div class="col-md-5  offset-md-0 form-group text-center">
                                     <label>Destination to:</label>
                                     <select class="form-control" th:field="*{destinationCityTo}">
-                                        <option th:each="dest : ${destinations}"
-                                                th:value="${dest.cityTo}"
-                                                th:text="${dest.cityTo}"
+                                        <option th:each="dest : ${destinationsTo}"
+                                                th:value="${dest}"
+                                                th:text="${dest}"
                                         >val
                                         </option>
                                     </select>

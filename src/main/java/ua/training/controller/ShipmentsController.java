@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.training.controller.exception.OrderCreateException;
 import ua.training.controller.exception.OrderNotFoundException;
+import ua.training.dto.DestinationDto;
 import ua.training.dto.OrderDto;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
@@ -16,6 +17,8 @@ import ua.training.service.OrderTypeService;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -86,9 +89,20 @@ public class ShipmentsController {
 
         OrderDto orderDto = OrderDto.builder().build();
 
+        List<DestinationDto> destinationDto = destinationService.getAllDestinationDto();
+
+        Set<String> destinationsFrom = destinationDto.stream()
+                .map(DestinationDto::getCityFrom)
+                .collect(Collectors.toSet());
+
+        Set<String> destinationsTo = destinationDto.stream()
+                .map(DestinationDto::getCityTo)
+                .collect(Collectors.toSet());
+
         model.addAttribute("newOrder", orderDto);
         model.addAttribute("types", orderTypeService.getAllOrderTypeDto());
-        model.addAttribute("destinations", destinationService.getAllDestinationDto());
+        model.addAttribute("destinationsFrom", destinationsFrom);
+        model.addAttribute("destinationsTo", destinationsTo);
 
         return "user/new_order";
     }
