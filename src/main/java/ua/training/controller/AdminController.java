@@ -7,16 +7,20 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ua.training.controller.exception.OrderCheckException;
 import ua.training.controller.exception.OrderNotFoundException;
+import ua.training.dto.OrderCheckDto;
 import ua.training.dto.OrderDto;
 import ua.training.dto.UserDto;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.service.AdminService;
+import ua.training.service.OrderCheckService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -27,11 +31,13 @@ public class AdminController {
     private final OrderService orderService;
     private final AdminService adminService;
     private final UserService userService;
+    private final OrderCheckService orderCheckService;
 
-    public AdminController(OrderService orderService, AdminService adminService, UserService userService) {
+    public AdminController(OrderService orderService, AdminService adminService, UserService userService, OrderCheckService orderCheckService) {
         this.orderService = orderService;
         this.adminService = adminService;
         this.userService = userService;
+        this.orderCheckService = orderCheckService;
     }
 
     @ModelAttribute
@@ -136,6 +142,26 @@ public class AdminController {
         userService.changeRole(userId);
 
         return "redirect:/admin/change_roles/" + userId;
+    }
+
+    @GetMapping("/show_checks")
+    public String showAllChecks(  @RequestParam(required = false) String error, Model model){
+
+        model.addAttribute("error", error != null);
+        model.addAttribute("checkDto", new OrderCheckDto());
+        model.addAttribute("checks", orderCheckService.showAllChecks());
+
+        return "admin/check_show";
+    }
+
+    @GetMapping("/find_check")
+    public String findOrderById(@ModelAttribute("checkDto") OrderCheckDto checkDto,
+                                Model model) throws OrderCheckException {
+
+        List<OrderCheckDto> checkDtoList = Collections.singletonList(orderCheckService.showCheckById(checkDto.getId()));
+        model.addAttribute("checks", checkDtoList);
+
+        return "admin/check_show";
     }
 
 

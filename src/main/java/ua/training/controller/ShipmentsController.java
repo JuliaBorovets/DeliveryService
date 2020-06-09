@@ -87,8 +87,6 @@ public class ShipmentsController {
     @GetMapping("/create_shipment")
     public String createOrderView( Model model) {
 
-        OrderDto orderDto = OrderDto.builder().build();
-
         List<DestinationDto> destinationDto = destinationService.getAllDestinationDto();
 
         Set<String> destinationsFrom = destinationDto.stream()
@@ -99,7 +97,7 @@ public class ShipmentsController {
                 .map(DestinationDto::getCityTo)
                 .collect(Collectors.toSet());
 
-        model.addAttribute("newOrder", orderDto);
+        model.addAttribute("newOrder", OrderDto.builder().build());
         model.addAttribute("types", orderTypeService.getAllOrderTypeDto());
         model.addAttribute("destinationsFrom", destinationsFrom);
         model.addAttribute("destinationsTo", destinationsTo);

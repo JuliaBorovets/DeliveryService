@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.training.controller.exception.BankException;
 import ua.training.controller.exception.BankTransactionException;
+import ua.training.controller.exception.OrderCheckException;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.BankCardDto;
 import ua.training.dto.OrderCheckDto;
@@ -29,7 +30,8 @@ public class BankController {
     private final OrderCheckService orderCheckService;
     private final UserService userService;
 
-    public BankController(OrderServiceImpl orderService, BankCardService bankCardService, OrderCheckService orderCheckService, UserService userService) {
+    public BankController(OrderServiceImpl orderService, BankCardService bankCardService,
+                          OrderCheckService orderCheckService, UserService userService) {
         this.orderService = orderService;
         this.bankCardService = bankCardService;
         this.orderCheckService = orderCheckService;
@@ -130,9 +132,10 @@ public class BankController {
     }
 
     @GetMapping("/show_check/{id}")
-    public String showCheck(@PathVariable Long id, Model model) {
+    public String showCheck(@PathVariable Long id, Model model) throws OrderCheckException {
 
         model.addAttribute("check", Collections.singletonList(orderCheckService.showCheckById(id)));
+
         return "bank/check_show";
     }
 

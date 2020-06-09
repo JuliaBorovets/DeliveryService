@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<!--suppress HtmlUnknownAttribute -->
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Admin page</title>
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/resources/images/image.png}">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <base href="/">
+
+    <script src="/webjars/jquery/3.3.1-1/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous" th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+<div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
+
+<br>
+
+<section class="jumbotron2 text-center">
+    <div class="container">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <a class="btn btn-outline-primary"   th:href="@{/admin/admin_page/page/1}"> Ship orders </a>
+            <a class="btn btn-outline-primary "   th:href="@{/admin/users_list}"> Change roles </a>
+            <a class="btn btn-outline-primary active"   th:href="@{/admin/show_checks}"> Show checks </a>
+        </div>
+    </div>
+</section>
+
+<div>
+    <section class="jumbotron2 text-center">
+        <br>
+        <h3> Order checks </h3>
+        <br>
+       <div>
+           <form th:object="${checkDto}" th:action="@{/admin/find_check}" method="get">
+            <div class="jumbotron2 text-center">
+                <div class="container" id="dataTable_filter">
+                    <label>
+                        <input type="number" class="form-control form-control-sm" th:field="*{id}"
+                                placeholder="Search by id">
+                    </label>
+                    <button type="submit" class="btn btn-default"  style="display: none;">Search</button>
+                </div>
+                <br>
+                <div th:if="${error}" style="color: red">
+                    <h5>Order not found</h5>
+                </div>
+            </div>
+        </form>
+       </div>
+        <table class="table table-hover">
+
+            <thead>
+            <tr>
+                <th scope="col"> ID </th>
+                <th scope="col"> order id </th>
+                <th scope="col"> price </th>
+                <th scope="col"> user id </th>
+                <th scope="col"> bankCard id </th>
+                <th scope="col"> creation date </th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="c : ${checks}">
+                <th scope="row" th:text="${c.id}"> ID </th>
+                <th scope="row" th:text="${c.orderId}"> order id </th>
+                <td th:text="${c.priceInCents}"> price </td>
+                <td th:text="${c.user.id}"> user id </td>
+                <td th:text="${c.bankCard}"> bankCard id </td>
+                <td th:text="${c.creationDate}"> creation date </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <br>
+        <br/>
+    </section>
+
+</div>
+
+<div th:include="fragments/footer :: footer" th:remove="tag"></div>
+
+</body>
+</html>

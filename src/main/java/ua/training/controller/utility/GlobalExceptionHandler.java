@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ua.training.controller.exception.BankTransactionException;
-import ua.training.controller.exception.OrderCreateException;
-import ua.training.controller.exception.OrderNotFoundException;
-import ua.training.controller.exception.RegException;
+import ua.training.controller.exception.*;
 import ua.training.dto.OrderDto;
 import ua.training.dto.UserDto;
 
@@ -49,6 +46,13 @@ public class GlobalExceptionHandler {
         log.error("OrderNotFound Exception");
         model.addAttribute("error", true);
         return "redirect:/shipments/show/1/all";
+    }
+
+    @ExceptionHandler(OrderCheckException.class)
+    public String handleOrderCheckException(Model model) {
+        log.error("OrderNotFound Exception");
+        model.addAttribute("error", true);
+        return "redirect:/admin/show_checks";
     }
 
     @ExceptionHandler(RegException.class)

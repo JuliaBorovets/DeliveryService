@@ -1,5 +1,6 @@
 package ua.training.service;
 
+import ua.training.controller.exception.OrderCheckException;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.BankCardDto;
 import ua.training.dto.OrderCheckDto;
@@ -12,7 +13,7 @@ public interface OrderCheckService {
 
     List<OrderCheckDto> showAllChecks();
 
-    OrderCheckDto showCheckById(Long checkId);
+    OrderCheckDto showCheckById(Long checkId) throws OrderCheckException;
 
     List<OrderCheckDto> showChecksByUser(Long userId);
 

@@ -2,6 +2,7 @@ package ua.training.service.serviceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ua.training.controller.exception.OrderCheckException;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.BankCardDto;
 import ua.training.dto.OrderCheckDto;
@@ -53,10 +54,10 @@ public class OrderCheckServiceImpl implements OrderCheckService {
 
 
     @Override
-    public OrderCheckDto showCheckById(Long checkId) {
+    public OrderCheckDto showCheckById(Long checkId) throws OrderCheckException {
         return checkToDtoConverter.convert(orderCheckRepository
                 .findById(checkId)
-                .orElseThrow(()->new RuntimeException("no check")));
+                .orElseThrow(()->new OrderCheckException("no check")));
     }
 
     @Override
