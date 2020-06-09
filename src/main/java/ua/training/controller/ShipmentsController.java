@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.training.controller.exception.OrderCreateException;
 import ua.training.controller.exception.OrderNotFoundException;
+import ua.training.controller.exception.UserNotFoundException;
 import ua.training.dto.DestinationDto;
 import ua.training.dto.OrderDto;
 import ua.training.entity.user.RoleType;
@@ -117,7 +118,7 @@ public class ShipmentsController {
 
     @PostMapping("/create_shipment")
     public String createOrder(@ModelAttribute OrderDto modelOrder, @AuthenticationPrincipal User user)
-            throws OrderCreateException {
+            throws OrderCreateException, UserNotFoundException {
 
         orderService.createOrder(modelOrder, user);
 
@@ -142,5 +143,12 @@ public class ShipmentsController {
         log.info("deleting order with id = " + orderId);
         return "redirect:/shipments/show/1/all";
 
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public String handleOrderNotFoundException(Model model) {
+        log.error("OrderNotFoundException Exception");
+        model.addAttribute("error", true);
+        return "redirect:/shipments/show/1/all";
     }
 }

@@ -40,23 +40,17 @@
                             Credit Card
                         </a>
                     </li>
-
                 </ul>
-                <!-- End -->
 
-                <!-- Credit card form content -->
                 <div class="tab-content">
 
-                    <!-- credit card info-->
                     <div id="nav-tab-card" class="tab-pane fade show active">
 
                         <form th:action="@{/bank/pay/{id}(id=${order.id})}" th:object="${orderCheck}" method="post">
 
-
                             <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
                                 <p>Please Correct Errors Below</p>
                             </div>
-
 
                             <div class="row">
                                 <div class=" col-md-10 offset-md-1 form-group" th:class="${#fields.hasErrors('orderId')}

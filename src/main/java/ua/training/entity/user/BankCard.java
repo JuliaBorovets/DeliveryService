@@ -12,7 +12,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity

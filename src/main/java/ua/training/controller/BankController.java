@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.training.controller.exception.BankException;
-import ua.training.controller.exception.BankTransactionException;
+import ua.training.controller.exception.CanNotPayException;
 import ua.training.controller.exception.OrderCheckException;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.BankCardDto;
@@ -39,16 +39,19 @@ public class BankController {
     }
 
     @ModelAttribute
-    public void setModel(@AuthenticationPrincipal User user,  Model model){
+    public void setModel(@AuthenticationPrincipal User user,  Model model, @RequestParam(required = false) String error){
 
+        model.addAttribute("error", error != null);
         model.addAttribute("user", user);
         model.addAttribute("isAdmin", user.getRole().equals(RoleType.ROLE_ADMIN));
 
     }
 
     @GetMapping
-    public String getBankInfo(@AuthenticationPrincipal User user,  Model model){
+    public String getBankInfo(@AuthenticationPrincipal User user, @RequestParam(required = false) String canNotPay,
+                              Model model){
 
+        model.addAttribute("canNotPay", canNotPay != null);
         model.addAttribute("bankCards", bankCardService.getAllUserBankCards(user));
 
         return "bank/info";
@@ -65,7 +68,7 @@ public class BankController {
 
 
     @PostMapping("/add_card")
-    public String addBankCard(@ModelAttribute BankCardDto bankCardDTO, @AuthenticationPrincipal User user, Model model)
+    public String addBankCard(@ModelAttribute BankCardDto bankCardDTO, @AuthenticationPrincipal User user)
             throws BankException {
 
         bankCardService.saveBankCardDTO(bankCardDTO, user.getId());
@@ -76,7 +79,7 @@ public class BankController {
     }
 
     @GetMapping("/update_card/{cardId}")
-    public String getUpdateBankPage(@PathVariable Long cardId, Model model) {
+    public String getUpdateBankPage(@PathVariable Long cardId, Model model) throws BankException {
 
         model.addAttribute("bankDTO", bankCardService.findBankCardDtoById(cardId));
 
@@ -84,10 +87,9 @@ public class BankController {
     }
 
     @PostMapping("/update_card/{cardId}")
-    public String updateBankCard(@PathVariable Long cardId, @ModelAttribute BankCardDto bankCardDTO,
-                                 @AuthenticationPrincipal User user){
+    public String updateBankCard(@PathVariable Long cardId, @ModelAttribute BankCardDto bankCardDTO) throws BankException {
 
-        bankCardService.updateBankCardDTO(bankCardDTO);
+        bankCardService.updateBankCardDTO(bankCardDTO, cardId);
 
         log.error("updating card");
 
@@ -106,7 +108,8 @@ public class BankController {
 
     @GetMapping(value = "/pay/{orderId}")
     public String payParticularShipmentView(@PathVariable Long orderId, Model model, @AuthenticationPrincipal User user,
-                                            @ModelAttribute("checkDto") OrderCheckDto orderCheckDto, @ModelAttribute("bankCard") BankCardDto bankCardDto)
+                                            @ModelAttribute("checkDto") OrderCheckDto orderCheckDto,
+                                            @ModelAttribute("bankCard") BankCardDto bankCardDto)
             throws OrderNotFoundException {
 
         model.addAttribute("order", orderService.getOrderDtoById(orderId));
@@ -120,7 +123,7 @@ public class BankController {
     @PostMapping(value = "/pay/{orderId}")
     public String payShipment(@PathVariable Long orderId, @ModelAttribute("checkDto") OrderCheckDto orderCheckDto,
                               @AuthenticationPrincipal User user)
-            throws OrderNotFoundException, BankTransactionException, BankException {
+            throws OrderNotFoundException, BankException, CanNotPayException {
 
         orderCheckDto.setUser(userService.findUserDTOById(user.getId()));
 
@@ -144,5 +147,33 @@ public class BankController {
 
         model.addAttribute("check", orderCheckService.showChecksByUser(user.getId()));
         return "bank/check_show";
+    }
+
+    @ExceptionHandler(OrderCheckException.class)
+    public String handleOrderCheckException(Model model) {
+        log.error("OrderCheckException Exception");
+        model.addAttribute("error", true);
+        return "redirect:/bank/show_checks";
+    }
+
+    @ExceptionHandler(BankException.class)
+    public String handleBankException(Model model) {
+        log.error("BankException Exception");
+        model.addAttribute("error", true);
+        return "redirect:/bank";
+    }
+
+    @ExceptionHandler(CanNotPayException.class)
+    public String handleCanNotPayException(Model model) {
+        log.error("CanNotPayException Exception");
+        model.addAttribute("canNotPay", true);
+        return "redirect:/bank";
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public String handleOrderNotFoundException(Model model) {
+        log.error("OrderNotFoundException Exception");
+        model.addAttribute("error", true);
+        return "redirect:/bank";
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserService {
 
-    UserDto saveNewUserDto(UserDto userDto) throws RegException;
+    void saveNewUserDto(UserDto userDto) throws RegException;
 
     UserDto findUserDTOById(Long id);
 

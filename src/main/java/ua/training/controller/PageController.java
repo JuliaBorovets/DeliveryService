@@ -4,10 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ua.training.controller.exception.RegException;
 import ua.training.dto.UserDto;
@@ -42,7 +39,7 @@ public class PageController implements WebMvcConfigurer {
     @GetMapping("/reg")
     public String registerUser(Model model) {
 
-        model.addAttribute("newUser", new UserDto());
+        model.addAttribute("newUser", UserDto.builder().build());
 
         return "registration";
     }
@@ -70,13 +67,19 @@ public class PageController implements WebMvcConfigurer {
         return "user/account_page";
     }
 
-
     @RequestMapping("/success")
     public String localRedirect() {
 
         return "redirect:/account_page";
     }
 
+    @ExceptionHandler(RegException.class)
+    public String handleRegException(Model model) {
+        log.error("registration exception. Duplicate user.");
+        model.addAttribute("newUser", new UserDto());
+        model.addAttribute("duplicate", true);
+        return "registration";
+    }
 }
 
 

@@ -8,7 +8,6 @@ import ua.training.entity.order.Destination;
 @Mapper(componentModel = "spring")
 public interface  DestinationMapper {
 
-
     DestinationMapper INSTANCE = Mappers.getMapper(DestinationMapper.class);
 
     DestinationDto destinationToDestinationDto(Destination destination);

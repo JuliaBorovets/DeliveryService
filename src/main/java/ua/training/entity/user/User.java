@@ -14,11 +14,10 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString
 
 @Entity
 @Table(name = "users",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"login", "id"})})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"login", "id", "email"})})
 public class User implements UserDetails {
 
     @Id
@@ -29,8 +28,10 @@ public class User implements UserDetails {
 
     private String lastName;
 
+    @Column(name = "login",  unique = true)
     private String login;
 
+    @Column(name = "email",  unique = true)
     private String email;
 
     private String password;
@@ -50,8 +51,6 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "card_id"))
     private Set<BankCard> cards = new HashSet<>();
 
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> result = new HashSet<>();
@@ -63,7 +62,6 @@ public class User implements UserDetails {
     public String getUsername() {
         return getLogin();
     }
-
 
     @Override
     public boolean isAccountNonExpired() {

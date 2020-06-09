@@ -39,6 +39,9 @@
         <br>
         <h3> Order checks </h3>
         <br>
+        <div th:if="${error}" style="color: red">
+            <h5>Order check not found</h5>
+        </div>
             <table class="table table-hover">
 
                 <thead>

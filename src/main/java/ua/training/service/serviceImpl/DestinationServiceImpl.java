@@ -2,6 +2,7 @@ package ua.training.service.serviceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ua.training.controller.exception.DestinationException;
 import ua.training.dto.DestinationDto;
 import ua.training.entity.order.Destination;
 import ua.training.mappers.DestinationMapper;
@@ -35,11 +36,11 @@ public class DestinationServiceImpl implements DestinationService {
 
 
     @Override
-    public Destination getDestination(String cityFrom, String cityTo) {
+    public Destination getDestination(String cityFrom, String cityTo) throws DestinationException {
 
         return destinationRepository
                 .findByCityFromAndCityTo(cityFrom, cityTo)
-                .orElseThrow(() -> new RuntimeException("can not find destination"));
+                .orElseThrow(() -> new DestinationException("no destination:  " + cityFrom + "-" + cityTo));
     }
 
 }

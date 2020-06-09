@@ -14,11 +14,13 @@ import ua.training.service.serviceImpl.UserServiceImpl;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserServiceImpl userService;
+    private final UserServiceImpl userService;
+    public final PasswordEncoder projectEncoder;
 
-    @Autowired
-    public PasswordEncoder projectEncoder;
+    public SecurityConfig(UserServiceImpl userService, PasswordEncoder projectEncoder) {
+        this.userService = userService;
+        this.projectEncoder = projectEncoder;
+    }
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {

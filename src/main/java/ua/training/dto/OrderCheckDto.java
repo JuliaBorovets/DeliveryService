@@ -3,7 +3,6 @@ package ua.training.dto;
 import lombok.*;
 import ua.training.entity.order.Status;
 
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -15,7 +14,6 @@ import java.time.LocalDate;
 @ToString
 public class OrderCheckDto {
 
-    @NotNull
     private Long id;
 
     private Long orderId;

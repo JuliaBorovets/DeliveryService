@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ua.training.controller.exception.OrderCreateException;
 import ua.training.controller.exception.OrderNotFoundException;
+import ua.training.controller.exception.UserNotFoundException;
 import ua.training.dto.OrderDto;
 import ua.training.entity.order.Order;
 import ua.training.entity.order.Status;
@@ -78,9 +79,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findOrderByStatus(Status.PAID).stream()
                 .map(orderToDtoConverter::convert)
                 .collect(Collectors.toList());
-
     }
-
 
     private BigDecimal calculatePrice(Order order) {
 
@@ -97,7 +96,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto getOrderDtoById(Long id) throws OrderNotFoundException {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new OrderNotFoundException("order " + id + " not found"));
+                .orElseThrow(() -> new OrderNotFoundException("order id=" + id + " not found"));
 
         return orderToDtoConverter.convert(order);
     }
@@ -106,7 +105,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto getOrderDtoByIdAndUserId(Long id, Long userId) throws OrderNotFoundException {
 
         Order order = orderRepository.findByIdAndOwner_id(id, userId)
-                .orElseThrow(() -> new OrderNotFoundException("order " + id + " not found"));
+                .orElseThrow(() -> new OrderNotFoundException("order id=" + id + " , userId=" + userId + "  not found"));
 
         return orderToDtoConverter.convert(order);
     }
@@ -120,11 +119,11 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             rollbackFor = OrderCreateException.class)
     @Override
-    public void createOrder(OrderDto orderDTO, User user) throws OrderCreateException {
+    public void createOrder(OrderDto orderDTO, User user) throws OrderCreateException, UserNotFoundException {
         Order orderToSave = orderConverter.convert(orderDTO);
 
-        User userToSave = userRepository.findUserById(user.getId()).orElseThrow(()->new
-                RuntimeException("no user"));
+        User userToSave = userRepository.findUserById(user.getId())
+                .orElseThrow(()->new UserNotFoundException("no user with id=" + user.getId()));
 
         try {
             orderToSave.setStatus(Status.NOT_PAID);
@@ -133,7 +132,7 @@ public class OrderServiceImpl implements OrderService {
             orderToSave.setShippingPriceInCents(calculatePrice(orderToSave));
             orderRepository.save(orderToSave);
         } catch (DataIntegrityViolationException e) {
-            throw new OrderCreateException("Can not create order");
+            throw new OrderCreateException("Can not create order with id = " + orderDTO.getId());
         }
     }
 
@@ -148,8 +147,6 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-
-    @Transactional
     @Override
     public void deleteOrderById(Long orderId) throws OrderNotFoundException {
         Order order = findOrderById(orderId);

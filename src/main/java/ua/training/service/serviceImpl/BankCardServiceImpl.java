@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ua.training.controller.exception.BankException;
+import ua.training.controller.exception.CanNotPayException;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.BankCardDto;
 import ua.training.dto.OrderCheckDto;
@@ -53,7 +54,7 @@ public class BankCardServiceImpl implements BankCardService {
     }
 
     @Transactional
-    public void deleteBankCardConnectionWithUser(Long bankId, Long userId) {
+    public void deleteBankCardConnectionWithUser(Long bankId, Long userId) throws BankException {
 
         BankCard  bankCard = findBankCardById(bankId);
 
@@ -91,33 +92,37 @@ public class BankCardServiceImpl implements BankCardService {
         try {
             bankCardRepository.save(bankCardToSave);
         } catch (DataIntegrityViolationException e) {
-            throw new BankException("Can not save bank card");
+            throw new BankException("Can not save bank card with  id=" + bankCardDTO.getId());
         }
 
     }
 
 
-    @Transactional
     @Override
-    public void updateBankCardDTO(BankCardDto bankCardDTO) {
-        bankCardRepository.save(BankCardMapper.INSTANCE.bankCardDtoToBankCard(bankCardDTO));
+    public void updateBankCardDTO(BankCardDto bankCardDTO, Long bankCardId) throws BankException {
+        BankCard bankCard = findBankCardById(bankCardId);
+        bankCard.setBalance(bankCardDTO.getBalance());
+        bankCardRepository.save(bankCard);
     }
 
 
-    @Transactional
     @Override
-    public void payForOrder(OrderCheckDto orderCheckDto) throws OrderNotFoundException, BankException {
+    public void payForOrder(OrderCheckDto orderCheckDto) throws OrderNotFoundException, BankException, CanNotPayException {
 
         Order order = orderService.findOrderById(orderCheckDto.getOrderId());
 
         if (order.getStatus().equals(Status.SHIPPED) || order.getStatus().equals(Status.PAID)){
-            throw new BankException("order is already paid");
+            throw new BankException("order with  id=" + order.getId() + " is already paid");
+        }
+
+        BankCard bankCard =  bankCardRepository.findById(orderCheckDto.getBankCard())
+                .orElseThrow(()->new BankException("no bank card with id=" + orderCheckDto.getBankCard()));
+
+        if (bankCard.getBalance().subtract(order.getShippingPriceInCents()).compareTo(BigDecimal.ZERO) < 0){
+            throw  new CanNotPayException("no money to pay for order with id=" + order.getId());
         }
 
         User user = userService.findUserById(orderCheckDto.getUser().getId());
-
-        BankCard bankCard =  bankCardRepository.findById(orderCheckDto.getBankCard())
-                .orElseThrow(()->new RuntimeException("dd"));
 
         OrderCheck orderCheck = OrderCheck.builder()
                 .user(user)
@@ -157,17 +162,17 @@ public class BankCardServiceImpl implements BankCardService {
     }
 
     @Override
-    public BankCardDto findBankCardDtoById(Long id) {
+    public BankCardDto findBankCardDtoById(Long id) throws BankException {
         return bankCardRepository
                 .findById(id)
                 .map(BankCardMapper.INSTANCE::bankCardToDto)
-                .orElseThrow(()->new RuntimeException("no card"));
+                .orElseThrow(() -> new BankException("no bank card with id=" + id));
     }
 
     @Override
-    public BankCard findBankCardById(Long id) {
+    public BankCard findBankCardById(Long id) throws BankException {
         return bankCardRepository
                 .findById(id)
-                .orElseThrow(()->new RuntimeException("no card"));
+                .orElseThrow(() -> new BankException("no bank card with id=" + id));
     }
 }

@@ -16,7 +16,6 @@ import ua.training.service.OrderCheckService;
 import ua.training.service.OrderService;
 import ua.training.service.UserService;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,7 +56,7 @@ public class OrderCheckServiceImpl implements OrderCheckService {
     public OrderCheckDto showCheckById(Long checkId) throws OrderCheckException {
         return checkToDtoConverter.convert(orderCheckRepository
                 .findById(checkId)
-                .orElseThrow(()->new OrderCheckException("no check")));
+                .orElseThrow(()->new OrderCheckException("no check with id=" + checkId)));
     }
 
     @Override
@@ -69,25 +68,10 @@ public class OrderCheckServiceImpl implements OrderCheckService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<OrderCheckDto> showChecksForMonthOfYear(LocalDate localDateDto) {
-
-        return orderCheckRepository.findAllByCreationDateAfter(localDateDto).stream()
-                .map(checkToDtoConverter::convert)
-                .collect(Collectors.toList());
-
-    }
 
     @Override
-    public List<OrderCheckDto> showChecksForYear(LocalDate localDateDto) {
-        int year = localDateDto.getYear();
-        return orderCheckRepository.findAllByCreationYear(year).stream()
-                .map(checkToDtoConverter::convert)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public OrderCheckDto createCheckDto(Long orderDtoId, BankCardDto bankCardDto, Long userId) throws OrderNotFoundException {
+    public OrderCheckDto createCheckDto(Long orderDtoId, BankCardDto bankCardDto, Long userId)
+            throws OrderNotFoundException {
 
         OrderDto orderDto = orderService.getOrderDtoById(orderDtoId);
         UserDto userDto = userService.findUserDTOById(userId);

@@ -2,6 +2,7 @@ package ua.training.service.serviceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.StatisticsDto;
@@ -29,7 +30,6 @@ public class AdminServiceImpl implements AdminService {
         this.orderCheckRepository = orderCheckRepository;
     }
 
-
     @Transactional
     @Override
     public void shipAllOrders(){
@@ -49,12 +49,13 @@ public class AdminServiceImpl implements AdminService {
         });
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            rollbackFor = OrderNotFoundException.class)
     @Override
     public void shipOrder(Long orderId) throws OrderNotFoundException {
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("can not find destination"));
+                .orElseThrow(() -> new OrderNotFoundException("can not find order with id=" + orderId));
 
         Long daysToDeliver = order.getDestination().getDaysToDeliver();
 

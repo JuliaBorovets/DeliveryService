@@ -14,7 +14,8 @@ public class OrderToDtoConverter implements Converter<Order, OrderDto> {
     private final DestinationMapper destinationMapper;
     private final CheckToDtoConverter checkToDtoConverter;
 
-    public OrderToDtoConverter(OrderTypeMapper orderTypeMapper, DestinationMapper destinationMapper, CheckToDtoConverter checkToDtoConverter) {
+    public OrderToDtoConverter(OrderTypeMapper orderTypeMapper, DestinationMapper destinationMapper,
+                               CheckToDtoConverter checkToDtoConverter) {
         this.orderTypeMapper = orderTypeMapper;
         this.destinationMapper = destinationMapper;
         this.checkToDtoConverter = checkToDtoConverter;

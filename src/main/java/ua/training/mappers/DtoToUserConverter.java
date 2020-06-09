@@ -13,7 +13,8 @@ public class DtoToUserConverter implements Converter<UserDto, User> {
     private final DtoToCheckConverter dtoToCheckConverter;
     private final BankCardMapper bankCardMapper;
 
-    public DtoToUserConverter(DtoToOrderConverter dtoToOrderConverter, DtoToCheckConverter dtoToCheckConverter, BankCardMapper bankCardMapper) {
+    public DtoToUserConverter(DtoToOrderConverter dtoToOrderConverter, DtoToCheckConverter dtoToCheckConverter,
+                              BankCardMapper bankCardMapper) {
         this.dtoToOrderConverter = dtoToOrderConverter;
         this.dtoToCheckConverter = dtoToCheckConverter;
         this.bankCardMapper = bankCardMapper;
@@ -44,7 +45,6 @@ public class DtoToUserConverter implements Converter<UserDto, User> {
             userDto.getCards()
                     .forEach( card -> user.getCards().add(bankCardMapper.bankCardDtoToBankCard(card)));
         }
-
 
         return user;
     }

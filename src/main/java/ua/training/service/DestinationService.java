@@ -1,5 +1,6 @@
 package ua.training.service;
 
+import ua.training.controller.exception.DestinationException;
 import ua.training.dto.DestinationDto;
 import ua.training.entity.order.Destination;
 
@@ -9,6 +10,6 @@ public interface DestinationService {
 
     List<DestinationDto> getAllDestinationDto();
 
-    Destination getDestination(String cityFrom, String cityTo);
+    Destination getDestination(String cityFrom, String cityTo) throws DestinationException;
 
 }

@@ -42,7 +42,17 @@
 </section>
 
 <div class="container-fluid text-center">
+    <div class="jumbotron2 text-center">
+        <div th:if="${error}" style="color: red">
+            <h4>Something went wrong...(</h4>
+        </div>
+    </div>
 
+    <div class="jumbotron2 text-center">
+        <div th:if="${canNotPay}" style="color: red">
+            <h4>Can not pay</h4>
+        </div>
+    </div>
     <h3 th:text="${user.firstName} + ' ' + ${user.lastName}"></h3>
     <br>
     <div class="table_info shadow">

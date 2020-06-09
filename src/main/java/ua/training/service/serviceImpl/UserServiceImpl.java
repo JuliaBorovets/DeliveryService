@@ -40,7 +40,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        return userRepository.findByLogin(login).orElseThrow(() -> new UsernameNotFoundException(login));
+        return userRepository.findByLogin(login)
+                .orElseThrow(() -> new UsernameNotFoundException(login));
     }
 
 
@@ -55,20 +56,19 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             rollbackFor = RegException.class)
     @Override
-    public UserDto saveNewUserDto(UserDto userDto) throws RegException {
+    public void saveNewUserDto(UserDto userDto) throws RegException {
 
         User user = dtoToUserConverter.convert(userDto);
         ProjectPasswordEncoder encoder = new ProjectPasswordEncoder();
 
         user.setPassword(encoder.encode(userDto.getPassword()));
-        user.setRole(userDto.getRole());
 
         try {
             userRepository.save(Objects.requireNonNull(user));
         } catch (DataIntegrityViolationException e) {
-            throw new RegException("saveNewUser exception");
+            throw new RegException("scan not save user with id = " + user.getId());
         }
-        return userToUserDtoConverter.convert(user);
+
     }
 
 

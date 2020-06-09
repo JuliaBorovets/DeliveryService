@@ -1,6 +1,7 @@
 package ua.training.service.serviceImpl;
 
 import org.springframework.stereotype.Service;
+import ua.training.controller.exception.OrderTypeException;
 import ua.training.dto.OrderTypeDto;
 import ua.training.entity.order.OrderType;
 import ua.training.mappers.OrderTypeMapper;
@@ -24,7 +25,8 @@ public class OrderTypeServiceImpl implements OrderTypeService {
     public List<OrderTypeDto> getAllOrderTypeDto() {
 
         List<OrderType> dtoList = new ArrayList<>();
-        orderTypeRepository.findAll().iterator().forEachRemaining(dtoList::add);
+        orderTypeRepository.findAll()
+                .iterator().forEachRemaining(dtoList::add);
 
         return dtoList.stream()
                 .map(OrderTypeMapper.INSTANCE::orderTypeToOrderTypeDto)
@@ -32,8 +34,8 @@ public class OrderTypeServiceImpl implements OrderTypeService {
     }
 
     @Override
-    public OrderType getOrderTypeById(Long id) {
+    public OrderType getOrderTypeById(Long id) throws OrderTypeException {
         return orderTypeRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("no type"));
+                .orElseThrow(()->new OrderTypeException("no type with id = " + id));
     }
 }

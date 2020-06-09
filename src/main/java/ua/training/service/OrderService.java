@@ -2,6 +2,7 @@ package ua.training.service;
 
 import ua.training.controller.exception.OrderCreateException;
 import ua.training.controller.exception.OrderNotFoundException;
+import ua.training.controller.exception.UserNotFoundException;
 import ua.training.dto.OrderDto;
 import ua.training.entity.order.Order;
 import ua.training.entity.user.User;
@@ -20,7 +21,7 @@ public interface OrderService {
 
     List<OrderDto> findAllArchivedUserOrders(Long userId);
 
-    void createOrder(OrderDto orderDTO, User user) throws OrderCreateException;
+    void createOrder(OrderDto orderDTO, User user) throws OrderCreateException, UserNotFoundException;
 
     OrderDto getOrderDtoById(Long id) throws OrderNotFoundException;
 

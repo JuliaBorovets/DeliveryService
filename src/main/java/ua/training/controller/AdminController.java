@@ -33,7 +33,8 @@ public class AdminController {
     private final UserService userService;
     private final OrderCheckService orderCheckService;
 
-    public AdminController(OrderService orderService, AdminService adminService, UserService userService, OrderCheckService orderCheckService) {
+    public AdminController(OrderService orderService, AdminService adminService, UserService userService,
+                           OrderCheckService orderCheckService) {
         this.orderService = orderService;
         this.adminService = adminService;
         this.userService = userService;
@@ -41,15 +42,15 @@ public class AdminController {
     }
 
     @ModelAttribute
-    public void setModel(@AuthenticationPrincipal User user,  Model model){
+    public void setModel(@AuthenticationPrincipal User user,  @RequestParam(required = false) String error, Model model){
+        model.addAttribute("error", error != null);
         model.addAttribute("user", user);
         model.addAttribute("isAdmin", user.getRole().equals(RoleType.ROLE_ADMIN));
 
     }
 
     @GetMapping({"/admin_page/page/{page}"})
-    public String calculatePage(@AuthenticationPrincipal User user, Model model,
-                                @PathVariable Long page) {
+    public String calculatePage( Model model, @PathVariable Long page) {
 
          List<OrderDto> orders = orderService.findAllPaidOrdersDTO();
          model.addAttribute("order", orders);
@@ -57,8 +58,8 @@ public class AdminController {
         return "admin/index";
     }
 
-    @GetMapping({"/to_ship"})
-    public String shipPage(@AuthenticationPrincipal User user, Model model) {
+    @GetMapping("/to_ship")
+    public String shipPage(Model model) {
 
         List<OrderDto> orders = orderService.findAllPaidOrdersDTO();
         model.addAttribute("order", orders);
@@ -68,8 +69,7 @@ public class AdminController {
 
 
     @GetMapping(value = "/to_ship/{id}")
-    public String shipOneOrder(@AuthenticationPrincipal User user, Model model, @PathVariable Long id,
-                            @PageableDefault Pageable pageable) throws OrderNotFoundException {
+    public String shipOneOrder(@PathVariable Long id, @PageableDefault Pageable pageable) throws OrderNotFoundException {
 
         adminService.shipOrder(id);
 
@@ -78,8 +78,7 @@ public class AdminController {
     }
 
     @PostMapping(value = "/to_ship")
-    public String shipAllOrders(@AuthenticationPrincipal User user, Model model,
-                               @PageableDefault Pageable pageable) throws OrderNotFoundException {
+    public String shipAllOrders(@PageableDefault Pageable pageable) throws OrderNotFoundException {
 
         adminService.shipAllOrders();
 
@@ -145,10 +144,10 @@ public class AdminController {
     }
 
     @GetMapping("/show_checks")
-    public String showAllChecks(  @RequestParam(required = false) String error, Model model){
+    public String showAllChecks( @RequestParam(required = false) String error, Model model){
 
         model.addAttribute("error", error != null);
-        model.addAttribute("checkDto", new OrderCheckDto());
+        model.addAttribute("checkDto", OrderCheckDto.builder().build());
         model.addAttribute("checks", orderCheckService.showAllChecks());
 
         return "admin/check_show";
@@ -164,9 +163,10 @@ public class AdminController {
         return "admin/check_show";
     }
 
-    @GetMapping("/showOrder")
-    public String showOrderByCheck(){
-        return "";
+    @ExceptionHandler({OrderNotFoundException.class, OrderCheckException.class})
+    public String handleOrderNotFoundException(Model model) {
+        log.error("OrderNotFoundException Exception");
+        model.addAttribute("error", true);
+        return "redirect:/admin/admin_page/page/1";
     }
-
 }

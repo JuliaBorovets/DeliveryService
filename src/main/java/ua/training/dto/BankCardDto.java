@@ -22,6 +22,6 @@ public class BankCardDto {
 
     private Long ccv;
 
-    private BigDecimal balance;
+    private BigDecimal balance = BigDecimal.ZERO;
 
 }
