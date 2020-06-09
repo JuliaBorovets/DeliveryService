@@ -8,9 +8,9 @@ import java.util.Map;
 
 public interface AdminService {
 
-    void shipAllOrders() throws OrderNotFoundException;
-
     void shipOrder(Long orderId) throws OrderNotFoundException;
+
+    void deliverOrder(Long orderID) throws OrderNotFoundException;
 
     StatisticsDto createStatisticsDto();
 

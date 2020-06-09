@@ -21,6 +21,8 @@ public interface OrderService {
 
     List<OrderDto> findAllArchivedUserOrders(Long userId);
 
+    List<OrderDto> findAllDeliveredUserOrders(Long userId);
+
     void createOrder(OrderDto orderDTO, User user) throws OrderCreateException, UserNotFoundException;
 
     OrderDto getOrderDtoById(Long id) throws OrderNotFoundException;
@@ -28,6 +30,8 @@ public interface OrderService {
     OrderDto getOrderDtoByIdAndUserId(Long id, Long userId) throws OrderNotFoundException;
 
     List<OrderDto> findAllPaidOrdersDTO();
+
+    List<OrderDto> findAllShippedOrdersDTO();
 
     Order findOrderById(Long orderId) throws OrderNotFoundException;
 

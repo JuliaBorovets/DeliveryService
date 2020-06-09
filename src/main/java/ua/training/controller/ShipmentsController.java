@@ -57,14 +57,11 @@ public class ShipmentsController {
             case "all":
                 model.addAttribute("orders", orderService.findAllUserOrders(user.getId()));
                 break;
-            case "paid" :
-                model.addAttribute("orders", orderService.findAllPaidUserOrders(user.getId()));
-                break;
             case "not_paid":
                 model.addAttribute("orders", orderService.findAllNotPaidUserOrders(user.getId()));
                 break;
-            case "shipped":
-                model.addAttribute("orders", orderService.findAllShippedUserOrders(user.getId()));
+            case "delivered":
+                model.addAttribute("orders", orderService.findAllDeliveredUserOrders(user.getId()));
                 break;
             case "archived":
                 model.addAttribute("orders", orderService.findAllArchivedUserOrders(user.getId()));

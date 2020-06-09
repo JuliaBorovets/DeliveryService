@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<!--suppress HtmlUnknownAttribute -->
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Admin page</title>
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/resources/images/image.png}">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <base href="/">
+
+    <script src="/webjars/jquery/3.3.1-1/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous" th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+<div th:include="fragments/header :: header_user_admin" th:remove="tag"></div>
+
+<br>
+
+<section class="jumbotron2 text-center">
+    <div class="container">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <a class="btn btn-outline-primary "   th:href="@{/admin/to_ship}"> Ship orders </a>
+            <a class="btn btn-outline-primary active"   th:href="@{/admin/to_deliver}"> Deliver orders </a>
+            <a class="btn btn-outline-primary"   th:href="@{/admin/users_list}"> Change roles </a>
+            <a class="btn btn-outline-primary "   th:href="@{/admin/show_checks}"> Show checks </a>
+        </div>
+    </div>
+</section>
+
+<div>
+    <br/>
+    <section class="jumbotron2 text-center">
+
+            <div class="jumbotron2 text-center">
+                <div th:if="${error}" style="color: red">
+                    <h4>Can not found</h4>
+                </div>
+            </div>
+
+            <table class="table table-hover">
+
+                <thead>
+                <tr>
+                    <th scope="col"> ID </th>
+                    <th scope="col"> description </th>
+                    <th scope="col"> Type </th>
+                    <th scope="col"> Weight </th>
+                    <th scope="col"> Destination </th>
+                    <th scope="col"> Delivery Date </th>
+                    <th scope="col"> Shipping price </th>
+                    <th scope="col"> Shipping Status </th>
+                    <th>Ship</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="o : ${order}">
+                    <th scope="row" th:text="${o.id}"> ID </th>
+                    <th scope="row" th:text="${o.description}"> description </th>
+                    <td th:text="${o.orderType.name}"> Order type </td>
+                    <td th:text="${o.weight}"> Order weight </td>
+                    <td th:text="${o.destination.cityFrom} + ' - ' + ${o.destination.cityTo}"> Order destination </td>
+                    <td th:text="${o.deliveryDate}"> Order deliveryDate </td>
+                    <td th:text="${o.shippingPriceInCents}"> Order shippingPrice </td>
+                    <td th:text="${o.status}"> Order status </td>
+                    <td>
+                        <a th:href="@{/admin/to_deliver/{id}(id=${o.id})}" > Deliver</a>
+                    </td>
+
+
+                </tr>
+                </tbody>
+            </table>
+
+            <br>
+        <br/>
+    </section>
+
+</div>
+
+<div th:include="fragments/footer :: footer" th:remove="tag"></div>
+
+</body>
+</html>

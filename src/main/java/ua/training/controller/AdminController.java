@@ -46,16 +46,6 @@ public class AdminController {
         model.addAttribute("error", error != null);
         model.addAttribute("user", user);
         model.addAttribute("isAdmin", user.getRole().equals(RoleType.ROLE_ADMIN));
-
-    }
-
-    @GetMapping({"/admin_page/page/{page}"})
-    public String calculatePage( Model model, @PathVariable Long page) {
-
-         List<OrderDto> orders = orderService.findAllPaidOrdersDTO();
-         model.addAttribute("order", orders);
-
-        return "admin/index";
     }
 
     @GetMapping("/to_ship")
@@ -64,28 +54,35 @@ public class AdminController {
         List<OrderDto> orders = orderService.findAllPaidOrdersDTO();
         model.addAttribute("order", orders);
 
-        return "admin/index";
+        return "admin/ship_page";
     }
-
 
     @GetMapping(value = "/to_ship/{id}")
     public String shipOneOrder(@PathVariable Long id, @PageableDefault Pageable pageable) throws OrderNotFoundException {
 
         adminService.shipOrder(id);
 
-        return "redirect:/admin/admin_page/page/1";
+        return "redirect:/admin/to_ship";
 
     }
 
-    @PostMapping(value = "/to_ship")
-    public String shipAllOrders(@PageableDefault Pageable pageable) throws OrderNotFoundException {
+    @GetMapping("/to_deliver")
+    public String deliverPage(Model model) {
 
-        adminService.shipAllOrders();
+        List<OrderDto> orders = orderService.findAllShippedOrdersDTO();
+        model.addAttribute("order", orders);
 
-        return "redirect:/admin/admin_page/page/1";
-
+        return "admin/deliver_page";
     }
 
+    @GetMapping(value = "/to_deliver/{id}")
+    public String deliverOneOrder(@PathVariable Long id, @PageableDefault Pageable pageable) throws OrderNotFoundException {
+
+        adminService.deliverOrder(id);
+
+        return "redirect:/admin/to_deliver";
+
+    }
 
     @GetMapping("/statistics")
     public String showStatistics(Model model){
@@ -154,7 +151,7 @@ public class AdminController {
     }
 
     @GetMapping("/find_check")
-    public String findOrderById(@ModelAttribute("checkDto") OrderCheckDto checkDto,
+    public String findOrderCheckById(@ModelAttribute("checkDto") OrderCheckDto checkDto,
                                 Model model) throws OrderCheckException {
 
         List<OrderCheckDto> checkDtoList = Collections.singletonList(orderCheckService.showCheckById(checkDto.getId()));
@@ -163,10 +160,10 @@ public class AdminController {
         return "admin/check_show";
     }
 
-    @ExceptionHandler({OrderNotFoundException.class, OrderCheckException.class})
+    @ExceptionHandler( OrderCheckException.class)
     public String handleOrderNotFoundException(Model model) {
         log.error("OrderNotFoundException Exception");
         model.addAttribute("error", true);
-        return "redirect:/admin/admin_page/page/1";
+        return "redirect:/admin/show_checks";
     }
 }

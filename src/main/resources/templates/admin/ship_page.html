@@ -27,7 +27,8 @@
 <section class="jumbotron2 text-center">
     <div class="container">
         <div class="btn-group mr-2" role="group" aria-label="First group">
-            <a class="btn btn-outline-primary active"   th:href="@{/admin/admin_page/page/1}"> Ship orders </a>
+            <a class="btn btn-outline-primary active"   th:href="@{/admin/to_ship}"> Ship orders </a>
+            <a class="btn btn-outline-primary"   th:href="@{/admin/to_deliver}"> Deliver orders </a>
             <a class="btn btn-outline-primary"   th:href="@{/admin/users_list}"> Change roles </a>
             <a class="btn btn-outline-primary "   th:href="@{/admin/show_checks}"> Show checks </a>
         </div>
@@ -39,20 +40,9 @@
     <br/>
     <section class="jumbotron2 text-center">
 
-        <form th:action="@{/admin/to_ship}" method="post">
-            <form>
-                <div class="col s12 sign">
-                    <button class="calculate waves-effect waves-light"
-                            type="submit" name="action" th:text="#{to.ship}">
-                    </button>
-                    <br>
-                </div>
-            </form>
-            <br>
-
             <div class="jumbotron2 text-center">
                 <div th:if="${error}" style="color: red">
-                    <h4>Can not found</h4>
+                    <h5>Can not found</h5>
                 </div>
             </div>
 
@@ -86,14 +76,12 @@
                         <a th:href="@{/admin/to_ship/{id}(id=${o.id})}" > Ship</a>
                     </td>
 
-
                 </tr>
                 </tbody>
             </table>
 
             <br>
 
-        </form>
         <br/>
     </section>
 

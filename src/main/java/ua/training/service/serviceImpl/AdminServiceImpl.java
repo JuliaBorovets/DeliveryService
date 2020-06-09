@@ -15,7 +15,6 @@ import ua.training.service.AdminService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -30,24 +29,6 @@ public class AdminServiceImpl implements AdminService {
         this.orderCheckRepository = orderCheckRepository;
     }
 
-    @Transactional
-    @Override
-    public void shipAllOrders(){
-
-        List<Order> orders = orderRepository.findOrderByStatus(Status.PAID);
-
-        orders.forEach(order -> {
-
-            Long daysToDeliver = order.getDestination().getDaysToDeliver();
-
-            order.setShippingDate(LocalDate.now().plusDays(1L));
-
-            order.setDeliveryDate(LocalDate.now().plusDays(daysToDeliver));
-
-            order.setStatus(Status.SHIPPED);
-
-        });
-    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW,
             rollbackFor = OrderNotFoundException.class)
@@ -64,6 +45,17 @@ public class AdminServiceImpl implements AdminService {
         order.setDeliveryDate(LocalDate.now().plusDays(daysToDeliver));
 
         order.setStatus(Status.SHIPPED);
+
+    }
+
+    @Override
+    public void deliverOrder(Long orderId) throws OrderNotFoundException {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("can not find order with id=" + orderId));
+        order.setDeliveryDate(LocalDate.now().plusDays(1));
+        order.setStatus(Status.DELIVERED);
+        orderRepository.save(order);
 
     }
 
