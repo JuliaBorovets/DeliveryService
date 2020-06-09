@@ -47,12 +47,6 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<OrderDto> findAllPaidUserOrders(Long userId) {
-        return orderRepository.findByStatusAndOwner_Id(Status.PAID, userId).stream()
-                .map(orderToDtoConverter::convert)
-                .collect(Collectors.toList());
-    }
 
     @Override
     public List<OrderDto> findAllNotPaidUserOrders(Long userId) {
@@ -61,12 +55,6 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<OrderDto> findAllShippedUserOrders(Long userId) {
-        return orderRepository.findByStatusAndOwner_Id(Status.SHIPPED, userId).stream()
-                .map(orderToDtoConverter::convert)
-                .collect(Collectors.toList());
-    }
 
     @Override
     public List<OrderDto> findAllArchivedUserOrders(Long userId) {
@@ -95,7 +83,12 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
     }
 
-
+    @Override
+    public List<OrderDto> findAllDeliveredOrdersDto() {
+        return orderRepository.findOrderByStatus(Status.DELIVERED).stream()
+                .map(orderToDtoConverter::convert)
+                .collect(Collectors.toList());
+    }
 
     private BigDecimal calculatePrice(Order order) {
 
@@ -157,7 +150,7 @@ public class OrderServiceImpl implements OrderService {
     public void moveOrderToArchive(Long orderId) throws OrderNotFoundException {
         Order order = findOrderById(orderId);
 
-        if (order.getStatus().equals(Status.DELIVERED)) {
+        if (order.getStatus().equals(Status.RECEIVED)) {
             order.setStatus(Status.ARCHIVED);
             orderRepository.save(order);
         }

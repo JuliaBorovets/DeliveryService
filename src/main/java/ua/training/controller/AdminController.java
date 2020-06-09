@@ -84,6 +84,23 @@ public class AdminController {
 
     }
 
+    @GetMapping("/to_receive")
+    public String receivePage(Model model) {
+
+        List<OrderDto> orders = orderService.findAllDeliveredOrdersDto();
+        model.addAttribute("order", orders);
+
+        return "admin/receive_page";
+    }
+
+    @GetMapping(value = "/to_receive/{id}")
+    public String receiveOneOrder(@PathVariable Long id, @PageableDefault Pageable pageable) throws OrderNotFoundException {
+
+        adminService.receiveOrder(id);
+
+        return "redirect:/admin/to_receive";
+    }
+
     @GetMapping("/statistics")
     public String showStatistics(Model model){
 

@@ -12,6 +12,8 @@ public interface AdminService {
 
     void deliverOrder(Long orderID) throws OrderNotFoundException;
 
+    void receiveOrder(Long orderId) throws OrderNotFoundException;
+
     StatisticsDto createStatisticsDto();
 
     Map<Integer, Long> statisticsNumberOfOrdersByForYear(Integer year);

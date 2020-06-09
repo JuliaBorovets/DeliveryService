@@ -60,6 +60,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public void receiveOrder(Long orderId) throws OrderNotFoundException {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("can not find order with id=" + orderId));
+
+        order.setStatus(Status.RECEIVED);
+        orderRepository.save(order);
+    }
+
+    @Override
     public StatisticsDto createStatisticsDto() {
 
         BigDecimal earningsLastMonth = orderCheckRepository

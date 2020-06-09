@@ -13,11 +13,7 @@ public interface OrderService {
 
     List<OrderDto> findAllUserOrders(Long userId);
 
-    List<OrderDto> findAllPaidUserOrders(Long userId);
-
     List<OrderDto> findAllNotPaidUserOrders(Long userId);
-
-    List<OrderDto> findAllShippedUserOrders(Long userId);
 
     List<OrderDto> findAllArchivedUserOrders(Long userId);
 
@@ -32,6 +28,8 @@ public interface OrderService {
     List<OrderDto> findAllPaidOrdersDTO();
 
     List<OrderDto> findAllShippedOrdersDTO();
+
+    List<OrderDto> findAllDeliveredOrdersDto();
 
     Order findOrderById(Long orderId) throws OrderNotFoundException;
 

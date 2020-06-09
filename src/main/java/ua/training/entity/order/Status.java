@@ -5,5 +5,6 @@ public enum Status {
     NOT_PAID,
     SHIPPED,
     DELIVERED,
+    RECEIVED,
     ARCHIVED;
 }
