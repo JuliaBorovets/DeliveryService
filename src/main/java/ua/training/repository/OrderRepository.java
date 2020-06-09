@@ -6,6 +6,7 @@ import ua.training.entity.order.Order;
 import ua.training.entity.order.Status;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends CrudRepository<Order, Long> {
@@ -15,5 +16,7 @@ public interface OrderRepository extends CrudRepository<Order, Long> {
     List<Order> findByStatusAndOwner_Id(Status status, Long ownerId);
 
     List<Order> findOrderByStatus(Status status);
+
+    Optional<Order> findByIdAndOwner_id(Long orderId, Long ownerId);
 
 }

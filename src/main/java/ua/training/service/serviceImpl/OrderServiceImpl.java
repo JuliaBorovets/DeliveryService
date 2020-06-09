@@ -103,6 +103,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public OrderDto getOrderDtoByIdAndUserId(Long id, Long userId) throws OrderNotFoundException {
+
+        Order order = orderRepository.findByIdAndOwner_id(id, userId)
+                .orElseThrow(() -> new OrderNotFoundException("order " + id + " not found"));
+
+        return orderToDtoConverter.convert(order);
+    }
+
+    @Override
     public Order findOrderById(Long orderId) throws OrderNotFoundException {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("order " + orderId + " not found"));

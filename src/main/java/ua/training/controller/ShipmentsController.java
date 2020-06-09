@@ -74,12 +74,22 @@ public class ShipmentsController {
     }
 
     @GetMapping("/find_order")
-    public String findOrderById(@ModelAttribute OrderDto orderDto,
+    public String findOrderById(@ModelAttribute OrderDto orderDto, @AuthenticationPrincipal User user,
                                 Model model) throws OrderNotFoundException {
 
-        List<OrderDto> order = Collections.singletonList(orderService.getOrderDtoById(orderDto.getId()));
+        List<OrderDto> order = Collections.singletonList(orderService.getOrderDtoByIdAndUserId(orderDto.getId(), user.getId()));
 
         model.addAttribute("orders", order);
+
+        return "user/my_shipments";
+    }
+
+    @GetMapping("/find_order/{id}")
+    public String findOrder(@PathVariable Long id, Model model) throws OrderNotFoundException {
+
+        List<OrderDto> order =  Collections.singletonList(orderService.getOrderDtoById(id));
+        model.addAttribute("orders", order);
+        model.addAttribute("orderDto", OrderDto.builder().build());
 
         return "user/my_shipments";
     }

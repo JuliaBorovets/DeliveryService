@@ -164,5 +164,9 @@ public class AdminController {
         return "admin/check_show";
     }
 
+    @GetMapping("/showOrder")
+    public String showOrderByCheck(){
+        return "";
+    }
 
 }
