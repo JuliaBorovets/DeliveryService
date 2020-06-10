@@ -6,6 +6,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import ua.training.controller.exception.OrderCheckException;
 import ua.training.controller.exception.OrderNotFoundException;
@@ -39,6 +40,12 @@ public class AdminController {
         this.adminService = adminService;
         this.userService = userService;
         this.orderCheckService = orderCheckService;
+    }
+
+    @InitBinder
+    public void setAllowedFields(WebDataBinder webDataBinder){
+        webDataBinder.setDisallowedFields("id");
+
     }
 
     @ModelAttribute

@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import ua.training.controller.exception.OrderCreateException;
 import ua.training.controller.exception.OrderNotFoundException;
@@ -16,6 +18,7 @@ import ua.training.service.DestinationService;
 import ua.training.service.OrderService;
 import ua.training.service.OrderTypeService;
 
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +39,12 @@ public class ShipmentsController {
         this.orderService = orderService;
         this.orderTypeService = orderTypeService;
         this.destinationService = destinationService;
+    }
+
+    @InitBinder
+    public void setAllowedFields(WebDataBinder webDataBinder){
+        webDataBinder.setDisallowedFields("id");
+
     }
 
     @ModelAttribute
@@ -114,8 +123,13 @@ public class ShipmentsController {
     }
 
     @PostMapping("/create_shipment")
-    public String createOrder(@ModelAttribute OrderDto modelOrder, @AuthenticationPrincipal User user)
+    public String createOrder(@Valid @ModelAttribute OrderDto modelOrder, BindingResult bindingResult,
+                              @AuthenticationPrincipal User user)
             throws OrderCreateException, UserNotFoundException {
+
+        if (bindingResult.hasErrors()){
+            return "user/new_order";
+        }
 
         orderService.createOrder(modelOrder, user);
 

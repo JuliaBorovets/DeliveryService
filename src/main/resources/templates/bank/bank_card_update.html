@@ -86,7 +86,7 @@
                                     <div class="form-group mb-4"  th:class="${#fields.hasErrors('balance')}
                                 ? 'form-group mb-4 has-error' : 'form-group mb-4'">
                                         <label> Balance </label>
-                                        <input type="text" pattern="\d*" placeholder="Your balance" class="form-control"
+                                        <input type="text" pattern="[0-9]+([,.][0-9]+)?" placeholder="Your balance" class="form-control"
                                                th:field="*{balance}" maxlength="16" th:errorclass="has-error" />
                                     </div>
                                 </div>

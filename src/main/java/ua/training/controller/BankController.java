@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.training.controller.exception.BankException;
 import ua.training.controller.exception.CanNotPayException;
@@ -18,6 +19,9 @@ import ua.training.service.OrderCheckService;
 import ua.training.service.UserService;
 import ua.training.service.serviceImpl.OrderServiceImpl;
 
+import javax.validation.Valid;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
 @Slf4j
@@ -59,17 +63,32 @@ public class BankController {
 
 
     @GetMapping("/add_card")
-    public String getBankPage(@ModelAttribute("bankDTO") BankCardDto bankCardDTO, Model model) {
+    public String getBankPage( Model model) {
 
-        model.addAttribute("bankDTO", bankCardDTO == null ? new BankCardDto() : bankCardDTO);
+        model.addAttribute("bankDTO", BankCardDto.builder().build());
 
         return "bank/bank_card_add";
     }
 
 
     @PostMapping("/add_card")
-    public String addBankCard(@ModelAttribute BankCardDto bankCardDTO, @AuthenticationPrincipal User user)
+    public String addBankCard(@Valid @ModelAttribute("bankDTO") BankCardDto bankCardDTO, BindingResult bindingResult,
+                              @AuthenticationPrincipal User user)
             throws BankException {
+
+        if (bindingResult.hasErrors()){
+            return "bank/bank_card_add";
+        }
+
+        String expDate = (bankCardDTO.getExpMonth() < 10) ?
+                ("01/0" + bankCardDTO.getExpMonth() + "/" + bankCardDTO.getExpYear()) :
+                ("01/" + bankCardDTO.getExpMonth() + "/" + bankCardDTO.getExpYear());
+
+        if (LocalDate.parse(expDate, DateTimeFormatter.ofPattern("dd/MM/yyy")).isBefore(LocalDate.now())) {
+
+            bindingResult.rejectValue("expYear", "not valid", "Not valid expiration date");
+
+        }
 
         bankCardService.saveBankCardDTO(bankCardDTO, user.getId());
 

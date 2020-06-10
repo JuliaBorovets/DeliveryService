@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ua.training.controller.exception.RegException;
@@ -22,6 +24,12 @@ public class PageController implements WebMvcConfigurer {
 
     public PageController(UserService userService) {
         this.userService = userService;
+    }
+
+    @InitBinder
+    public void setAllowedFields(WebDataBinder webDataBinder){
+        webDataBinder.setDisallowedFields("id");
+
     }
 
     @ModelAttribute
@@ -45,12 +53,16 @@ public class PageController implements WebMvcConfigurer {
     }
 
     @PostMapping("/reg")
-    public String newUser(@Valid @ModelAttribute("newUser") UserDto modelUser) throws RegException {
+    public String newUser(@Valid @ModelAttribute("newUser") UserDto modelUser, BindingResult bindingResult) throws RegException {
+
+        if (bindingResult.hasErrors()){
+            return "registration";
+        }
 
         userService.saveNewUserDto(modelUser);
         log.info("new user registration");
-
         return "redirect:/login";
+
     }
 
     @GetMapping("/login")

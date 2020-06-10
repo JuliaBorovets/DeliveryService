@@ -46,7 +46,7 @@
 
                             <div class="row">
 
-                                <input type="hidden" th:field="*{id}"/>
+                                <input type="hidden" th:field="*{id}" required/>
 
                                 <div class="col-md-12 form-group text-center" th:class="${#fields.hasErrors('description')}
                                 ? 'col-md-12 form-group has-error' : 'col-md-12 form-group'">
@@ -54,7 +54,8 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-md-12 form-group">
-                                                <input type="text" class="form-control" th:field="*{description}" th:errorclass="has-error"/>
+                                                <input type="text" class="form-control" th:field="*{description}"
+                                                       maxlength="255" th:errorclass="has-error" required/>
                                             </div>
                                         </div>
                                     </div>
@@ -71,7 +72,7 @@
                                 <div class="col-md-5 offset-md-1 form-group text-center" th:class="${#fields.hasErrors('weight')}
                                 ? 'col-md-5 offset-md-1 form-group has-error' : 'col-md-5 offset-md-1 form-group'">
                                     <label>Weight:</label>
-                                    <input type="number" class="form-control" th:field="*{weight}" th:errorclass="has-error" min="0"/>
+                                    <input type="number" class="form-control" th:field="*{weight}" th:errorclass="has-error" min="0" required/>
                                     <span class="help-block" th:if="${#fields.hasErrors('weight')}">
                                         <ul>
                                             <li th:each="err : ${#fields.errors('weight')}" th:text="${err}"/>
@@ -80,7 +81,7 @@
                                 </div>
                                 <div class="col-md-5 offset-md-0 form-group text-center">
                                     <label>Type:</label>
-                                    <select class="form-control" th:field="*{type}">
+                                    <select class="form-control" th:field="*{type}" required>
                                         <option th:each="type : ${types}"
                                                 th:value="${type.id}"
                                                 th:text="${type.name}"
@@ -93,7 +94,7 @@
                             <div class="row">
                                 <div class="col-md-5 offset-md-1 form-group text-center">
                                     <label>Destination from:</label>
-                                    <select class="form-control" th:field="*{destinationCityFrom}">
+                                    <select class="form-control" th:field="*{destinationCityFrom}" required>
                                         <option th:each="dest : ${destinationsFrom}"
                                                 th:value="${dest}"
                                                 th:text="${dest}"
@@ -104,7 +105,7 @@
                                 </div>
                                 <div class="col-md-5  offset-md-0 form-group text-center">
                                     <label>Destination to:</label>
-                                    <select class="form-control" th:field="*{destinationCityTo}">
+                                    <select class="form-control" th:field="*{destinationCityTo}" required>
                                         <option th:each="dest : ${destinationsTo}"
                                                 th:value="${dest}"
                                                 th:text="${dest}"

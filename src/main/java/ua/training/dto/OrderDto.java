@@ -3,6 +3,9 @@ package ua.training.dto;
 import lombok.*;
 import ua.training.entity.order.Status;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Setter
@@ -15,12 +18,19 @@ public class OrderDto {
 
     private Long id;
 
+    @Size(min = 3, max = 255)
     private String description;
 
-    private OrderTypeDto orderType;
+    @NotBlank
+    private String destinationCityFrom;
 
-    private DestinationDto destination;
+    @NotBlank
+    private String destinationCityTo;
 
+    @NotBlank
+    private String type;
+
+    @Positive
     private BigDecimal weight;
 
     private Status status;
@@ -33,11 +43,9 @@ public class OrderDto {
 
     private OrderCheckDto check;
 
-    private String destinationCityFrom;
+    private OrderTypeDto orderType;
 
-    private String destinationCityTo;
-
-    private String type;
+    private DestinationDto destination;
 
 }
 

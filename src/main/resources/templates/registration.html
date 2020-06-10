@@ -6,53 +6,121 @@
     <link rel="shortcut icon" type="image/x-icon" th:href="@{/resources/images/image.png}">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="reg.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+    <script src="/webjars/jquery/3.3.1-1/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous" th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"></script>
+
 </head>
 
-<body onload="checkFields()">
+<body >
 <div class="column">
     <a class="button" href="/login" th:text="#{go.to.first.page}">{To the first page}</a>
     <h1 th:text="#{reg.welcome}">{Welcome header}</h1>
     <br>
-    <div class="alert" th:if="${error}">
-        <h3 class="black" th:text="#{reg.error.generic}">{Reg error}</h3>
-    </div>
+
     <div class="alert" th:if="${duplicate}">
         <h3 class="black" th:text="#{reg.error.duplicate}">{Reg error}</h3>
     </div>
 
 
+
     <div class="registr">
         <form id="newUser" name="newUser" action="#" th:action="@{/reg}" th:object="${newUser}" method="post">
 
-            <div>
-                <input type="text" id="firstName" name="firstName" class="firstName" th:field="*{firstName}"
-                       th:placeholder="#{reg.firstname.lat}" required>
+<!--            <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">-->
+<!--                <p>Please Correct Errors Below</p>-->
+<!--            </div>-->
+
+            <div class="row">
+                <div class="col-md-6 offset-md-0 form-group text-center" th:class="${#fields.hasErrors('firstName')}
+                                    ? 'col-md-6 offset-md-0 form-group text-center has-error' : 'col-md-6 offset-md-0 form-group text-center'">
+                    <label>first Name</label>
+                    <div class="input-group">
+                        <input type="text" placeholder="firstName" class="form-control"
+                               th:field="*{firstName}" th:errorclass="has-error" required/>
+                    </div>
+                    <span class="help-block" style="color: red" th:if="${#fields.hasErrors('firstName')}">
+                        <ul style="list-style-type: none;">
+                            <li th:each="err : ${#fields.errors('firstName')}" th:text="${err}"/>
+                        </ul>
+                    </span>
+                </div>
+
+                <div class="col-md-6 offset-md-0 form-group text-center" th:class="${#fields.hasErrors('lastName')}
+                                    ? 'col-md-6 offset-md-0 form-group text-center has-error' : 'col-md-6 offset-md-0 form-group text-center'">
+                    <label>last Name</label>
+                    <div class="input-group">
+                        <input type="text" placeholder="lastName" class="form-control"
+                               th:field="*{lastName}" th:errorclass="has-error" required/>
+                    </div>
+                    <span class="help-block" style="color: red" th:if="${#fields.hasErrors('lastName')}">
+                        <ul style="list-style-type: none;">
+                            <li th:each="err : ${#fields.errors('lastName')}" th:text="${err}"/>
+                        </ul>
+                    </span>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-6 offset-md-0 form-group text-center" th:class="${#fields.hasErrors('login')}
+                                    ? 'col-md-6 offset-md-0 form-group text-center has-error' : 'col-md-6 offset-md-0 form-group text-center'">
+                    <label>login</label>
+                    <div class="input-group">
+                        <input type="text" placeholder="login" class="form-control"
+                               th:field="*{login}" th:errorclass="has-error" required/>
+                    </div>
+                    <span class="help-block" style="color: red" th:if="${#fields.hasErrors('login')}">
+                        <ul style="list-style-type: none;">
+                            <li th:each="err : ${#fields.errors('login')}" th:text="${err}"/>
+                        </ul>
+                    </span>
+                </div>
+
+                <div class="col-md-6 offset-md-0 form-group text-center" th:class="${#fields.hasErrors('email')}
+                                    ? 'col-md-6 offset-md-0 form-group text-center has-error' : 'col-md-6 offset-md-0 form-group text-center'">
+                    <label>email</label>
+                    <div class="input-group">
+                        <input type="text" placeholder="email" class="form-control"
+                               th:field="*{email}" th:errorclass="has-error" required/>
+                    </div>
+                    <span class="help-block" style="color: red" th:if="${#fields.hasErrors('email')}">
+                        <ul style="list-style-type: none;">
+                            <li th:each="err : ${#fields.errors('email')}" th:text="${err}"/>
+                        </ul>
+                    </span>
+                </div>
             </div>
 
-            <div>
-                <input type="text" id="lastName" name="lastName" class="lastName" th:field="*{lastName}"
-                       th:placeholder="#{reg.lastname.lat}" required>
+
+            <div class="row">
+                <div class="col-md-6 offset-md-3 form-group text-center" th:class="${#fields.hasErrors('password')}
+                                    ? 'col-md-6 offset-md-3 form-group text-center has-error' : 'col-md-6 offset-md-3 form-group text-center'">
+                    <label>password</label>
+                    <div class="input-group">
+                        <input type="password" id="password" name="password" placeholder="password" class="form-control"
+                               th:field="*{password}" th:errorclass="has-error" required/>
+                    </div>
+                    <span class="help-block" style="color: red" th:if="${#fields.hasErrors('password')}">
+                        <ul style="list-style-type: none;">
+                            <li th:each="err : ${#fields.errors('password')}" th:text="${err}"/>
+                        </ul>
+                    </span>
+                </div>
             </div>
 
-            <br/>
-            <div>
-                <input type="text" id="login" name="login" th:field="*{login}" class="login"
-                       th:placeholder="#{login.username}" required>
-            </div>
-            <div>
-                <input type="email" id="email" name="email" th:field="*{email}" class="email"
-                       th:placeholder="#{reg.email}" required>
-            </div>
-            <br/>
-            <div>
-                <input type="password" id="password" name="password" class="password" th:placeholder="#{login.password}"
-                       required>
-            </div>
-            <div>
-                <input class="button" type="submit" th:value="#{reg.submit}">
+            <div class="row">
+                <div class="col-md-6 offset-md-3 form-group text-center">
+                     <input class="button" type="submit" th:value="#{reg.submit}">
+                </div>
             </div>
         </form>
     </div>
 </div>
+
 </body>
 </html>
