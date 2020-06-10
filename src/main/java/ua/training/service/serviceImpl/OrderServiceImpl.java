@@ -1,6 +1,8 @@
 package ua.training.service.serviceImpl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,12 +27,19 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@PropertySource("classpath:constants.properties")
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final DtoToOrderConverter orderConverter;
     private final UserRepository userRepository;
     private final OrderToDtoConverter orderToDtoConverter;
+
+    @Value("${constants.BASE.PRICE}")
+    private BigDecimal BASE_PRICE;
+
+    @Value("${constants.WEIGHT.COEFFICIENT}")
+    private BigDecimal WEIGHT_COEFFICIENT;
 
     public OrderServiceImpl(OrderRepository orderRepository, DtoToOrderConverter orderConverter,
                             UserRepository userRepository, OrderToDtoConverter orderToDtoConverter) {
@@ -94,11 +103,11 @@ public class OrderServiceImpl implements OrderService {
 
         BigDecimal priceForDestination = order.getDestination().getPriceInCents();
 
-        BigDecimal priceForWeight = order.getWeight().multiply(BigDecimal.valueOf(0.5));
+        BigDecimal priceForWeight = order.getWeight().multiply(WEIGHT_COEFFICIENT);
 
         BigDecimal priceForType = order.getOrderType().getPriceInCents();
 
-        return priceForDestination.add(priceForType).add(priceForWeight);
+        return priceForDestination.add(priceForType).add(priceForWeight).add(BASE_PRICE);
 
     }
 
