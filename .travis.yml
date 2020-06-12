@@ -10,7 +10,7 @@ cache:
     - $HOME/.m2
 
 ## Codecov https://github.com/codecov/example-java
-#after_success:
+after_success:
   - bash <(curl -s https://codecov.io/bash)
 
 # Notifications https://docs.travis-ci.com/user/notifications/
@@ -20,3 +20,4 @@ notifications:
       - juliaborovets2001@gmail.com
     on_success: always # default: change
     on_failure: always # default: always
+
