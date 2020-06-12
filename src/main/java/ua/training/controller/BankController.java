@@ -20,8 +20,6 @@ import ua.training.service.UserService;
 import ua.training.service.serviceImpl.OrderServiceImpl;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
 @Slf4j
@@ -80,16 +78,6 @@ public class BankController {
             return "bank/bank_card_add";
         }
 
-        String expDate = (bankCardDTO.getExpMonth() < 10) ?
-                ("01/0" + bankCardDTO.getExpMonth() + "/" + bankCardDTO.getExpYear()) :
-                ("01/" + bankCardDTO.getExpMonth() + "/" + bankCardDTO.getExpYear());
-
-        if (LocalDate.parse(expDate, DateTimeFormatter.ofPattern("dd/MM/yyy")).isBefore(LocalDate.now())) {
-
-            bindingResult.rejectValue("expYear", "not valid", "Not valid expiration date");
-
-        }
-
         bankCardService.saveBankCardDTO(bankCardDTO, user.getId());
 
         log.error("adding card");
@@ -144,7 +132,7 @@ public class BankController {
                               @AuthenticationPrincipal User user)
             throws OrderNotFoundException, BankException, CanNotPayException {
 
-        orderCheckDto.setUser(userService.findUserDTOById(user.getId()));
+        orderCheckDto.setUserId(user.getId());
 
         bankCardService.payForOrder(orderCheckDto);
 

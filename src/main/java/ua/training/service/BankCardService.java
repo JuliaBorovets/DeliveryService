@@ -17,6 +17,8 @@ public interface BankCardService {
 
     void saveBankCardDTO(BankCardDto bankCardDTO, Long userId) throws BankException;
 
+    void createAccountToSendMoney() throws BankException;
+
     void updateBankCardDTO(BankCardDto bankCardDTO, Long bankCardId) throws BankException;
 
     void deleteBankCardConnectionWithUser(Long bankId, Long userId) throws BankException;

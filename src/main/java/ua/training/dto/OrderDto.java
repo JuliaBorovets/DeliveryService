@@ -33,7 +33,7 @@ public class OrderDto {
     @Positive
     private BigDecimal weight;
 
-    private Status status;
+    private Status status = Status.NOT_PAID;
 
     private String shippingDate;
 

@@ -22,7 +22,7 @@ public class BankCardDto {
     @Max(12)
     private Long expMonth;
 
-    @Min(1700)
+    @Min(2020)
     @Max(2040)
     private Long expYear;
 

@@ -7,18 +7,17 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ua.training.controller.exception.OrderCreateException;
-import ua.training.controller.exception.OrderNotFoundException;
-import ua.training.controller.exception.UserNotFoundException;
+import ua.training.controller.exception.*;
 import ua.training.dto.OrderDto;
 import ua.training.entity.order.Order;
 import ua.training.entity.order.Status;
 import ua.training.entity.user.User;
-import ua.training.mappers.DtoToOrderConverter;
-import ua.training.mappers.OrderToDtoConverter;
+import ua.training.mappers.OrderMapper;
 import ua.training.repository.OrderRepository;
 import ua.training.repository.UserRepository;
+import ua.training.service.DestinationService;
 import ua.training.service.OrderService;
+import ua.training.service.OrderTypeService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -31,9 +30,10 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final DtoToOrderConverter orderConverter;
     private final UserRepository userRepository;
-    private final OrderToDtoConverter orderToDtoConverter;
+    private final OrderMapper orderMapper;
+    private final OrderTypeService orderTypeService;
+    private final DestinationService destinationService;
 
     @Value("${constants.BASE.PRICE}")
     private BigDecimal BASE_PRICE;
@@ -41,17 +41,18 @@ public class OrderServiceImpl implements OrderService {
     @Value("${constants.WEIGHT.COEFFICIENT}")
     private BigDecimal WEIGHT_COEFFICIENT;
 
-    public OrderServiceImpl(OrderRepository orderRepository, DtoToOrderConverter orderConverter,
-                            UserRepository userRepository, OrderToDtoConverter orderToDtoConverter) {
+    public OrderServiceImpl(OrderRepository orderRepository, UserRepository userRepository, OrderMapper orderMapper,
+                            OrderTypeService orderTypeService, DestinationService destinationService) {
         this.orderRepository = orderRepository;
-        this.orderConverter = orderConverter;
         this.userRepository = userRepository;
-        this.orderToDtoConverter = orderToDtoConverter;
+        this.orderMapper = orderMapper;
+        this.orderTypeService = orderTypeService;
+        this.destinationService = destinationService;
     }
 
     public List<OrderDto> findAllUserOrders(Long userId) {
         return orderRepository.findOrderByOwnerId(userId).stream()
-                .map(orderToDtoConverter::convert)
+                .map(orderMapper::orderToOrderDto)
                 .filter(o -> !o.getStatus().equals(Status.ARCHIVED))
                 .collect(Collectors.toList());
     }
@@ -60,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> findAllNotPaidUserOrders(Long userId) {
         return orderRepository.findByStatusAndOwner_Id(Status.NOT_PAID, userId).stream()
-                .map(orderToDtoConverter::convert)
+                .map(orderMapper::orderToOrderDto)
                 .collect(Collectors.toList());
     }
 
@@ -68,34 +69,34 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> findAllArchivedUserOrders(Long userId) {
         return orderRepository.findByStatusAndOwner_Id(Status.ARCHIVED, userId).stream()
-                .map(orderToDtoConverter::convert)
+                .map(orderMapper::orderToOrderDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<OrderDto> findAllDeliveredUserOrders(Long userId) {
         return orderRepository.findByStatusAndOwner_Id(Status.DELIVERED, userId).stream()
-                .map(orderToDtoConverter::convert)
+                .map(orderMapper::orderToOrderDto)
                 .collect(Collectors.toList());
     }
 
     public List<OrderDto> findAllPaidOrdersDTO() {
         return orderRepository.findOrderByStatus(Status.PAID).stream()
-                .map(orderToDtoConverter::convert)
+                .map(orderMapper::orderToOrderDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<OrderDto> findAllShippedOrdersDTO() {
         return orderRepository.findOrderByStatus(Status.SHIPPED).stream()
-                .map(orderToDtoConverter::convert)
+                .map(orderMapper::orderToOrderDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<OrderDto> findAllDeliveredOrdersDto() {
         return orderRepository.findOrderByStatus(Status.DELIVERED).stream()
-                .map(orderToDtoConverter::convert)
+                .map(orderMapper::orderToOrderDto)
                 .collect(Collectors.toList());
     }
 
@@ -116,7 +117,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException("order id=" + id + " not found"));
 
-        return orderToDtoConverter.convert(order);
+        return orderMapper.orderToOrderDto(order);
     }
 
     @Override
@@ -125,7 +126,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findByIdAndOwner_id(id, userId)
                 .orElseThrow(() -> new OrderNotFoundException("order id=" + id + " , userId=" + userId + "  not found"));
 
-        return orderToDtoConverter.convert(order);
+        return orderMapper.orderToOrderDto(order);
     }
 
     @Override
@@ -138,22 +139,23 @@ public class OrderServiceImpl implements OrderService {
             rollbackFor = OrderCreateException.class)
     @Override
     public void createOrder(OrderDto orderDTO, User user) throws OrderCreateException, UserNotFoundException {
-        Order orderToSave = orderConverter.convert(orderDTO);
+        Order orderToSave = orderMapper.orderDtoToOrder(orderDTO);
 
         User userToSave = userRepository.findUserById(user.getId())
                 .orElseThrow(()->new UserNotFoundException("no user with id=" + user.getId()));
 
         try {
-            orderToSave.setStatus(Status.NOT_PAID);
+            orderToSave.setOrderType(orderTypeService.getOrderTypeById(Long.valueOf(orderDTO.getType())));
+            orderToSave.setDestination(destinationService.getDestination(orderDTO.getDestinationCityFrom(),
+                    orderDTO.getDestinationCityTo()));
             orderToSave.saveOrder(userToSave);
             orderToSave.setShippingDate(LocalDate.now());
             orderToSave.setShippingPriceInCents(calculatePrice(orderToSave));
             orderRepository.save(orderToSave);
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException | OrderTypeException | DestinationException e) {
             throw new OrderCreateException("Can not create order with id = " + orderDTO.getId());
         }
     }
-
 
     @Override
     public void moveOrderToArchive(Long orderId) throws OrderNotFoundException {

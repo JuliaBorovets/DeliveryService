@@ -13,8 +13,7 @@ import ua.training.controller.utility.ProjectPasswordEncoder;
 import ua.training.dto.UserDto;
 import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
-import ua.training.mappers.DtoToUserConverter;
-import ua.training.mappers.UserToUserDtoConverter;
+import ua.training.mappers.UserMapper;
 import ua.training.repository.UserRepository;
 import ua.training.service.UserService;
 
@@ -27,15 +26,11 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final UserRepository userRepository;
-    private final UserToUserDtoConverter userToUserDtoConverter;
-    private final DtoToUserConverter dtoToUserConverter;
+    private final UserMapper userMapper;
 
-
-    public UserServiceImpl(UserRepository userRepository, UserToUserDtoConverter userToUserDtoConverter,
-                           DtoToUserConverter dtoToUserConverter) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
-        this.userToUserDtoConverter = userToUserDtoConverter;
-        this.dtoToUserConverter = dtoToUserConverter;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -58,7 +53,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public void saveNewUserDto(UserDto userDto) throws RegException {
 
-        User user = dtoToUserConverter.convert(userDto);
+        User user = userMapper.userDtoToUser(userDto);
         ProjectPasswordEncoder encoder = new ProjectPasswordEncoder();
 
         user.setPassword(encoder.encode(userDto.getPassword()));
@@ -75,20 +70,20 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public UserDto findUserDTOById(Long id) {
 
-        return userToUserDtoConverter.convert(findUserById(id));
+        return userMapper.userToUserDto(findUserById(id));
     }
 
     @Override
     public List<UserDto> findAllByLoginLike(String login) {
         return userRepository.findAllByLoginLike("%" + login + "%").stream()
-                .map(userToUserDtoConverter::convert)
+                .map(userMapper::userToUserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<UserDto> findAllUserDto() {
         return userRepository.findAll().stream()
-                .map(userToUserDtoConverter::convert)
+                .map(userMapper::userToUserDto)
                 .collect(Collectors.toList());
     }
 

@@ -11,7 +11,4 @@ public interface  DestinationMapper {
     DestinationMapper INSTANCE = Mappers.getMapper(DestinationMapper.class);
 
     DestinationDto destinationToDestinationDto(Destination destination);
-
-    Destination destinationDtoToDestination(DestinationDto destinationDto);
-
 }

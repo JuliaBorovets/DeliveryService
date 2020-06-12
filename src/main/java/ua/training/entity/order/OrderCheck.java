@@ -39,4 +39,16 @@ public class OrderCheck {
 
     private LocalDate creationDate ;
 
+    @Override
+    public String toString() {
+        return "OrderCheck{" +
+                "id=" + id +
+                ", order=" + order +
+                ", priceInCents=" + priceInCents +
+                ", status=" + status +
+                ", user=" + user +
+                ", bankCard=" + bankCard +
+                ", creationDate=" + creationDate +
+                '}';
+    }
 }

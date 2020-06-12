@@ -11,7 +11,5 @@ public interface OrderTypeMapper {
 
     OrderTypeMapper INSTANCE = Mappers.getMapper(OrderTypeMapper.class);
 
-    OrderType orderTypeDtoToOrderType(OrderTypeDto orderTypeDto);
-
     OrderTypeDto orderTypeToOrderTypeDto(OrderType orderType);
 }

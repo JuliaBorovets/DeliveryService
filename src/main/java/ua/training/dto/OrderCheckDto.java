@@ -22,7 +22,7 @@ public class OrderCheckDto {
 
     private Status status;
 
-    private UserDto user;
+    private Long userId;
 
     private Long bankCard;
 

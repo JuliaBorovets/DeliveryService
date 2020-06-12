@@ -37,7 +37,6 @@ public class BankCard {
     @OneToMany(mappedBy = "bankCard")
     private List<OrderCheck> orderChecks = new ArrayList<>();
 
-
     @PreRemove
     public void deleteBankCard(){
         users.forEach(b -> b.getCards().remove(this));

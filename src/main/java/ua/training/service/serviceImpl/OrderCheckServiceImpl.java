@@ -10,7 +10,7 @@ import ua.training.dto.OrderDto;
 import ua.training.dto.UserDto;
 import ua.training.entity.order.OrderCheck;
 import ua.training.entity.order.Status;
-import ua.training.mappers.CheckToDtoConverter;
+import ua.training.mappers.OrderCheckMapper;
 import ua.training.repository.OrderCheckRepository;
 import ua.training.service.OrderCheckService;
 import ua.training.service.OrderService;
@@ -27,14 +27,14 @@ public class OrderCheckServiceImpl implements OrderCheckService {
     private final OrderCheckRepository orderCheckRepository;
     private final OrderService orderService;
     private final UserService userService;
-    private final CheckToDtoConverter checkToDtoConverter;
+    private final OrderCheckMapper orderCheckMapper;
 
     public OrderCheckServiceImpl(OrderCheckRepository orderCheckRepository, OrderService orderService,
-                                 UserService userService, CheckToDtoConverter checkToDtoConverter) {
+                                 UserService userService, OrderCheckMapper orderCheckMapper) {
         this.orderCheckRepository = orderCheckRepository;
         this.orderService = orderService;
         this.userService = userService;
-        this.checkToDtoConverter = checkToDtoConverter;
+        this.orderCheckMapper = orderCheckMapper;
     }
 
     @Override
@@ -47,14 +47,14 @@ public class OrderCheckServiceImpl implements OrderCheckService {
                 .forEachRemaining(orderChecks::add);
 
         return orderChecks.stream()
-                .map(checkToDtoConverter::convert)
+                .map(orderCheckMapper::orderCheckToOrderCheckDto)
                 .collect(Collectors.toList());
     }
 
 
     @Override
     public OrderCheckDto showCheckById(Long checkId) throws OrderCheckException {
-        return checkToDtoConverter.convert(orderCheckRepository
+        return orderCheckMapper.orderCheckToOrderCheckDto(orderCheckRepository
                 .findById(checkId)
                 .orElseThrow(()->new OrderCheckException("no check with id=" + checkId)));
     }
@@ -64,7 +64,7 @@ public class OrderCheckServiceImpl implements OrderCheckService {
 
         return orderCheckRepository
                 .findAllByUser_Id(userId).stream()
-                .map(checkToDtoConverter::convert)
+                .map(orderCheckMapper::orderCheckToOrderCheckDto)
                 .collect(Collectors.toList());
     }
 
@@ -80,7 +80,7 @@ public class OrderCheckServiceImpl implements OrderCheckService {
                 .orderId(orderDtoId)
                 .bankCard(bankCardDto.getId())
                 .priceInCents(orderDto.getShippingPriceInCents())
-                .user(userDto)
+                .userId(userDto.getId())
                 .status(Status.NOT_PAID).build();
     }
 }

@@ -53,6 +53,22 @@ public class Order {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", orderType=" + orderType +
+                ", owner=" + owner +
+                ", weight=" + weight +
+                ", destination=" + destination +
+                ", status=" + status +
+                ", shippingDate=" + shippingDate +
+                ", deliveryDate=" + deliveryDate +
+                ", shippingPriceInCents=" + shippingPriceInCents +
+                ", check=" + check +
+                '}';
+    }
 }
 
 

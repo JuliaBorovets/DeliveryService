@@ -7,10 +7,6 @@ import ua.training.entity.user.RoleType;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Setter
 @Getter
@@ -39,10 +35,5 @@ public class UserDto {
     @ValidPassword
     private String password;
 
-    private List<OrderDto> orders = new ArrayList<>();
-
-    private List<OrderCheckDto> checks = new ArrayList<>();
-
-    private Set<BankCardDto> cards = new HashSet<>();
 
 }
