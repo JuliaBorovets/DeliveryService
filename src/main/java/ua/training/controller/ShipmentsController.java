@@ -123,7 +123,7 @@ public class ShipmentsController {
     }
 
     @PostMapping("/create_shipment")
-    public String createOrder(@Valid @ModelAttribute OrderDto modelOrder, BindingResult bindingResult,
+    public String createOrder(@Valid @ModelAttribute("newOrder") OrderDto newOrder, BindingResult bindingResult,
                               @AuthenticationPrincipal User user)
             throws OrderCreateException, UserNotFoundException {
 
@@ -131,7 +131,7 @@ public class ShipmentsController {
             return "user/new_order";
         }
 
-        orderService.createOrder(modelOrder, user);
+        orderService.createOrder(newOrder, user);
 
         return "redirect:/shipments/show/1/all";
     }

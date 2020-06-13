@@ -1,8 +1,6 @@
 package ua.training.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,7 +63,7 @@ public class AdminController {
     }
 
     @GetMapping(value = "/to_ship/{id}")
-    public String shipOneOrder(@PathVariable Long id, @PageableDefault Pageable pageable) throws OrderNotFoundException {
+    public String shipOneOrder(@PathVariable Long id) throws OrderNotFoundException {
 
         adminService.shipOrder(id);
 
@@ -83,7 +81,7 @@ public class AdminController {
     }
 
     @GetMapping(value = "/to_deliver/{id}")
-    public String deliverOneOrder(@PathVariable Long id, @PageableDefault Pageable pageable) throws OrderNotFoundException {
+    public String deliverOneOrder(@PathVariable Long id) throws OrderNotFoundException {
 
         adminService.deliverOrder(id);
 
@@ -101,7 +99,7 @@ public class AdminController {
     }
 
     @GetMapping(value = "/to_receive/{id}")
-    public String receiveOneOrder(@PathVariable Long id, @PageableDefault Pageable pageable) throws OrderNotFoundException {
+    public String receiveOneOrder(@PathVariable Long id) throws OrderNotFoundException {
 
         adminService.receiveOrder(id);
 
@@ -165,9 +163,8 @@ public class AdminController {
     }
 
     @GetMapping("/show_checks")
-    public String showAllChecks( @RequestParam(required = false) String error, Model model){
+    public String showAllChecks(Model model){
 
-        model.addAttribute("error", error != null);
         model.addAttribute("checkDto", OrderCheckDto.builder().build());
         model.addAttribute("checks", orderCheckService.showAllChecks());
 

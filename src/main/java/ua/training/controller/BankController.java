@@ -16,8 +16,7 @@ import ua.training.entity.user.RoleType;
 import ua.training.entity.user.User;
 import ua.training.service.BankCardService;
 import ua.training.service.OrderCheckService;
-import ua.training.service.UserService;
-import ua.training.service.serviceImpl.OrderServiceImpl;
+import ua.training.service.OrderService;
 
 import javax.validation.Valid;
 import java.util.Collections;
@@ -27,17 +26,14 @@ import java.util.Collections;
 @Controller
 public class BankController {
 
-    private final OrderServiceImpl orderService;
+    private final OrderService orderService;
     private final BankCardService bankCardService;
     private final OrderCheckService orderCheckService;
-    private final UserService userService;
 
-    public BankController(OrderServiceImpl orderService, BankCardService bankCardService,
-                          OrderCheckService orderCheckService, UserService userService) {
+    public BankController(OrderService orderService, BankCardService bankCardService, OrderCheckService orderCheckService) {
         this.orderService = orderService;
         this.bankCardService = bankCardService;
         this.orderCheckService = orderCheckService;
-        this.userService = userService;
     }
 
     @ModelAttribute

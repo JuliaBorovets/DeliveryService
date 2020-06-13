@@ -68,7 +68,7 @@ public class PageController implements WebMvcConfigurer {
     @GetMapping("/login")
     public String loginPage() {
 
-        return "login";
+        return "login_page";
     }
 
     @GetMapping("/account_page")
