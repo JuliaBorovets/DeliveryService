@@ -2,8 +2,6 @@ package ua.training.service.serviceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import ua.training.controller.exception.OrderNotFoundException;
 import ua.training.dto.StatisticsDto;
 import ua.training.entity.order.Order;
@@ -29,14 +27,13 @@ public class AdminServiceImpl implements AdminService {
         this.orderCheckRepository = orderCheckRepository;
     }
 
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW,
-            rollbackFor = OrderNotFoundException.class)
     @Override
     public void shipOrder(Long orderId) throws OrderNotFoundException {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("can not find order with id=" + orderId));
+
+        //todo checking status
 
         Long daysToDeliver = order.getDestination().getDaysToDeliver();
 
@@ -46,10 +43,14 @@ public class AdminServiceImpl implements AdminService {
 
         order.setStatus(Status.SHIPPED);
 
+        orderRepository.save(order);
+
     }
 
     @Override
     public void deliverOrder(Long orderId) throws OrderNotFoundException {
+
+        //todo checking status
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("can not find order with id=" + orderId));
@@ -61,6 +62,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void receiveOrder(Long orderId) throws OrderNotFoundException {
+
+        //todo checking status
+
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("can not find order with id=" + orderId));
 

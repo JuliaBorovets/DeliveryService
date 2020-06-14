@@ -14,8 +14,6 @@ public interface OrderCheckRepository extends CrudRepository<OrderCheck, Long> {
 
     List<OrderCheck> findAllByUser_Id(Long id);
 
-    List<OrderCheck> findAll();
-
     @Query("select count (e) from OrderCheck e where year(e.creationDate) = :year ")
     Long ordersByCreationYear( @Param("year") int year);
 

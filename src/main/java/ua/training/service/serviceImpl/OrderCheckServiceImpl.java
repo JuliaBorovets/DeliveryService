@@ -27,14 +27,12 @@ public class OrderCheckServiceImpl implements OrderCheckService {
     private final OrderCheckRepository orderCheckRepository;
     private final OrderService orderService;
     private final UserService userService;
-    private final OrderCheckMapper orderCheckMapper;
 
     public OrderCheckServiceImpl(OrderCheckRepository orderCheckRepository, OrderService orderService,
-                                 UserService userService, OrderCheckMapper orderCheckMapper) {
+                                 UserService userService) {
         this.orderCheckRepository = orderCheckRepository;
         this.orderService = orderService;
         this.userService = userService;
-        this.orderCheckMapper = orderCheckMapper;
     }
 
     @Override
@@ -43,18 +41,17 @@ public class OrderCheckServiceImpl implements OrderCheckService {
         List<OrderCheck> orderChecks = new ArrayList<>();
 
         orderCheckRepository.findAll()
-                .iterator()
-                .forEachRemaining(orderChecks::add);
+                .forEach(orderChecks::add);
 
         return orderChecks.stream()
-                .map(orderCheckMapper::orderCheckToOrderCheckDto)
+                .map(OrderCheckMapper.INSTANCE::orderCheckToOrderCheckDto)
                 .collect(Collectors.toList());
     }
 
 
     @Override
     public OrderCheckDto showCheckById(Long checkId) throws OrderCheckException {
-        return orderCheckMapper.orderCheckToOrderCheckDto(orderCheckRepository
+        return OrderCheckMapper.INSTANCE.orderCheckToOrderCheckDto(orderCheckRepository
                 .findById(checkId)
                 .orElseThrow(()->new OrderCheckException("no check with id=" + checkId)));
     }
@@ -64,7 +61,7 @@ public class OrderCheckServiceImpl implements OrderCheckService {
 
         return orderCheckRepository
                 .findAllByUser_Id(userId).stream()
-                .map(orderCheckMapper::orderCheckToOrderCheckDto)
+                .map(OrderCheckMapper.INSTANCE::orderCheckToOrderCheckDto)
                 .collect(Collectors.toList());
     }
 
